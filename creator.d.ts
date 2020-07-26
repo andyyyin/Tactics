@@ -21227,8 +21227,8 @@ declare namespace cc.AssetManager {
 		downloadScript('http://localhost:8080/index.js', null, (err) => console.log(err));
 		``` 
 		*/
-		downloadScript(url: string, options?: Record<string, any>, onComplete?: (err: Error) => void): void;;
-		downloadScript(url: string, onComplete?: (err: Error) => void): void;;		
+		downloadScript(url: string, options?: Record<string, any>, onComplete?: (err: Error) => void): void;
+		downloadScript(url: string, onComplete?: (err: Error) => void): void;
 		/**
 		!#en
 		Register custom handler if you want to change default behavior or extend downloader to download other format file
