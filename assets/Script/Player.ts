@@ -16,7 +16,7 @@ export default class Player extends cc.Component {
 
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
-		this.Map = this.Battle.MapIndicator
+		this.Map = this.Battle.Map
 	}
 
 	protected start() {
@@ -25,7 +25,7 @@ export default class Player extends cc.Component {
 		this.node.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
 		this.node.on(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
 
-		this.tilePosition = this.Battle.startTile
+		this.tilePosition = this.Map.startTile
 		this.updatePosition()
 	}
 
@@ -52,7 +52,7 @@ export default class Player extends cc.Component {
 	}
 
 	updatePosition () {
-		let {layerFloor, tileSize} = this.Battle
+		let {layerFloor, tileSize} = this.Map
 		let {x, y} = layerFloor.getPositionAt(this.tilePosition);
 		let fixX = tileSize.width / 2
 		let fixY = tileSize.height / 2

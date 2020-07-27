@@ -1,13 +1,19 @@
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class HomeManager extends cc.Component {
+export default class BattleMap extends cc.Component {
 
 	@property(cc.Prefab)
-	TilePrefab = null
+	IndicatorTile = null
 
-	TiledMap
-	tileSize
+	@property(cc.Node)
+	IndicatorNode = null
+
+	@property(cc.Component)
+	TiledMap = null
+
+	startTile;
+	tileSize;
 	mapSize
 
 	layerFloor
@@ -16,7 +22,15 @@ export default class HomeManager extends cc.Component {
 	iTileList = []
 
 	onLoad() {
-		this.TiledMap = this.node.parent.getComponent(cc.TiledMap)
+		// let posArr = [cc.v2(-249, 96), cc.v2(-150, 76), cc.v2(-60, 54), cc.v2(-248, -144), cc.v2(-89, -34)];
+		// for (let i = 0; i < posArr.length; i++) {
+		// 	let shieldNode = cc.instantiate(this.player);
+		// 	// 可任意设置节点位置，这里仅作为示范
+		// 	shieldNode.x = posArr[i].x;
+		// 	shieldNode.y = posArr[i].y;
+		// 	// 调用 TiledLayer 组件的 addUserNode 方法，可将节点添加到对应的地图层中，并与地图层产生相互遮挡关系。
+		// 	this.playerLayer.addUserNode(shieldNode);
+		// }
 		this.mapSize = this.TiledMap.getMapSize()
 
 		this.tileSize = this.TiledMap.getTileSize();
@@ -28,17 +42,29 @@ export default class HomeManager extends cc.Component {
 
 		this.layerFloor = this.TiledMap.getLayer('floor');
 		this.layerBarrier = this.TiledMap.getLayer('barrier');
+
+		let objectGroup = this.TiledMap.getObjectGroup('points');
+		if (!objectGroup) return;
+
+		let startObj = objectGroup.getObject('SpawnPoint');
+		let endObj = objectGroup.getObject('SuccessPoint');
+		if (!startObj || !endObj) return;
+
+		let startPos = cc.v2(startObj.x, startObj.y);
+		let endPos = cc.v2(endObj.x, endObj.y);
+
+		this.startTile = this.getTilePos(startPos);
 	}
 
 	start() {
 		for (let y = 0; y < this.mapSize.width; y++) {
 			for (let x = 0; x < this.mapSize.height; x++) {
-				let iTile = cc.instantiate(this.TilePrefab)
-				this.node.addChild(iTile)
+				let iTile = cc.instantiate(this.IndicatorTile)
+				this.IndicatorNode.addChild(iTile)
 				iTile.width = this.tileSize.width
 				iTile.height = this.tileSize.height
-				iTile.anchorX = this.node.anchorX
-				iTile.anchorY = this.node.anchorY
+				iTile.anchorX = this.IndicatorNode.anchorX
+				iTile.anchorY = this.IndicatorNode.anchorY
 				iTile.setPosition(this.layerFloor.getPositionAt(x, y))
 				this.iTileList.push(iTile)
 				iTile.active = false
@@ -68,12 +94,15 @@ export default class HomeManager extends cc.Component {
 		let step = 1
 		let moveRange = [[startIndex]]
 		while (step <= move) {
-			let prevArray = moveRange[moveRange.length - 1]
+			let prevArray = moveRange[step - 1]
 			let currentArray = []
 			prevArray.map(pi => {
-				this.aroundList(pi).map(ai => {
+				let around = this.aroundList(pi)
+				around.map(ai => {
 					if (this.isBlocked(ai)) return
+					if (currentArray.includes(ai)) return
 					if (prevArray.includes(ai)) return
+					if (moveRange[step - 2] && moveRange[step - 2].includes(ai)) return
 					currentArray.push(ai)
 				})
 			})
@@ -93,6 +122,14 @@ export default class HomeManager extends cc.Component {
 		return false
 	}
 
+
+	getTilePos (posInPixel) {
+		let mapNodeSize = this.TiledMap.node.getContentSize();
+		let tileSize = this.tileSize
+		let x = Math.floor(posInPixel.x / tileSize.width);
+		let y = Math.floor((mapNodeSize.height - posInPixel.y) / tileSize.height);
+		return cc.v2(x, y);
+	}
 
 	pToI (p1, p2?) {
 		let x, y
