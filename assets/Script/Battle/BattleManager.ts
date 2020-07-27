@@ -7,26 +7,21 @@ export default class BattleManager extends cc.Component {
 	playerPrefab = null
 
 	@property(cc.Node)
-	playerTestNode = null
-
-	@property(cc.Node)
 	MapNode = null;
 
 	@property(cc.Component)
-	mapIndicator = null
+	MapIndicator = null
 
 	TiledMap;
 	layerFloor;
 	layerBarrier;
 
-	curTile;
 	startTile;
 	tileSize;
 
-	onLoad() {
-	}
+	players = []
 
-	start() {
+	protected onLoad() {
 		// let posArr = [cc.v2(-249, 96), cc.v2(-150, 76), cc.v2(-60, 54), cc.v2(-248, -144), cc.v2(-89, -34)];
 		// for (let i = 0; i < posArr.length; i++) {
 		// 	let shieldNode = cc.instantiate(this.player);
@@ -54,9 +49,12 @@ export default class BattleManager extends cc.Component {
 		this.layerFloor = this.TiledMap.getLayer('floor');
 		this.layerBarrier = this.TiledMap.getLayer('barrier');
 
+		this.startTile = this.getTilePos(startPos);
+	}
 
-		this.curTile = this.startTile = this.getTilePos(startPos);
-		this.updatePlayerPos();
+	protected start() {
+		let testPlayer = this.MapNode.getChildByName('TestPlayer').getComponent('Player')
+		this.players.push(testPlayer)
 	}
 
 
@@ -68,26 +66,8 @@ export default class BattleManager extends cc.Component {
 		return cc.v2(x, y);
 	}
 
-	updatePlayerPos () {
-		let {x, y} = this.layerFloor.getPositionAt(this.curTile);
-		let fixX = this.tileSize.width / 2
-		let fixY = this.tileSize.height / 2
-		this.playerTestNode.setPosition(x + fixX, y + fixY);
-	}
-
-	showXXX () {
-		this.mapIndicator.showIndicator(this.curTile.x + 1, this.curTile.y)
-		this.mapIndicator.showIndicator(this.curTile.x - 1, this.curTile.y)
-		this.mapIndicator.showIndicator(this.curTile.x, this.curTile.y + 1)
-		this.mapIndicator.showIndicator(this.curTile.x, this.curTile.y - 1)
-		this.mapIndicator.showIndicator(this.curTile.x + 2, this.curTile.y)
-		this.mapIndicator.showIndicator(this.curTile.x - 2, this.curTile.y)
-
-		// let tile = this.layerFloor.getTiledTileAt(5, 5, true)
-	}
-
-	hideXXX () {
-		this.mapIndicator.hideAll()
+	focus (player) {
+		this.players.map(p => p.focus = p === player)
 	}
 
 }

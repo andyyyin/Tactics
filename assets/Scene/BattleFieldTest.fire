@@ -690,7 +690,7 @@
       "array": [
         0,
         0,
-        348.412845260027,
+        343.0543130741108,
         0,
         0,
         0,
@@ -965,11 +965,11 @@
     "playerPrefab": {
       "__uuid__": "89560192-6502-4b9e-84a6-6c3824eaf6c8"
     },
-    "playerTestNode": {
-      "__id__": 12
-    },
     "MapNode": {
       "__id__": 3
+    },
+    "MapIndicator": {
+      "__id__": 11
     },
     "_id": "1fV2RbE8JF+7ZM0K1eovsp"
   },
