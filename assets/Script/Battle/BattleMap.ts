@@ -1,3 +1,5 @@
+import find = cc.find;
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -116,7 +118,14 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onHover (tilePos) {
-		if (this.Battle.focusPlayer) return
+		if (this.Battle.focusPlayer) {
+			let player = this.Battle.focusPlayer
+			let range = player.moveRange
+			if (range && range.flat().includes(this.pToI(tilePos))) {
+				this.showRoute(tilePos, range)
+			}
+			return
+		}
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
 		if (target) {
 			this.showIndicator(target.moveRange)
@@ -162,6 +171,36 @@ export default class BattleMap extends cc.Component {
 	hideIndicator () {
 		this.iTileList.map(iTile => iTile.active = false)
 		this.showing = false
+	}
+
+	showRoute (pos, range) {
+		let preIndex;
+		let endIndex = this.pToI(pos)
+		let tiles = this.iTileList
+		for (let i = range.length - 1; i > 0; i--) {
+			if (preIndex === undefined) {
+				range[i].map(pi => {
+					if (pi === endIndex) {
+						tiles[pi].opacity = 255
+						preIndex = pi
+					} else {
+						tiles[pi].opacity = 100
+					}
+				})
+			} else {
+				let findFlag = false
+				range[i].map(pi => {
+					if (!findFlag && this.isClose(pi, preIndex)) {
+						tiles[pi].opacity = 255
+						preIndex = pi
+						findFlag = true
+					} else {
+						tiles[pi].opacity = 100
+					}
+				})
+			}
+
+		}
 	}
 
 	handleMoveRange (start, move) {
@@ -234,6 +273,10 @@ export default class BattleMap extends cc.Component {
 
 	aroundList (index) {
 		return [this.toUp(index), this.toRight(index), this.toLeft(index), this.toDown(index)]
+	}
+
+	isClose (i1, i2) {
+		return this.aroundList(i1).includes(i2)
 	}
 
 }
