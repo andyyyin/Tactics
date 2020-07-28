@@ -20,40 +20,19 @@ export default class Player extends cc.Component {
 	}
 
 	protected start() {
-		// this.node.on(cc.Node.EventType.MOUSE_ENTER, this.onMouseEnter, this)
-		// this.node.on(cc.Node.EventType.MOUSE_LEAVE, this.onMouseLeave, this)
-		// this.node.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
-		// this.node.on(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
-
 		this.tilePos = this.Map.startTile
 		this.updatePosition()
 		this.updateMoveRange()
 	}
 
 	protected onDestroy() {
-		// this.node.off(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
-		// this.node.off(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
 	}
 
-	// onMouseEnter () {
-	// 	if (this.Battle.focusPlayer) return
-	// 	this.Map.showIndicator(this.moveRange)
-	// }
-	//
-	// onMouseLeave () {
-	// 	if (this.Battle.focusPlayer) return
-	// 	this.Map.hideIndicator()
-	// }
-	//
-	// onMouseDown () {
-	// 	this.mouseHolding = true
-	// }
-	//
-	// onMouseUp () {
-	// 	if (!this.mouseHolding) return
-	// 	this.Battle.focus(this)
-	// 	this.Map.showIndicator(this.moveRange)
-	// }
+	moveTo (pos) {
+		this.tilePos = pos
+		this.updatePosition()
+		this.updateMoveRange()
+	}
 
 	updateMoveRange () {
 		this.moveRange = this.Map.handleMoveRange(this.tilePos, this.move)

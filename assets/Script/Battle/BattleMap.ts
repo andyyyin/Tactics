@@ -86,8 +86,8 @@ export default class BattleMap extends cc.Component {
 			}
 		}
 		let cursorNode = cc.instantiate(this.CursorPrefab)
-		cursorNode.scaleX = this.tileSize.width / cursorNode.width * 1.3
-		cursorNode.scaleY = this.tileSize.height / cursorNode.height * 1.3
+		cursorNode.scaleX = this.tileSize.width / cursorNode.width * 1.2
+		cursorNode.scaleY = this.tileSize.height / cursorNode.height * 1.2
 		cursorNode.setPosition(this.tileSize.width/2, this.tileSize.height/2)
 		this.TiledMap.node.addChild(cursorNode, 100, 'Cursor')
 		this.cursorNode = cursorNode
@@ -130,11 +130,22 @@ export default class BattleMap extends cc.Component {
 		if (target) {
 			this.Battle.focus(target)
 			this.showIndicator(target.moveRange)
-		} else if (this.Battle.focusPlayer) {
+			return
+		}
+
+		if (this.Battle.focusPlayer) {
+			let player = this.Battle.focusPlayer
+			let range = player.moveRange
+			if (range && range.flat().includes(this.pToI(tilePos))) {
+				player.moveTo(tilePos)
+			}
+
 			this.Battle.focus(null)
 			this.hideIndicator()
 		}
 	}
+
+
 
 	showIndicator (param) {
 		if (Array.isArray(param)) {
