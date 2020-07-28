@@ -12,6 +12,8 @@ export default class BattleManager extends cc.Component {
 
 	players = []
 
+	focusPlayer;
+
 	protected onLoad() {
 		this.Map = this.BattleMap
 	}
@@ -24,7 +26,8 @@ export default class BattleManager extends cc.Component {
 
 
 	focus (player) {
-		this.players.map(p => p.focus = p === player)
+		// this.players.map(p => p.focus = p === player)
+		this.focusPlayer = player
 	}
 
 }

@@ -6,11 +6,16 @@ export default class BattleMap extends cc.Component {
 	@property(cc.Prefab)
 	IndicatorTile = null
 
+	@property(cc.Prefab)
+	CursorPrefab = null
+
 	@property(cc.Node)
 	IndicatorNode = null
 
 	@property(cc.Component)
 	TiledMap = null
+
+	Battle
 
 	startTile;
 	tileSize;
@@ -20,6 +25,11 @@ export default class BattleMap extends cc.Component {
 	layerBarrier
 
 	iTileList = []
+
+	cursorNode;
+	mouseHolding
+
+	showing
 
 	onLoad() {
 		// let posArr = [cc.v2(-249, 96), cc.v2(-150, 76), cc.v2(-60, 54), cc.v2(-248, -144), cc.v2(-89, -34)];
@@ -31,6 +41,12 @@ export default class BattleMap extends cc.Component {
 		// 	// 调用 TiledLayer 组件的 addUserNode 方法，可将节点添加到对应的地图层中，并与地图层产生相互遮挡关系。
 		// 	this.playerLayer.addUserNode(shieldNode);
 		// }
+		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
+
+		this.TiledMap.node.on(cc.Node.EventType.MOUSE_MOVE, this.onMouseMove, this)
+		this.TiledMap.node.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
+		this.TiledMap.node.on(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
+
 		this.mapSize = this.TiledMap.getMapSize()
 
 		this.tileSize = this.TiledMap.getTileSize();
@@ -49,7 +65,6 @@ export default class BattleMap extends cc.Component {
 		let startObj = objectGroup.getObject('SpawnPoint');
 		let endObj = objectGroup.getObject('SuccessPoint');
 		if (!startObj || !endObj) return;
-
 		let startPos = cc.v2(startObj.x, startObj.y);
 		let endPos = cc.v2(endObj.x, endObj.y);
 
@@ -70,8 +85,55 @@ export default class BattleMap extends cc.Component {
 				iTile.active = false
 			}
 		}
+		let cursorNode = cc.instantiate(this.CursorPrefab)
+		cursorNode.scaleX = this.tileSize.width / cursorNode.width * 1.3
+		cursorNode.scaleY = this.tileSize.height / cursorNode.height * 1.3
+		cursorNode.setPosition(this.tileSize.width/2, this.tileSize.height/2)
+		this.TiledMap.node.addChild(cursorNode, 100, 'Cursor')
+		this.cursorNode = cursorNode
+	}
 
+	onMouseMove (event) {
+		if (!this.cursorNode) return
+		let {x, y} = event.getLocation()
+		let {width, height} = this.tileSize
+		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
+		this.cursorNode.y = Math.floor(y - (y % height)) + height / 2
 
+		this.onHover(this.getTilePos(event.getLocation()))
+	}
+
+	onMouseDown (event) {
+		this.mouseHolding = this.getTilePos(event.getLocation())
+	}
+	onMouseUp (event) {
+		if (!this.mouseHolding) return
+		let holding = this.mouseHolding
+		this.mouseHolding = false
+		let tilePos =  this.getTilePos(event.getLocation())
+		if (!cc.Vec2.strictEquals(tilePos, holding)) return
+		this.onClick(tilePos)
+	}
+
+	onHover (tilePos) {
+		if (this.Battle.focusPlayer) return
+		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
+		if (target) {
+			this.showIndicator(target.moveRange)
+		} else if (this.showing) {
+			this.hideIndicator()
+		}
+	}
+
+	onClick (tilePos) {
+		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
+		if (target) {
+			this.Battle.focus(target)
+			this.showIndicator(target.moveRange)
+		} else if (this.Battle.focusPlayer) {
+			this.Battle.focus(null)
+			this.hideIndicator()
+		}
 	}
 
 	showIndicator (param) {
@@ -82,14 +144,16 @@ export default class BattleMap extends cc.Component {
 			let iTile = this.iTileList[index]
 			if (!iTile) return
 			iTile.active = true
+			this.showing = true
 		}
 	}
 
 	hideIndicator () {
 		this.iTileList.map(iTile => iTile.active = false)
+		this.showing = false
 	}
 
-	handleMoveRange (start, move, show) {
+	handleMoveRange (start, move) {
 		let startIndex = this.pToI(start)
 		let step = 1
 		let moveRange = [[startIndex]]
@@ -108,9 +172,6 @@ export default class BattleMap extends cc.Component {
 			})
 			step++
 			moveRange.push(currentArray)
-		}
-		if (show) {
-			this.showIndicator(moveRange)
 		}
 		return moveRange
 	}
