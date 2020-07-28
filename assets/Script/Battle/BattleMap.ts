@@ -97,22 +97,22 @@ export default class BattleMap extends cc.Component {
 
 	onMouseMove (event) {
 		if (!this.cursorNode) return
-		let {x, y} = event.getLocation()
+		let {x, y} = this.getMouseLocation(event)
 		let {width, height} = this.tileSize
 		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
 		this.cursorNode.y = Math.floor(y - (y % height)) + height / 2
 
-		this.onHover(this.getTilePos(event.getLocation()))
+		this.onHover(this.getTilePos({x, y}))
 	}
 
 	onMouseDown (event) {
-		this.mouseHolding = this.getTilePos(event.getLocation())
+		this.mouseHolding = this.getTilePos(this.getMouseLocation(event))
 	}
 	onMouseUp (event) {
 		if (!this.mouseHolding) return
 		let holding = this.mouseHolding
 		this.mouseHolding = false
-		let tilePos =  this.getTilePos(event.getLocation())
+		let tilePos =  this.getTilePos(this.getMouseLocation(event))
 		if (!cc.Vec2.strictEquals(tilePos, holding)) return
 		this.onClick(tilePos)
 	}
@@ -225,6 +225,11 @@ export default class BattleMap extends cc.Component {
 			moveRange.push(currentArray)
 		}
 		return moveRange
+	}
+
+	getMouseLocation (event) {
+		let camera = this.Battle.Control.CameraNode
+		return event.getLocation().add(camera)
 	}
 
 	isBlocked (index) {

@@ -9,6 +9,7 @@ export default class BattleManager extends cc.Component {
 	@property(cc.Component)
 	BattleMap = null
 	Map
+	Control
 
 	players = []
 
@@ -16,6 +17,7 @@ export default class BattleManager extends cc.Component {
 
 	protected onLoad() {
 		this.Map = this.BattleMap
+		this.Control = this.getComponent('BattleControl')
 	}
 
 	protected start() {
