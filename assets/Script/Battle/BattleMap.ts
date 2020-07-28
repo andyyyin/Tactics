@@ -121,9 +121,7 @@ export default class BattleMap extends cc.Component {
 		if (this.Battle.focusPlayer) {
 			let player = this.Battle.focusPlayer
 			let range = player.moveRange
-			if (range && range.flat().includes(this.pToI(tilePos))) {
-				this.showRoute(tilePos, range)
-			}
+			this.showRoute(tilePos, range)
 			return
 		}
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
@@ -169,7 +167,10 @@ export default class BattleMap extends cc.Component {
 	}
 
 	hideIndicator () {
-		this.iTileList.map(iTile => iTile.active = false)
+		this.iTileList.map(iTile => {
+			iTile.active = false
+			iTile.opacity = 100
+		})
 		this.showing = false
 	}
 
