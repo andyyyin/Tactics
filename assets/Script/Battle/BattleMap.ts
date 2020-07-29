@@ -114,16 +114,25 @@ export default class BattleMap extends cc.Component {
 		this.mouseHolding = false
 		let tilePos =  this.getTilePos(this.getMouseLocation(event))
 		if (!cc.Vec2.strictEquals(tilePos, holding)) return
-		this.onClick(tilePos)
+		switch (event.getButton()) {
+			case 0:
+				this.onClick(tilePos)
+				break
+			case 2:
+				this.onRightClick(tilePos)
+		}
 	}
 
 	onHover (tilePos) {
 		if (this.Battle.focusPlayer) {
-			let player = this.Battle.focusPlayer
-			let range = player.moveRange
-			this.showRoute(tilePos, range)
+			if (this.Battle.focusPlayer.isMoving) {
+				let player = this.Battle.focusPlayer
+				let range = player.moveRange
+				this.showRoute(tilePos, range)
+			}
 			return
 		}
+		// 看是否指向玩家
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
 		if (target) {
 			this.showIndicator(target.moveRange)
@@ -133,26 +142,34 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onClick (tilePos) {
-		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
-		if (target) {
-			this.Battle.focus(target)
-			this.showIndicator(target.moveRange)
+		if (this.Battle.focusPlayer) {
+			if (this.Battle.focusPlayer.isMoving) {
+				let player = this.Battle.focusPlayer
+				let range = player.moveRange
+				if (range && range.flat().includes(this.pToI(tilePos))) {
+					player.moveAction(tilePos)
+				} else {
+					this.Battle.focusPlayer.revertAction()
+					// 点击瞬间更新指示状态
+					this.onHover(tilePos)
+				}
+			}
 			return
 		}
 
-		if (this.Battle.focusPlayer) {
-			let player = this.Battle.focusPlayer
-			let range = player.moveRange
-			if (range && range.flat().includes(this.pToI(tilePos))) {
-				player.moveTo(tilePos)
-			}
-
-			this.Battle.focus(null)
-			this.hideIndicator()
+		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
+		if (target) {
+			this.Battle.focus(target)
 		}
 	}
 
-
+	onRightClick (tilePos) {
+		if (this.Battle.focusPlayer) {
+			this.Battle.focusPlayer.revertAction()
+			// 点击瞬间更新指示状态
+			this.onHover(tilePos)
+		}
+	}
 
 	showIndicator (param) {
 		if (Array.isArray(param)) {
@@ -178,7 +195,7 @@ export default class BattleMap extends cc.Component {
 		let preIndex;
 		let endIndex = this.pToI(pos)
 		let tiles = this.iTileList
-		for (let i = range.length - 1; i > 0; i--) {
+		for (let i = range.length - 1; i >= 0; i--) {
 			if (preIndex === undefined) {
 				range[i].map(pi => {
 					if (pi === endIndex) {

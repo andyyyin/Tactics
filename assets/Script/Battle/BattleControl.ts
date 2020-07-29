@@ -7,6 +7,9 @@ export default class BattleControl extends cc.Component {
 	@property(cc.Node)
 	CameraNode = null;
 
+	@property(cc.Node)
+	ActionPanel = null
+
 	cameraMovingX = 0
 	cameraMovingY = 0
 
@@ -56,7 +59,14 @@ export default class BattleControl extends cc.Component {
 		if (this.cameraMovingY) {
 			this.CameraNode.y += (this.cameraMovingY * speed * dt)
 		}
+	}
 
+	showActionPanel () {
+		this.ActionPanel.active = true
+	}
+
+	hidePanel () {
+		this.ActionPanel.active = false
 	}
 
 }

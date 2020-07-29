@@ -9,11 +9,13 @@ export default class BattleManager extends cc.Component {
 	@property(cc.Component)
 	BattleMap = null
 	Map
+
 	Control
 
 	players = []
 
 	focusPlayer;
+	actionState;
 
 	protected onLoad() {
 		this.Map = this.BattleMap
@@ -25,11 +27,14 @@ export default class BattleManager extends cc.Component {
 		this.players.push(testPlayer)
 	}
 
-
-
 	focus (player) {
 		// this.players.map(p => p.focus = p === player)
 		this.focusPlayer = player
+		this.focusPlayer.actionStart()
+	}
+
+	unFocus () {
+		this.focusPlayer = null
 	}
 
 }

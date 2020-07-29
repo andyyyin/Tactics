@@ -1,18 +1,24 @@
 const {ccclass, property} = cc._decorator;
 
+enum ACTION_STATE {
+	NONE,
+	MOVE,
+	OPTION
+}
+
 @ccclass
 export default class Player extends cc.Component {
 
 	Battle;
 	Map;
 
-	mouseHolding = false
 	tilePos
+	tempPos
 
 	move = 5
 	moveRange = []
 
-	focus = false
+	actionState = ACTION_STATE.NONE
 
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
@@ -28,10 +34,35 @@ export default class Player extends cc.Component {
 	protected onDestroy() {
 	}
 
-	moveTo (pos) {
-		this.tilePos = pos
+	get isMoving () { return this.actionState === ACTION_STATE.MOVE }
+
+	actionStart () {
+		this.actionState = ACTION_STATE.MOVE
+		this.Map.showIndicator(this.moveRange)
+	}
+
+	moveAction (pos) {
+		this.tempPos = pos
 		this.updatePosition()
-		this.updateMoveRange()
+		this.actionState = ACTION_STATE.OPTION
+		this.Battle.Control.showActionPanel()
+	}
+
+	revertAction () {
+		if (this.actionState === ACTION_STATE.OPTION) {
+			this.Battle.Control.hidePanel()
+			this.tempPos = null
+			this.updatePosition()
+			this.actionState = ACTION_STATE.MOVE
+			return
+		}
+		if (this.actionState === ACTION_STATE.MOVE) {
+			this.Battle.unFocus()
+		}
+	}
+
+	actionComplete () {
+		this.tilePos = this.tempPos
 	}
 
 	updateMoveRange () {
@@ -40,7 +71,8 @@ export default class Player extends cc.Component {
 
 	updatePosition () {
 		let {layerFloor, tileSize} = this.Map
-		let {x, y} = layerFloor.getPositionAt(this.tilePos);
+		let pos = this.tempPos || this.tilePos
+		let {x, y} = layerFloor.getPositionAt(pos);
 		let fixX = tileSize.width / 2
 		let fixY = tileSize.height / 2
 		this.node.setPosition(x + fixX, y + fixY);
