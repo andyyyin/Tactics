@@ -23,8 +23,10 @@ export default class BattleManager extends cc.Component {
 	}
 
 	protected start() {
-		let testPlayer = this.Map.TiledMap.node.getChildByName('TestPlayer').getComponent('Player')
-		this.players.push(testPlayer)
+	}
+
+	registry (player) {
+		this.players.push(player)
 	}
 
 	focus (player) {

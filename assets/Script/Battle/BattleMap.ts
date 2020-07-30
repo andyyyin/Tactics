@@ -1,6 +1,9 @@
 import find = cc.find;
+import array = cc.js.array;
 
 const {ccclass, property} = cc._decorator;
+
+let _playerPosCache
 
 @ccclass
 export default class BattleMap extends cc.Component {
@@ -19,7 +22,7 @@ export default class BattleMap extends cc.Component {
 
 	Battle
 
-	startTile;
+	startPos;
 	tileSize;
 	mapSize
 
@@ -71,7 +74,7 @@ export default class BattleMap extends cc.Component {
 		let startPos = cc.v2(startObj.x, startObj.y);
 		let endPos = cc.v2(endObj.x, endObj.y);
 
-		this.startTile = this.getTilePos(startPos);
+		this.startPos = this.getTilePos(startPos);
 	}
 
 	start() {
@@ -124,6 +127,16 @@ export default class BattleMap extends cc.Component {
 		}
 	}
 
+	getPlayerStartPos () {
+		if (!_playerPosCache) {
+			// @ts-ignore
+			_playerPosCache = this.handleMoveRange(this.startPos, 2).flat()
+			_playerPosCache.shift()
+			return this.startPos
+		}
+		return this.iToP(_playerPosCache.shift())
+	}
+
 	updateIndicator (tilePos?) {
 		this.onHover(tilePos || this.getTilePos(this.mouseLoc))
 	}
@@ -139,7 +152,7 @@ export default class BattleMap extends cc.Component {
 		}
 		// 看是否指向玩家
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
-		if (target) {
+		if (target && !target.isDone) {
 			this.showIndicator(target.moveRange)
 		} else if (this.showing) {
 			this.hideIndicator()
@@ -163,7 +176,7 @@ export default class BattleMap extends cc.Component {
 		}
 
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
-		if (target) {
+		if (target && !target.isDone) {
 			this.Battle.focus(target)
 		}
 	}
@@ -227,7 +240,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	handleMoveRange (start, move) {
-		let startIndex = this.pToI(start)
+		let startIndex = typeof start === 'number' ? start : this.pToI(start)
 		let step = 1
 		let moveRange = [[startIndex]]
 		while (step <= move) {
@@ -236,6 +249,9 @@ export default class BattleMap extends cc.Component {
 			prevArray.map(pi => {
 				let around = this.aroundList(pi)
 				around.map(ai => {
+					// if (ai < 0) {
+					// 	debugger
+					// }
 					if (this.isBlocked(ai)) return
 					if (currentArray.includes(ai)) return
 					if (prevArray.includes(ai)) return

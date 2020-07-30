@@ -10,13 +10,15 @@ enum ACTION_STATE {
 @ccclass
 export default class Player extends cc.Component {
 
+	@property(cc.Integer)
+	move = 5
+
 	Battle;
 	Map;
 
 	tilePos
 	tempPos
 
-	move = 5
 	moveRange = []
 
 	actionState
@@ -28,7 +30,8 @@ export default class Player extends cc.Component {
 	}
 
 	protected start() {
-		this.tilePos = this.Map.startTile
+		this.Battle.registry(this)
+		this.tilePos = this.Map.getPlayerStartPos()
 		this.updatePosition()
 		this.updateMoveRange()
 	}
