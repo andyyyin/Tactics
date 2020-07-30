@@ -3,7 +3,8 @@ const {ccclass, property} = cc._decorator;
 enum ACTION_STATE {
 	NONE,
 	MOVE,
-	OPTION
+	OPTION,
+	DONE
 }
 
 @ccclass
@@ -18,11 +19,12 @@ export default class Player extends cc.Component {
 	move = 5
 	moveRange = []
 
-	actionState = ACTION_STATE.NONE
+	actionState
 
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 		this.Map = this.Battle.Map
+		this.setState(ACTION_STATE.NONE)
 	}
 
 	protected start() {
@@ -31,20 +33,30 @@ export default class Player extends cc.Component {
 		this.updateMoveRange()
 	}
 
+	protected update(dt: number) {
+	}
+
 	protected onDestroy() {
 	}
 
 	get isMoving () { return this.actionState === ACTION_STATE.MOVE }
 
+	get isDone () { return this.actionState === ACTION_STATE.DONE }
+
+	setState (state) {
+		this.actionState = state
+		this.node.opacity = state === ACTION_STATE.DONE ? 150 : 255
+	}
+
 	actionStart () {
-		this.actionState = ACTION_STATE.MOVE
+		this.setState(ACTION_STATE.MOVE)
 		this.Map.showIndicator(this.moveRange)
 	}
 
 	moveAction (pos) {
 		this.tempPos = pos
 		this.updatePosition()
-		this.actionState = ACTION_STATE.OPTION
+		this.setState(ACTION_STATE.OPTION)
 		this.Battle.Control.showActionPanel()
 	}
 
@@ -53,7 +65,7 @@ export default class Player extends cc.Component {
 			this.Battle.Control.hidePanel()
 			this.tempPos = null
 			this.updatePosition()
-			this.actionState = ACTION_STATE.MOVE
+			this.setState(ACTION_STATE.MOVE)
 			return
 		}
 		if (this.actionState === ACTION_STATE.MOVE) {
@@ -63,6 +75,7 @@ export default class Player extends cc.Component {
 
 	actionComplete () {
 		this.tilePos = this.tempPos
+		this.setState(ACTION_STATE.DONE)
 	}
 
 	updateMoveRange () {

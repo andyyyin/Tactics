@@ -28,6 +28,7 @@ export default class BattleMap extends cc.Component {
 
 	iTileList = []
 
+	mouseLoc;
 	cursorNode;
 	mouseHolding
 
@@ -97,7 +98,7 @@ export default class BattleMap extends cc.Component {
 
 	onMouseMove (event) {
 		if (!this.cursorNode) return
-		let {x, y} = this.getMouseLocation(event)
+		let {x, y} = this.mouseLoc = this.getMouseLocation(event)
 		let {width, height} = this.tileSize
 		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
 		this.cursorNode.y = Math.floor(y - (y % height)) + height / 2
@@ -121,6 +122,10 @@ export default class BattleMap extends cc.Component {
 			case 2:
 				this.onRightClick(tilePos)
 		}
+	}
+
+	updateIndicator (tilePos?) {
+		this.onHover(tilePos || this.getTilePos(this.mouseLoc))
 	}
 
 	onHover (tilePos) {
@@ -151,7 +156,7 @@ export default class BattleMap extends cc.Component {
 				} else {
 					this.Battle.focusPlayer.revertAction()
 					// 点击瞬间更新指示状态
-					this.onHover(tilePos)
+					this.updateIndicator(tilePos)
 				}
 			}
 			return
@@ -167,7 +172,7 @@ export default class BattleMap extends cc.Component {
 		if (this.Battle.focusPlayer) {
 			this.Battle.focusPlayer.revertAction()
 			// 点击瞬间更新指示状态
-			this.onHover(tilePos)
+			this.updateIndicator(tilePos)
 		}
 	}
 

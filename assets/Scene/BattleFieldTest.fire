@@ -17,7 +17,7 @@
         "__id__": 2
       },
       {
-        "__id__": 48
+        "__id__": 33
       },
       {
         "__id__": 6
@@ -146,7 +146,7 @@
       "__id__": 4
     },
     "TiledMap": {
-      "__id__": 47
+      "__id__": 51
     },
     "_id": "161s24Td1FX5j9P1QKDAZe"
   },
@@ -217,25 +217,25 @@
     },
     "_children": [
       {
-        "__id__": 37
-      },
-      {
-        "__id__": 39
-      },
-      {
         "__id__": 41
+      },
+      {
+        "__id__": 43
+      },
+      {
+        "__id__": 45
       },
       {
         "__id__": 4
       },
       {
-        "__id__": 43
+        "__id__": 47
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 47
+        "__id__": 51
       }
     ],
     "_prefab": null,
@@ -304,10 +304,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 35
+        "__id__": 39
       },
       {
-        "__id__": 36
+        "__id__": 40
       }
     ],
     "_prefab": null,
@@ -376,7 +376,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 34
+        "__id__": 38
       }
     ],
     "_prefab": null,
@@ -404,7 +404,7 @@
       "array": [
         0,
         0,
-        260.673646539116,
+        343.0543130741108,
         0,
         0,
         0,
@@ -526,7 +526,7 @@
   {
     "__type__": "cc.Node",
     "_name": "ActionPanel",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 7
     },
@@ -544,10 +544,10 @@
     "_active": false,
     "_components": [
       {
-        "__id__": 32
+        "__id__": 36
       },
       {
-        "__id__": 33
+        "__id__": 37
       }
     ],
     "_prefab": null,
@@ -601,7 +601,7 @@
   {
     "__type__": "cc.Node",
     "_name": "AttackButton",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 10
     },
@@ -973,7 +973,7 @@
   {
     "__type__": "cc.Node",
     "_name": "ItemButton",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 10
     },
@@ -1345,7 +1345,7 @@
   {
     "__type__": "cc.Node",
     "_name": "WaitButton",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 10
     },
@@ -1644,7 +1644,11 @@
     "_grayMaterial": null,
     "duration": 0.1,
     "zoomScale": 1.2,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 32
+      }
+    ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
     "_N$transition": 2,
@@ -1713,6 +1717,113 @@
       "__id__": 26
     },
     "_id": "2d2FuBopBF/KsIb4VVa1l5"
+  },
+  {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 33
+    },
+    "component": "",
+    "_componentId": "b38f6E/jeJLX5FqYVrI/d9b",
+    "handler": "actionDone",
+    "customEventData": ""
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "BattleManager",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 34
+      },
+      {
+        "__id__": 35
+      }
+    ],
+    "_prefab": null,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": "67/64CC+JKYocDCbKqI/BW"
+  },
+  {
+    "__type__": "b38f6E/jeJLX5FqYVrI/d9b",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 33
+    },
+    "_enabled": true,
+    "playerPrefab": {
+      "__uuid__": "89560192-6502-4b9e-84a6-6c3824eaf6c8"
+    },
+    "BattleMap": {
+      "__id__": 3
+    },
+    "_id": "1fV2RbE8JF+7ZM0K1eovsp"
+  },
+  {
+    "__type__": "ac879YjP1pHRokRaYoKZyI7",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 33
+    },
+    "_enabled": true,
+    "CameraNode": {
+      "__id__": 7
+    },
+    "ActionPanel": {
+      "__id__": 10
+    },
+    "_id": "6f66u2eLhPQr3gqtrtYbl+"
   },
   {
     "__type__": "cc.Sprite",
@@ -1869,7 +1980,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 38
+        "__id__": 42
       }
     ],
     "_prefab": null,
@@ -1925,7 +2036,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 37
+      "__id__": 41
     },
     "_enabled": true,
     "_materials": [
@@ -1946,7 +2057,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 40
+        "__id__": 44
       }
     ],
     "_prefab": null,
@@ -2002,7 +2113,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 39
+      "__id__": 43
     },
     "_enabled": true,
     "_materials": [
@@ -2023,7 +2134,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 42
+        "__id__": 46
       }
     ],
     "_prefab": null,
@@ -2079,7 +2190,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 41
+      "__id__": 45
     },
     "_enabled": true,
     "_id": "fbVUpCMQNGY63/1xg3V/UW"
@@ -2095,14 +2206,14 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 44
+        "__id__": 48
       },
       {
-        "__id__": 45
+        "__id__": 49
       }
     ],
     "_prefab": {
-      "__id__": 46
+      "__id__": 50
     },
     "_opacity": 255,
     "_color": {
@@ -2156,7 +2267,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 43
+      "__id__": 47
     },
     "_enabled": true,
     "_materials": [
@@ -2188,7 +2299,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 43
+      "__id__": 47
     },
     "_enabled": true,
     "_id": "73pZv89EJIC57akixqbF7B"
@@ -2196,7 +2307,7 @@
   {
     "__type__": "cc.PrefabInfo",
     "root": {
-      "__id__": 43
+      "__id__": 47
     },
     "asset": {
       "__uuid__": "89560192-6502-4b9e-84a6-6c3824eaf6c8"
@@ -2216,102 +2327,5 @@
       "__uuid__": "6db6e5db-04c2-4953-a2ca-ffc4219919bb"
     },
     "_id": "banE8U+VVAkr44slgH4nhY"
-  },
-  {
-    "__type__": "cc.Node",
-    "_name": "BattleManager",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 1
-    },
-    "_children": [],
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 49
-      },
-      {
-        "__id__": 50
-      }
-    ],
-    "_prefab": null,
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": "67/64CC+JKYocDCbKqI/BW"
-  },
-  {
-    "__type__": "b38f6E/jeJLX5FqYVrI/d9b",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 48
-    },
-    "_enabled": true,
-    "playerPrefab": {
-      "__uuid__": "89560192-6502-4b9e-84a6-6c3824eaf6c8"
-    },
-    "BattleMap": {
-      "__id__": 3
-    },
-    "_id": "1fV2RbE8JF+7ZM0K1eovsp"
-  },
-  {
-    "__type__": "ac879YjP1pHRokRaYoKZyI7",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 48
-    },
-    "_enabled": true,
-    "CameraNode": {
-      "__id__": 7
-    },
-    "ActionPanel": {
-      "__id__": 10
-    },
-    "_id": "6f66u2eLhPQr3gqtrtYbl+"
   }
 ]

@@ -37,4 +37,11 @@ export default class BattleManager extends cc.Component {
 		this.focusPlayer = null
 	}
 
+	actionDone () {
+		this.focusPlayer.actionComplete()
+		this.focusPlayer = null;
+		this.Control.hidePanel()
+		this.Map.updateIndicator()
+	}
+
 }
