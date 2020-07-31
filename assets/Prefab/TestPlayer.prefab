@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Player1",
+    "_name": "TestPlayer",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -51,8 +51,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -179.08,
-        -31.774,
+        143,
+        334.736,
         0,
         0,
         0,
@@ -124,7 +124,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "89560192-6502-4b9e-84a6-6c3824eaf6c8"
+      "__id__": 0
     },
     "fileId": "b2YSvLcD1L4acTw2uj0mvh",
     "sync": false

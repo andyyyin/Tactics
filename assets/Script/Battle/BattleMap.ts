@@ -4,6 +4,7 @@ import array = cc.js.array;
 const {ccclass, property} = cc._decorator;
 
 let _playerPosCache
+let _hoverCache
 
 @ccclass
 export default class BattleMap extends cc.Component {
@@ -105,8 +106,11 @@ export default class BattleMap extends cc.Component {
 		let {width, height} = this.tileSize
 		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
 		this.cursorNode.y = Math.floor(y - (y % height)) + height / 2
-
-		this.onHover(this.getTilePos({x, y}))
+		let newPos = this.getTilePos({x, y})
+		if (!_hoverCache || !cc.Vec2.strictEquals(_hoverCache, newPos)) {
+			_hoverCache = newPos
+			this.onHover(newPos)
+		}
 	}
 
 	onMouseDown (event) {
@@ -153,6 +157,7 @@ export default class BattleMap extends cc.Component {
 		// 看是否指向玩家
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
 		if (target && !target.isDone) {
+			this.hideIndicator()
 			this.showIndicator(target.moveRange)
 		} else if (this.showing) {
 			this.hideIndicator()
@@ -165,7 +170,7 @@ export default class BattleMap extends cc.Component {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
 				if (range && range.flat().includes(this.pToI(tilePos))) {
-					player.moveAction(tilePos)
+					player.tempMove(tilePos)
 				} else {
 					this.Battle.focusPlayer.revertAction()
 					// 点击瞬间更新指示状态
@@ -249,9 +254,6 @@ export default class BattleMap extends cc.Component {
 			prevArray.map(pi => {
 				let around = this.aroundList(pi)
 				around.map(ai => {
-					// if (ai < 0) {
-					// 	debugger
-					// }
 					if (this.isBlocked(ai)) return
 					if (currentArray.includes(ai)) return
 					if (prevArray.includes(ai)) return
@@ -271,8 +273,10 @@ export default class BattleMap extends cc.Component {
 	}
 
 	isBlocked (index) {
+		if (!this.iTileList[index]) return
 		let {x, y} = this.iToP(index)
 		if (this.layerBarrier.getTileGIDAt(x, y)) return true
+		if (this.Battle.getUnitAt({x, y})) return true
 		// todo 其他物体检测
 		return false
 	}

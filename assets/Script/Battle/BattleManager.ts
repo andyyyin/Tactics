@@ -13,6 +13,7 @@ export default class BattleManager extends cc.Component {
 	Control
 
 	players = []
+	enemies = []
 
 	focusPlayer;
 	actionState;
@@ -25,8 +26,19 @@ export default class BattleManager extends cc.Component {
 	protected start() {
 	}
 
-	registry (player) {
+	registerPlayer (player) {
 		this.players.push(player)
+	}
+
+	registerEnemy (enemy) {
+		this.enemies.push(enemy)
+	}
+
+	getUnitAt (pos) {
+		let unit = this.players.find(p => cc.Vec2.strictEquals(p.tilePos, pos))
+		if (unit) return unit
+		unit = this.enemies.find(e => cc.Vec2.strictEquals(e.tilePos, pos))
+		return unit
 	}
 
 	focus (player) {
@@ -42,8 +54,13 @@ export default class BattleManager extends cc.Component {
 	actionDone () {
 		this.focusPlayer.actionComplete()
 		this.focusPlayer = null;
+		this.updateUnits()
 		this.Control.hidePanel()
 		this.Map.updateIndicator()
+	}
+
+	updateUnits () {
+		this.players.map(p => p.updateSituation())
 	}
 
 }
