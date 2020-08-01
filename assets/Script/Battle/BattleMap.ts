@@ -83,8 +83,10 @@ export default class BattleMap extends cc.Component {
 			for (let x = 0; x < this.mapSize.height; x++) {
 				let iTile = cc.instantiate(this.IndicatorTile)
 				this.IndicatorNode.addChild(iTile)
-				iTile.width = this.tileSize.width
-				iTile.height = this.tileSize.height
+				// iTile.width = this.tileSize.width
+				// iTile.height = this.tileSize.height
+				iTile.scaleX = this.tileSize.width / iTile.width
+				iTile.scaleY = this.tileSize.height / iTile.height
 				iTile.anchorX = this.IndicatorNode.anchorX
 				iTile.anchorY = this.IndicatorNode.anchorY
 				iTile.setPosition(this.layerFloor.getPositionAt(x, y))
@@ -146,6 +148,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onHover (tilePos) {
+		if (this.Battle.Control.isShowingOption) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
@@ -165,6 +168,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onClick (tilePos) {
+		if (this.Battle.Control.isShowingOption) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
@@ -191,7 +195,9 @@ export default class BattleMap extends cc.Component {
 			this.Battle.focusPlayer.revertAction()
 			// 点击瞬间更新指示状态
 			this.updateIndicator(tilePos)
+			return
 		}
+		this.Battle.Control.toggleOptionPanel()
 	}
 
 	showIndicator (param) {
@@ -209,7 +215,7 @@ export default class BattleMap extends cc.Component {
 	hideIndicator () {
 		this.iTileList.map(iTile => {
 			iTile.active = false
-			iTile.opacity = 100
+			iTile.getChildByName('Route').active = false
 		})
 		this.showing = false
 	}
@@ -222,21 +228,21 @@ export default class BattleMap extends cc.Component {
 			if (preIndex === undefined) {
 				range[i].map(pi => {
 					if (pi === endIndex) {
-						tiles[pi].opacity = 255
+						tiles[pi].getChildByName('Route').active = true
 						preIndex = pi
 					} else {
-						tiles[pi].opacity = 100
+						tiles[pi].getChildByName('Route').active = false
 					}
 				})
 			} else {
 				let findFlag = false
 				range[i].map(pi => {
 					if (!findFlag && this.isClose(pi, preIndex)) {
-						tiles[pi].opacity = 255
+						tiles[pi].getChildByName('Route').active = true
 						preIndex = pi
 						findFlag = true
 					} else {
-						tiles[pi].opacity = 100
+						tiles[pi].getChildByName('Route').active = false
 					}
 				})
 			}

@@ -10,6 +10,9 @@ export default class BattleControl extends cc.Component {
 	@property(cc.Node)
 	ActionPanel = null
 
+	@property(cc.Node)
+	OptionPanel = null
+
 	cameraMovingX = 0
 	cameraMovingY = 0
 
@@ -26,6 +29,8 @@ export default class BattleControl extends cc.Component {
 	protected update (dt): void {
 		this.updateCamera(dt)
 	}
+
+	get isShowingOption () { return this.OptionPanel.active}
 
 	onKeyDown (event) {
 		switch(event.keyCode) {
@@ -65,8 +70,13 @@ export default class BattleControl extends cc.Component {
 		this.ActionPanel.active = true
 	}
 
+	toggleOptionPanel () {
+		this.OptionPanel.active = !this.OptionPanel.active
+	}
+
 	hidePanel () {
 		this.ActionPanel.active = false
+		this.OptionPanel.active = false
 	}
 
 }

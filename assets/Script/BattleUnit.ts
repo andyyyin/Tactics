@@ -3,6 +3,10 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class BattleUnit extends cc.Component {
 
+	@property(cc.Integer)
+	move = 5
+	moveRange = []
+
 	Battle
 	Map
 

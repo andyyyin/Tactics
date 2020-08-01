@@ -16,7 +16,6 @@ export default class BattleManager extends cc.Component {
 	enemies = []
 
 	focusPlayer;
-	actionState;
 
 	protected onLoad() {
 		this.Map = this.BattleMap
@@ -24,6 +23,7 @@ export default class BattleManager extends cc.Component {
 	}
 
 	protected start() {
+		this.playerTurnStart()
 	}
 
 	registerPlayer (player) {
@@ -61,6 +61,29 @@ export default class BattleManager extends cc.Component {
 
 	updateUnits () {
 		this.players.map(p => p.updateSituation())
+	}
+
+	onClickTurnEnd () {
+		this.Control.hidePanel()
+		this.playerTurnEnd()
+	}
+
+	playerTurnStart () {
+		this.players.map(p => p.resetState())
+	}
+
+	playerTurnEnd () {
+		this.enemyTurnStart()
+	}
+
+	enemyTurnStart () {
+		console.log('enemy act')
+		console.log('enemy done')
+		this.enemyTurnEnd()
+	}
+
+	enemyTurnEnd () {
+		this.playerTurnStart()
 	}
 
 }

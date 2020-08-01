@@ -2,7 +2,7 @@ const {ccclass, property} = cc._decorator;
 import BattleUnit from "./BattleUnit";
 
 enum ACTION_STATE {
-	NONE,
+	READY,
 	MOVE,
 	OPTION,
 	DONE
@@ -11,15 +11,20 @@ enum ACTION_STATE {
 @ccclass
 export default class Player extends BattleUnit {
 
-	@property(cc.Integer)
-	move = 5
-	moveRange = []
+	@property(cc.Color)
+	StateColorReady = null
+
+	@property(cc.Color)
+	StateColorFocus = null
 
 	actionState
 
+	StateMark;
+
 	protected onLoad() {
 		super.onLoad()
-		this.setState(ACTION_STATE.NONE)
+		this.StateMark = this.node.getChildByName('state_mark')
+		this.setState(ACTION_STATE.READY)
 		this.Battle.registerPlayer(this)
 		this.tilePos = this.Map.getPlayerStartPos()
 	}
@@ -65,6 +70,7 @@ export default class Player extends BattleUnit {
 			return
 		}
 		if (this.actionState === ACTION_STATE.MOVE) {
+			this.setState(ACTION_STATE.READY)
 			this.Battle.unFocus()
 		}
 	}
@@ -72,6 +78,11 @@ export default class Player extends BattleUnit {
 	public actionComplete () {
 		this.tilePos = this.tempPos
 		this.setState(ACTION_STATE.DONE)
+	}
+
+	public resetState () {
+		this.setState(ACTION_STATE.READY)
+		this.updateMoveRange()
 	}
 
 	/* ------------ private ------------ */
@@ -82,7 +93,9 @@ export default class Player extends BattleUnit {
 
 	private setState (state) {
 		this.actionState = state
-		this.node.opacity = state === ACTION_STATE.DONE ? 150 : 255
+		this.StateMark.active = state !== ACTION_STATE.DONE
+		this.StateMark.color = state === ACTION_STATE.READY ?
+			this.StateColorReady : this.StateColorFocus
 	}
 
 }
