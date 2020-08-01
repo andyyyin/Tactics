@@ -78,6 +78,9 @@ export default class BattleManager extends cc.Component {
 
 	enemyTurnStart () {
 		console.log('enemy act')
+		this.enemies.map(e => {
+			e.startAI()
+		})
 		console.log('enemy done')
 		this.enemyTurnEnd()
 	}

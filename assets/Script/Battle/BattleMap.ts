@@ -273,6 +273,26 @@ export default class BattleMap extends cc.Component {
 		return moveRange
 	}
 
+	handleAttackRange (shotRange, moveRange, opponents) {
+		if (typeof shotRange === 'number') shotRange = [1, shotRange]
+		let [min, max] = shotRange
+		debugger
+		let move = moveRange.length - 1
+		let startPos = moveRange[0][0]
+		// 先过滤掉太远不可能碰到的
+		opponents = opponents.filter(p => this.getDistance(p.tilePos, startPos) <= (move + max))
+		let results = []
+		moveRange.flat().map(pi => {
+			opponents.map(op => {
+				let distance = this.getDistance(pi, op.tilePos)
+				if (distance >= min && distance <= max) {
+					results.push([op, pi, distance])
+				}
+			})
+		})
+		return results
+	}
+
 	getMouseLocation (event) {
 		let camera = this.Battle.Control.CameraNode
 		return event.getLocation().add(camera)
@@ -294,6 +314,12 @@ export default class BattleMap extends cc.Component {
 		let x = Math.floor(posInPixel.x / tileSize.width);
 		let y = Math.floor((mapNodeSize.height - posInPixel.y) / tileSize.height);
 		return cc.v2(x, y);
+	}
+
+	getDistance (p1, p2) {
+		if (typeof p1 === 'number') p1 = this.iToP(p1)
+		if (typeof p2 === 'number') p2 = this.iToP(p2)
+		return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)
 	}
 
 	pToI (p1, p2?) {

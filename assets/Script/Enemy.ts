@@ -7,11 +7,16 @@ export default class Enemy extends BattleUnit {
 	protected onLoad() {
 		super.onLoad()
 		this.Battle.registerEnemy(this)
-		this.tilePos = {x: 2, y: 21}
+		this.tilePos = this.Map.getTilePos(this.node)
 	}
 
 	protected start() {
 		this.updatePosition()
+	}
+
+	public startAI () {
+		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move)
+		let attackRange = this.Map.handleAttackRange(2, moveRange, this.Battle.players)
 	}
 
 }

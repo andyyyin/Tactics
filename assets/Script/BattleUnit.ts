@@ -13,6 +13,13 @@ export default class BattleUnit extends cc.Component {
 	tilePos
 	tempPos
 
+	@property(cc.Integer)
+	mhp
+	hp = this.mhp
+
+	@property(cc.Integer)
+	damage
+
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 		this.Map = this.Battle.Map

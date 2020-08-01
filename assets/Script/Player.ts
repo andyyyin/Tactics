@@ -26,7 +26,8 @@ export default class Player extends BattleUnit {
 		this.StateMark = this.node.getChildByName('state_mark')
 		this.setState(ACTION_STATE.READY)
 		this.Battle.registerPlayer(this)
-		this.tilePos = this.Map.getPlayerStartPos()
+		// this.tilePos = this.Map.getPlayerStartPos()
+		this.tilePos = this.Map.getTilePos(this.node)
 	}
 
 	protected start() {
