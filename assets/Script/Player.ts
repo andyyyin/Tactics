@@ -74,7 +74,7 @@ export default class Player extends BattleUnit {
 	public attackTo (pos) {
 		let target = this.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, pos))
 		if (!target) return
-		this.attackStart().then()
+		this.attackStart(target).then()
 	}
 
 	public getOpponents () {

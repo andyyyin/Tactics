@@ -1,4 +1,6 @@
 const {ccclass, property} = cc._decorator;
+import {getTwoPointAngle} from "./Global/Math";
+import {rotationToAngle} from "./Global/Node";
 
 @ccclass
 export default class BattleUnit extends cc.Component {
@@ -20,9 +22,17 @@ export default class BattleUnit extends cc.Component {
 	@property(cc.Integer)
 	damage = 15
 
+	attackAnimation;
+
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 		this.Map = this.Battle.Map
+
+		let attackNode = this.node.getChildByName('attack')
+		if (attackNode) {
+			this.attackAnimation = attackNode.getComponent(cc.Animation)
+			attackNode.active = false
+		}
 	}
 
 	protected start() {
@@ -38,15 +48,19 @@ export default class BattleUnit extends cc.Component {
 		this.node.setPosition(x + fixX, y + fixY);
 	}
 
-	async attackStart () {
-		let Animation = this.getComponent(cc.Animation)
-		if (Animation) {
+	async attackStart (target) {
+		let animation = this.attackAnimation
+		if (animation) {
+
+			let rotation = getTwoPointAngle(this.node, target.node)
+			animation.node.angle = rotationToAngle(rotation)
+
+			animation.node.active = true
 			await new Promise(resolve => {
-				Animation.once('finished', () => {
-					resolve()
-				})
-				Animation.play()
+				animation.once('finished', resolve)
+				animation.play()
 			})
+			animation.node.active = false
 		}
 		console.log('attack finish')
 	}

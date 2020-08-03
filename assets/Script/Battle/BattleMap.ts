@@ -2,6 +2,7 @@ const {ccclass, property} = cc._decorator;
 
 let _playerPosCache
 let _hoverCache
+let _hoverTarget
 
 let _moveIndicatorColor
 let _attackIndicatorColor
@@ -162,6 +163,10 @@ export default class BattleMap extends cc.Component {
 		}
 		// 看是否指向玩家
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
+		if (_hoverTarget) _hoverTarget.node.zIndex = 0
+		_hoverTarget = target
+		if (_hoverTarget) _hoverTarget.node.zIndex = 1
+
 		if (target && !target.isDone) {
 			this.hideIndicator()
 			this.showIndicator(target.moveRange)
