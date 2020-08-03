@@ -16,7 +16,11 @@ export default class Enemy extends BattleUnit {
 
 	public startAI () {
 		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move)
-		let attackRange = this.Map.handleAttackRange(2, moveRange, this.Battle.players)
+		let attackRange = this.Map.handleAIAttackOptions(2, moveRange, this.getOpponents())
+	}
+
+	getOpponents () {
+		return this.Battle.players
 	}
 
 }

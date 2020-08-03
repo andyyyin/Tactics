@@ -1,10 +1,10 @@
-import find = cc.find;
-import array = cc.js.array;
-
 const {ccclass, property} = cc._decorator;
 
 let _playerPosCache
 let _hoverCache
+
+let _moveIndicatorColor
+let _attackIndicatorColor
 
 @ccclass
 export default class BattleMap extends cc.Component {
@@ -79,6 +79,9 @@ export default class BattleMap extends cc.Component {
 	}
 
 	start() {
+		_moveIndicatorColor = this.IndicatorTile.data.color
+		_attackIndicatorColor = new cc.Color(196, 15, 15)
+		// _attackIndicatorColor = new cc.Color()
 		for (let y = 0; y < this.mapSize.width; y++) {
 			for (let x = 0; x < this.mapSize.height; x++) {
 				let iTile = cc.instantiate(this.IndicatorTile)
@@ -148,7 +151,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onHover (tilePos) {
-		if (this.Battle.Control.isShowingOption) return
+		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
@@ -168,17 +171,23 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onClick (tilePos) {
-		if (this.Battle.Control.isShowingOption) return
+		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
 				if (range && range.flat().includes(this.pToI(tilePos))) {
-					player.tempMove(tilePos)
+					player.moveTo(tilePos)
 				} else {
-					this.Battle.focusPlayer.revertAction()
-					// 点击瞬间更新指示状态
-					this.updateIndicator(tilePos)
+					// 点空了，什么也不做，如需要回退可调用revertAction
+				}
+			} else if (this.Battle.focusPlayer.isAttacking) {
+				let player = this.Battle.focusPlayer
+				let range = player.attackRange
+				if (range && range.flat().includes(this.pToI(tilePos))) {
+					player.attackTo(tilePos)
+				} else {
+					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
 			}
 			return
@@ -200,13 +209,15 @@ export default class BattleMap extends cc.Component {
 		this.Battle.Control.toggleOptionPanel()
 	}
 
-	showIndicator (param) {
+	showIndicator (param, focus?, attack?) {
 		if (Array.isArray(param)) {
-			param.forEach(p => this.showIndicator(p))
+			param.forEach(p => this.showIndicator(p, focus, attack))
 		} else {
 			let index = typeof param === 'object' ? this.pToI(param) : param
 			let iTile = this.iTileList[index]
 			if (!iTile) return
+			iTile.opacity = focus ? 150 : 70
+			iTile.color = attack ? _attackIndicatorColor : _moveIndicatorColor
 			iTile.active = true
 			this.showing = true
 		}
@@ -250,6 +261,23 @@ export default class BattleMap extends cc.Component {
 		}
 	}
 
+	handleRange (start, range) {
+		start = typeof start === 'number' ? this.iToP(start) : start
+		if (typeof range === 'number') range = [1, range]
+		let [min, max] = range
+		let result = []
+		for (let step = min; step <= max; step++) {
+			for (let y = step; y >= -step; y--) {
+				let x = step - Math.abs(y)
+				result.push(this.pToI(start.x + x, start.y + y))
+				if (x > 0) {
+					result.push(this.pToI(start.x - x, start.y + y))
+				}
+			}
+		}
+		return result
+	}
+
 	handleMoveRange (start, move) {
 		let startIndex = typeof start === 'number' ? start : this.pToI(start)
 		let step = 1
@@ -273,10 +301,9 @@ export default class BattleMap extends cc.Component {
 		return moveRange
 	}
 
-	handleAttackRange (shotRange, moveRange, opponents) {
+	handleAIAttackOptions (shotRange, moveRange, opponents) {
 		if (typeof shotRange === 'number') shotRange = [1, shotRange]
 		let [min, max] = shotRange
-		debugger
 		let move = moveRange.length - 1
 		let startPos = moveRange[0][0]
 		// 先过滤掉太远不可能碰到的

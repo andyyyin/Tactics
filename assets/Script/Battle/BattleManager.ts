@@ -26,57 +26,69 @@ export default class BattleManager extends cc.Component {
 		this.playerTurnStart()
 	}
 
-	registerPlayer (player) {
+	/* ------------ public ------------ */
+
+	public registerPlayer (player) {
 		this.players.push(player)
 	}
 
-	registerEnemy (enemy) {
+	public registerEnemy (enemy) {
 		this.enemies.push(enemy)
 	}
 
-	getUnitAt (pos) {
+	public onClickTurnEnd () {
+		this.Control.hidePanel()
+		this.playerTurnEnd()
+	}
+
+	public onClickAttack () {
+		this.focusPlayer.attackPrepare()
+		// this.focusPlayer.attackStart().then()
+	}
+
+	public onClickWait () {
+		this.actionDone()
+	}
+
+	public getUnitAt (pos) {
 		let unit = this.players.find(p => cc.Vec2.strictEquals(p.tilePos, pos))
 		if (unit) return unit
 		unit = this.enemies.find(e => cc.Vec2.strictEquals(e.tilePos, pos))
 		return unit
 	}
 
-	focus (player) {
+	public focus (player) {
 		// this.players.map(p => p.focus = p === player)
 		this.focusPlayer = player
 		this.focusPlayer.actionStart()
 	}
 
-	unFocus () {
+	public unFocus () {
 		this.focusPlayer = null
 	}
+	/* ------------ private ------------ */
 
-	actionDone () {
+
+	private actionDone () {
 		this.focusPlayer.actionComplete()
-		this.focusPlayer = null;
+		this.unFocus()
 		this.updateUnits()
-		this.Control.hidePanel()
 		this.Map.updateIndicator()
 	}
 
-	updateUnits () {
+	private updateUnits () {
 		this.players.map(p => p.updateSituation())
 	}
 
-	onClickTurnEnd () {
-		this.Control.hidePanel()
-		this.playerTurnEnd()
-	}
-
-	playerTurnStart () {
+	private playerTurnStart () {
 		this.players.map(p => p.resetState())
 	}
 
-	playerTurnEnd () {
+	private playerTurnEnd () {
 		this.enemyTurnStart()
 	}
 
-	enemyTurnStart () {
+	private enemyTurnStart () {
 		console.log('enemy act')
 		this.enemies.map(e => {
 			e.startAI()
@@ -85,7 +97,7 @@ export default class BattleManager extends cc.Component {
 		this.enemyTurnEnd()
 	}
 
-	enemyTurnEnd () {
+	private enemyTurnEnd () {
 		this.playerTurnStart()
 	}
 

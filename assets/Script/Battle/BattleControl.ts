@@ -30,7 +30,9 @@ export default class BattleControl extends cc.Component {
 		this.updateCamera(dt)
 	}
 
-	get isShowingOption () { return this.OptionPanel.active}
+	get isShowingPanel () {
+		return this.OptionPanel.active || this.ActionPanel.active
+	}
 
 	onKeyDown (event) {
 		switch(event.keyCode) {
@@ -66,12 +68,14 @@ export default class BattleControl extends cc.Component {
 		}
 	}
 
-	showActionPanel () {
-		this.ActionPanel.active = true
+	toggleActionPanel (active?) {
+		active = active === undefined ? !this.ActionPanel.active : active
+		this.ActionPanel.active = active
 	}
 
-	toggleOptionPanel () {
-		this.OptionPanel.active = !this.OptionPanel.active
+	toggleOptionPanel (active?) {
+		active = active === undefined ? !this.OptionPanel.active : active
+		this.OptionPanel.active = active
 	}
 
 	hidePanel () {

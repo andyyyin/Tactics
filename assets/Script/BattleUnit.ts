@@ -14,11 +14,11 @@ export default class BattleUnit extends cc.Component {
 	tempPos
 
 	@property(cc.Integer)
-	mhp
+	mhp = 100
 	hp = this.mhp
 
 	@property(cc.Integer)
-	damage
+	damage = 15
 
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
@@ -36,6 +36,19 @@ export default class BattleUnit extends cc.Component {
 		let fixX = tileSize.width / 2
 		let fixY = tileSize.height / 2
 		this.node.setPosition(x + fixX, y + fixY);
+	}
+
+	async attackStart () {
+		let Animation = this.getComponent(cc.Animation)
+		if (Animation) {
+			await new Promise(resolve => {
+				Animation.once('finished', () => {
+					resolve()
+				})
+				Animation.play()
+			})
+		}
+		console.log('attack finish')
 	}
 
 }

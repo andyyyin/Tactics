@@ -5,6 +5,7 @@ enum ACTION_STATE {
 	READY,
 	MOVE,
 	OPTION,
+	ATTACK,
 	DONE
 }
 
@@ -20,6 +21,8 @@ export default class Player extends BattleUnit {
 	actionState
 
 	StateMark;
+
+	attackRange;
 
 	protected onLoad() {
 		super.onLoad()
@@ -44,34 +47,52 @@ export default class Player extends BattleUnit {
 	/* ------------ public ------------ */
 
 	public get isMoving () { return this.actionState === ACTION_STATE.MOVE }
+	public get isAttacking () { return this.actionState === ACTION_STATE.ATTACK }
 	public get isDone () { return this.actionState === ACTION_STATE.DONE }
 
 	public updateSituation () {
 		this.updateMoveRange()
 	}
 
-	public actionStart () {
-		this.setState(ACTION_STATE.MOVE)
-		this.Map.showIndicator(this.moveRange)
+	public attackPrepare () {
+		let pos = this.tempPos || this.tilePos
+		this.attackRange = this.Map.handleRange(pos, 2) // todo
+		this.setState(ACTION_STATE.ATTACK)
+		this.Map.showIndicator(this.attackRange, true, true)
 	}
 
-	public tempMove (pos) {
+	public actionStart () {
+		this.setState(ACTION_STATE.MOVE)
+	}
+
+	public moveTo (pos) {
 		this.tempPos = pos
 		this.updatePosition()
 		this.setState(ACTION_STATE.OPTION)
-		this.Battle.Control.showActionPanel()
+	}
+
+	public attackTo (pos) {
+		let target = this.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, pos))
+		if (!target) return
+		this.attackStart().then()
+	}
+
+	public getOpponents () {
+		return this.Battle.enemies
 	}
 
 	public revertAction () {
-		if (this.actionState === ACTION_STATE.OPTION) {
-			this.Battle.Control.hidePanel()
-			this.tempPos = null
-			this.updatePosition()
-			this.setState(ACTION_STATE.MOVE)
-			return
-		}
-		if (this.actionState === ACTION_STATE.MOVE) {
-			this.setState(ACTION_STATE.READY)
+		let stateSequence = [
+			ACTION_STATE.READY,
+			ACTION_STATE.MOVE,
+			ACTION_STATE.OPTION,
+			ACTION_STATE.ATTACK,
+		]
+		let index = stateSequence.findIndex(s => this.actionState === s)
+		if (index === 0) return
+		let newState = stateSequence[index - 1]
+		this.setState(newState)
+		if (newState === ACTION_STATE.READY) {
 			this.Battle.unFocus()
 		}
 	}
@@ -97,6 +118,17 @@ export default class Player extends BattleUnit {
 		this.StateMark.active = state !== ACTION_STATE.DONE
 		this.StateMark.color = state === ACTION_STATE.READY ?
 			this.StateColorReady : this.StateColorFocus
+
+		if (state === ACTION_STATE.MOVE) {
+			this.tempPos = null
+			this.updatePosition()
+			this.Map.showIndicator(this.moveRange, true)
+		} else {
+			this.Map.hideIndicator()
+		}
+
+		this.Battle.Control.toggleActionPanel(state === ACTION_STATE.OPTION)
+
 	}
 
 }
