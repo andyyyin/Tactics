@@ -58,7 +58,7 @@ export default class Player extends BattleUnit {
 		let pos = this.tempPos || this.tilePos
 		this.attackRange = this.Map.handleRange(pos, 2) // todo
 		this.setState(ACTION_STATE.ATTACK)
-		this.Map.showIndicator(this.attackRange, true, true)
+
 	}
 
 	public actionStart () {
@@ -71,10 +71,11 @@ export default class Player extends BattleUnit {
 		this.setState(ACTION_STATE.OPTION)
 	}
 
-	public attackTo (pos) {
+	public async attackTo (pos) {
 		let target = this.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, pos))
 		if (!target) return
-		this.attackStart(target).then()
+		await this.attackStart(target)
+
 	}
 
 	public getOpponents () {
@@ -114,7 +115,6 @@ export default class Player extends BattleUnit {
 	}
 
 	private setState (state) {
-		this.actionState = state
 		this.StateMark.active = state !== ACTION_STATE.DONE
 		this.StateMark.color = state === ACTION_STATE.READY ?
 			this.StateColorReady : this.StateColorFocus
@@ -123,12 +123,19 @@ export default class Player extends BattleUnit {
 			this.tempPos = null
 			this.updatePosition()
 			this.Map.showIndicator(this.moveRange, true)
-		} else {
+		} else if (this.actionState === ACTION_STATE.MOVE) {
+			this.Map.hideIndicator()
+		}
+
+		if (state === ACTION_STATE.ATTACK) {
+			this.Map.showIndicator(this.attackRange, true, true)
+		} else if (this.actionState === ACTION_STATE.ATTACK) {
 			this.Map.hideIndicator()
 		}
 
 		this.Battle.Control.toggleActionPanel(state === ACTION_STATE.OPTION)
 
+		this.actionState = state
 	}
 
 }

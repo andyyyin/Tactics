@@ -50,6 +50,11 @@ export default class BattleManager extends cc.Component {
 		this.actionDone()
 	}
 
+	public async attackTo (pos) {
+		await this.focusPlayer.attackTo(pos)
+		this.actionDone()
+	}
+
 	public getUnitAt (pos) {
 		let unit = this.players.find(p => cc.Vec2.strictEquals(p.tilePos, pos))
 		if (unit) return unit

@@ -190,7 +190,7 @@ export default class BattleMap extends cc.Component {
 				let player = this.Battle.focusPlayer
 				let range = player.attackRange
 				if (range && range.flat().includes(this.pToI(tilePos))) {
-					player.attackTo(tilePos)
+					this.Battle.attackTo(tilePos)
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}

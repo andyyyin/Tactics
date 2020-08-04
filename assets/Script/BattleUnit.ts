@@ -24,9 +24,14 @@ export default class BattleUnit extends cc.Component {
 
 	attackAnimation;
 
+	HpProgress
+
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 		this.Map = this.Battle.Map
+
+		let hpNode = this.node.getChildByName('hp')
+		this.HpProgress = hpNode && hpNode.getComponent(cc.ProgressBar)
 
 		let attackNode = this.node.getChildByName('attack')
 		if (attackNode) {
@@ -62,7 +67,14 @@ export default class BattleUnit extends cc.Component {
 			})
 			animation.node.active = false
 		}
+		target.changeHp(-this.damage)
 		console.log('attack finish')
 	}
+
+	changeHp (value) {
+		this.hp += value
+		this.HpProgress.progress = this.hp / this.mhp
+	}
+
 
 }
