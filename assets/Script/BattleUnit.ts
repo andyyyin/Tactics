@@ -73,7 +73,18 @@ export default class BattleUnit extends cc.Component {
 
 	changeHp (value) {
 		this.hp += value
+		if (this.hp > this.mhp) this.hp = this.mhp
+		if (this.hp < 0) {
+			this.hp = 0
+			this.defeat()
+		}
 		this.HpProgress.progress = this.hp / this.mhp
+	}
+
+	defeat () {
+		// todo
+		console.log(this.node.name, '已战败')
+		this.node.destroy()
 	}
 
 

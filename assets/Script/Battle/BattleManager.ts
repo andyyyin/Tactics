@@ -86,6 +86,7 @@ export default class BattleManager extends cc.Component {
 	}
 
 	private playerTurnStart () {
+		console.log('player turn start')
 		this.players.map(p => p.resetState())
 	}
 
@@ -95,11 +96,12 @@ export default class BattleManager extends cc.Component {
 
 	private enemyTurnStart () {
 		console.log('enemy act')
-		this.enemies.map(e => {
-			e.startAI()
+
+		Promise.all(this.enemies.map(e => e.startAI())).then(() => {
+			console.log('enemy done')
+			this.enemyTurnEnd()
 		})
-		console.log('enemy done')
-		this.enemyTurnEnd()
+
 	}
 
 	private enemyTurnEnd () {
