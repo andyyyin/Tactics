@@ -56,7 +56,7 @@ export default class Player extends BattleUnit {
 
 	public attackPrepare () {
 		let pos = this.tempPos || this.tilePos
-		this.attackRange = this.Map.handleRange(pos, 2) // todo
+		this.attackRange = this.Map.handleRange(pos, 5) // todo
 		this.setState(ACTION_STATE.ATTACK)
 
 	}
