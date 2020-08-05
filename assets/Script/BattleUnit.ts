@@ -22,7 +22,7 @@ export default class BattleUnit extends cc.Component {
 	@property(cc.Integer)
 	damage = 15
 
-	attackAnimation;
+	attackAnimController;
 
 	HpProgress
 
@@ -32,16 +32,19 @@ export default class BattleUnit extends cc.Component {
 
 		let hpNode = this.node.getChildByName('hp')
 		this.HpProgress = hpNode && hpNode.getComponent(cc.ProgressBar)
-
-		let attackNode = this.node.getChildByName('attack')
-		if (attackNode) {
-			this.attackAnimation = attackNode.getComponent(cc.Animation)
-			attackNode.active = false
-		}
+		// let attackNode = this.node.getChildByName('attack')
+		// if (attackNode) {
+		// 	this.attackAnimation = attackNode.getComponent(cc.Animation)
+		// 	attackNode.active = false
+		// }
 	}
 
 	protected start() {
 		this.Battle.registerEnemy(this)
+	}
+
+	public addAttackAnim (controller, name) {
+		this.attackAnimController = controller
 	}
 
 	updatePosition () {
@@ -54,18 +57,9 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	async attackStart (target) {
-		let animation = this.attackAnimation
-		if (animation) {
-
-			let rotation = getTwoPointAngle(this.node, target.node)
-			animation.node.angle = rotationToAngle(rotation)
-
-			animation.node.active = true
-			await new Promise(resolve => {
-				animation.once('finished', resolve)
-				animation.play()
-			})
-			animation.node.active = false
+		let animController = this.attackAnimController
+		if (animController) {
+			await animController.playAttackTo(target)
 		}
 		target.changeHp(-this.damage)
 		console.log('attack finish')

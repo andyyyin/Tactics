@@ -15,6 +15,8 @@ export default class Enemy extends BattleUnit {
 	}
 
 	public async startAI () {
+		this.node.zIndex = 1
+
 		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move)
 		let attackRange = this.Map.handleAIAttackOptions(2, moveRange, this.getOpponents())
 		// 找最近的
@@ -24,6 +26,8 @@ export default class Enemy extends BattleUnit {
 		this.updatePosition()
 
 		await this.attackStart(target)
+
+		this.node.zIndex = 0
 	}
 
 	getOpponents () {
