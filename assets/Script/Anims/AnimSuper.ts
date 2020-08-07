@@ -1,3 +1,4 @@
+import find = cc.find;
 
 const {ccclass, property} = cc._decorator;
 
@@ -15,6 +16,20 @@ export default class AnimDefault extends cc.Component {
 		this.Unit = this.node.parent.getComponent('BattleUnit')
 		this.Unit.addAttackAnim(this, this.node.name)
 		this.node.active = false
+		this.Animation.on('finished', () => this.node.active = false)
+	}
+
+	playAnim (name?) {
+		this.node.active = true
+		return new Promise(resolve => {
+			this.node.once('hit', resolve)
+			this.Animation.once('finished', resolve)
+			this.Animation.play(name)
+		})
+	}
+
+	onHit () {
+		this.node.emit('hit')
 	}
 
 }

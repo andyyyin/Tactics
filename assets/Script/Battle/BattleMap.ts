@@ -67,16 +67,16 @@ export default class BattleMap extends cc.Component {
 		this.layerFloor = this.TiledMap.getLayer('floor');
 		this.layerBarrier = this.TiledMap.getLayer('barrier');
 
-		let objectGroup = this.TiledMap.getObjectGroup('points');
-		if (!objectGroup) return;
+		// let objectGroup = this.TiledMap.getObjectGroup('points');
+		// if (!objectGroup) return;
+		//
+		// let startObj = objectGroup.getObject('SpawnPoint');
+		// let endObj = objectGroup.getObject('SuccessPoint');
+		// if (!startObj || !endObj) return;
+		// let startPos = cc.v2(startObj.x, startObj.y);
+		// let endPos = cc.v2(endObj.x, endObj.y);
 
-		let startObj = objectGroup.getObject('SpawnPoint');
-		let endObj = objectGroup.getObject('SuccessPoint');
-		if (!startObj || !endObj) return;
-		let startPos = cc.v2(startObj.x, startObj.y);
-		let endPos = cc.v2(endObj.x, endObj.y);
-
-		this.startPos = this.getTilePos(startPos);
+		// this.startPos = this.getTilePos(startPos);
 	}
 
 	start() {
@@ -99,8 +99,8 @@ export default class BattleMap extends cc.Component {
 			}
 		}
 		let cursorNode = cc.instantiate(this.CursorPrefab)
-		cursorNode.scaleX = this.tileSize.width / cursorNode.width * 1.2
-		cursorNode.scaleY = this.tileSize.height / cursorNode.height * 1.2
+		cursorNode.scaleX = this.tileSize.width / cursorNode.width * 1.1
+		cursorNode.scaleY = this.tileSize.height / cursorNode.height * 1.1
 		cursorNode.setPosition(this.tileSize.width/2, this.tileSize.height/2)
 		this.TiledMap.node.addChild(cursorNode, 100, 'Cursor')
 		this.cursorNode = cursorNode
@@ -190,7 +190,12 @@ export default class BattleMap extends cc.Component {
 				let player = this.Battle.focusPlayer
 				let range = player.attackRange
 				if (range && range.flat().includes(this.pToI(tilePos))) {
-					this.Battle.attackTo(tilePos)
+					let target = player.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, tilePos))
+					if (target) {
+						this.Battle.attackTo(target)
+					} else {
+						// 点空了，什么也不做，如需要回退可调用revertAction
+					}
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
@@ -274,9 +279,11 @@ export default class BattleMap extends cc.Component {
 		for (let step = min; step <= max; step++) {
 			for (let y = step; y >= -step; y--) {
 				let x = step - Math.abs(y)
-				result.push(this.pToI(start.x + x, start.y + y))
+				let pi1 = this.pToI(start.x + x, start.y + y)
+				if (pi1) result.push(pi1)
 				if (x > 0) {
-					result.push(this.pToI(start.x - x, start.y + y))
+					let pi2 = this.pToI(start.x - x, start.y + y)
+					if (pi2) result.push(pi2)
 				}
 			}
 		}
@@ -366,7 +373,8 @@ export default class BattleMap extends cc.Component {
 			x = p1; y = p2
 		}
 		if (!Number.isInteger(x) || !Number.isInteger(y)) return null
-		let {width} = this.mapSize
+		let {width, height} = this.mapSize
+		if (x < 0 || x > width || y < 0 || y > height) return null
 		return y * width + x
 	}
 

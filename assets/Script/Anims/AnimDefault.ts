@@ -16,12 +16,7 @@ export default class AnimDefault extends AnimSuper {
 
 		let rotation = getTwoPointAngle(this.Unit.node, target.node)
 		this.node.angle = rotationToAngle(rotation)
-		this.node.active = true
-		await new Promise(resolve => {
-			this.Animation.once('finished', resolve)
-			this.Animation.play()
-		})
-		this.node.active = false
+		await this.playAnim()
 	}
 
 }

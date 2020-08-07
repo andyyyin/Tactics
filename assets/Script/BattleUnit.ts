@@ -1,6 +1,5 @@
 const {ccclass, property} = cc._decorator;
-import {getTwoPointAngle} from "./Global/Math";
-import {rotationToAngle} from "./Global/Node";
+import {calcHitChance} from "./Global/Func";
 
 @ccclass
 export default class BattleUnit extends cc.Component {
@@ -21,6 +20,21 @@ export default class BattleUnit extends cc.Component {
 
 	@property(cc.Integer)
 	damage = 15
+
+	@property(cc.Integer)
+	attackMax = 1
+
+	@property(cc.Integer)
+	attackMin = 1
+
+	@property(cc.Integer)
+	accuracy = 100
+
+	@property(cc.Integer)
+	dodge = 100
+
+	// @property(cc.Integer)
+	// accuracy = 100
 
 	attackAnimController;
 
@@ -61,7 +75,15 @@ export default class BattleUnit extends cc.Component {
 		if (animController) {
 			await animController.playAttackTo(target)
 		}
-		target.changeHp(-this.damage)
+		let hitChance = calcHitChance(this, target)
+		let position = target.node.getPosition()
+		if (Math.random() < hitChance) {
+			let damage = this.damage
+			await this.Battle.Anim.playDamage(position, damage)
+			target.changeHp(-damage)
+		} else {
+			await this.Battle.Anim.playMiss(position)
+		}
 		console.log('attack finish')
 	}
 
@@ -73,6 +95,7 @@ export default class BattleUnit extends cc.Component {
 			this.defeat()
 		}
 		this.HpProgress.progress = this.hp / this.mhp
+		console.log(`${this.hp}/${this.mhp} - ${this.HpProgress.progress}`)
 	}
 
 	defeat () {

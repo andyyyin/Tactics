@@ -12,12 +12,7 @@ export default class AnimPoint extends AnimSuper {
 	async playAttackTo (target) {
 		let relativePos = target.node.getPosition().subtract(this.Unit.node.getPosition())
 		this.node.setPosition(relativePos)
-		this.node.active = true
-		await new Promise(resolve => {
-			this.Animation.once('finished', resolve)
-			this.Animation.play()
-		})
-		this.node.active = false
+		await this.playAnim()
 	}
 
 }

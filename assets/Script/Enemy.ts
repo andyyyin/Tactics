@@ -18,15 +18,18 @@ export default class Enemy extends BattleUnit {
 		this.node.zIndex = 1
 
 		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move)
-		let attackRange = this.Map.handleAIAttackOptions(2, moveRange, this.getOpponents())
-		// 找最近的
-		let [target, pos, distance] = attackRange[0]
+		let min = this.attackMin
+		let max = this.attackMax
+		let attackRange = this.Map.handleAIAttackOptions([min, max], moveRange, this.getOpponents())
+		if (attackRange.length) {
+			// 找最近的
+			let [target, pos, distance] = attackRange[0]
 
-		this.tilePos = this.Map.iToP(pos)
-		this.updatePosition()
+			this.tilePos = this.Map.iToP(pos)
+			this.updatePosition()
 
-		await this.attackStart(target)
-
+			await this.attackStart(target)
+		}
 		this.node.zIndex = 0
 	}
 

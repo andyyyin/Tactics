@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.5" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="48" tileheight="48" infinite="0" nextlayerid="4" nextobjectid="1">
+ <tileset firstgid="1" source="041.tsx"/>
+ <layer id="2" name="floor" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzd1D0OgCAMgFGuoKfwCMZ4EbqpM7B4/9jFpCGlP+Dk8C0EX9oBcwgh/6DY+V1pnLXOrV5Ronel2TWHc6Ng9nhcwHgTNlctA96KbVW70eP2tXia2eMB2e8tEe927st53HwHdlZdA14r+Njzzud9bxbP8++QvCQk3fNaWtadvD16qaNX
+  </data>
+ </layer>
+ <layer id="3" name="barrier" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxzYmBgcKMSdgFiZQbqAWUam8cPpZ0YEH5wR5J3ZUD1G7IebObB2OZEuAWmBl0/NvNIAQNpHigc0cPPBU0NPvPQww1bOOJTQ+v0Qm3z+NHk0fmE1BCKjywGzPjIweImYs0jBgyEedjCDR3A1BCT/kDhRqg8yEHTg808SgEtzEP2G6UYFAYA4AQbmQ==
+  </data>
+ </layer>
+</map>

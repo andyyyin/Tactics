@@ -17,7 +17,7 @@ export default class AnimPoint extends AnimSuper {
 
 		this.Animation.play()
 		await new Promise(resolve => {
-			let time = relativePos.mag() / 300
+			let time = relativePos.mag() / 500
 			cc.tween(this.node)
 				.to(time, {position: relativePos})
 				.call(resolve).start()

@@ -10,6 +10,10 @@ export default class BattleManager extends cc.Component {
 	BattleMap = null
 	Map
 
+	@property(cc.Component)
+	BattleAnim = null
+	Anim
+
 	Control
 
 	players = []
@@ -19,6 +23,7 @@ export default class BattleManager extends cc.Component {
 
 	protected onLoad() {
 		this.Map = this.BattleMap
+		this.Anim = this.BattleAnim
 		this.Control = this.getComponent('BattleControl')
 	}
 
@@ -50,8 +55,8 @@ export default class BattleManager extends cc.Component {
 		this.actionDone()
 	}
 
-	public async attackTo (pos) {
-		await this.focusPlayer.attackTo(pos)
+	public async attackTo (target) {
+		await this.focusPlayer.attackTo(target)
 		this.actionDone()
 	}
 
