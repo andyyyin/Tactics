@@ -1,3 +1,5 @@
+import {UNIT_SIDE} from "../Global/Enums";
+
 const {ccclass, property} = cc._decorator;
 
 let _playerPosCache
@@ -290,7 +292,7 @@ export default class BattleMap extends cc.Component {
 		return result
 	}
 
-	handleMoveRange (start, move) {
+	handleMoveRange (start, move, unitSide?) {
 		let startIndex = typeof start === 'number' ? start : this.pToI(start)
 		let step = 1
 		let moveRange = [[startIndex]]
@@ -300,7 +302,7 @@ export default class BattleMap extends cc.Component {
 			prevArray.map(pi => {
 				let around = this.aroundList(pi)
 				around.map(ai => {
-					if (this.isBlocked(ai)) return
+					if (this.isBlocked(ai, unitSide)) return
 					if (currentArray.includes(ai)) return
 					if (prevArray.includes(ai)) return
 					if (moveRange[step - 2] && moveRange[step - 2].includes(ai)) return
@@ -310,6 +312,10 @@ export default class BattleMap extends cc.Component {
 			step++
 			moveRange.push(currentArray)
 		}
+		// 剔除友军占位格子
+		moveRange = moveRange.map(step => {
+			return step.filter(pi => !this.Battle.getUnitAt(this.iToP(pi)))
+		})
 		return moveRange
 	}
 
@@ -337,11 +343,13 @@ export default class BattleMap extends cc.Component {
 		return event.getLocation().add(camera)
 	}
 
-	isBlocked (index) {
+	isBlocked (index, unitSide?) {
 		if (!this.iTileList[index]) return
 		let {x, y} = this.iToP(index)
 		if (this.layerBarrier.getTileGIDAt(x, y)) return true
-		if (this.Battle.getUnitAt({x, y})) return true
+		if (unitSide === undefined && this.Battle.getUnitAt({x, y})) return true
+		if (unitSide === UNIT_SIDE.ENEMY && this.Battle.getPlayerAt({x, y})) return true
+		if (unitSide === UNIT_SIDE.PLAYER && this.Battle.getEnemyAt({x, y})) return true
 		// todo 其他物体检测
 		return false
 	}

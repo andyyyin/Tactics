@@ -60,11 +60,16 @@ export default class BattleManager extends cc.Component {
 		this.actionDone()
 	}
 
+	public getPlayerAt (pos) {
+		return this.players.find(p => cc.Vec2.strictEquals(p.tilePos, pos))
+	}
+
+	public getEnemyAt (pos) {
+		return this.enemies.find(e => cc.Vec2.strictEquals(e.tilePos, pos))
+	}
+
 	public getUnitAt (pos) {
-		let unit = this.players.find(p => cc.Vec2.strictEquals(p.tilePos, pos))
-		if (unit) return unit
-		unit = this.enemies.find(e => cc.Vec2.strictEquals(e.tilePos, pos))
-		return unit
+		return this.getPlayerAt(pos) || this.getEnemyAt(pos)
 	}
 
 	public focus (player) {

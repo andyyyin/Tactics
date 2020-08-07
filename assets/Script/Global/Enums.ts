@@ -6,3 +6,8 @@ export enum DIRECTION {
 	RIGHT,
 	DOWN
 }
+
+export enum UNIT_SIDE {
+	PLAYER,
+	ENEMY
+}

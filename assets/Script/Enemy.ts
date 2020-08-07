@@ -1,3 +1,5 @@
+import {UNIT_SIDE} from "./Global/Enums";
+
 const {ccclass, property} = cc._decorator;
 import BattleUnit from "./BattleUnit";
 
@@ -17,7 +19,7 @@ export default class Enemy extends BattleUnit {
 	public async startAI () {
 		this.node.zIndex = 1
 
-		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move)
+		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move, UNIT_SIDE.ENEMY)
 		let min = this.attackMin
 		let max = this.attackMax
 		let attackRange = this.Map.handleAIAttackOptions([min, max], moveRange, this.getOpponents())

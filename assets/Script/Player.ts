@@ -1,3 +1,5 @@
+import {UNIT_SIDE} from "./Global/Enums";
+
 const {ccclass, property} = cc._decorator;
 import BattleUnit from "./BattleUnit";
 
@@ -112,7 +114,7 @@ export default class Player extends BattleUnit {
 	/* ------------ private ------------ */
 
 	private updateMoveRange () {
-		this.moveRange = this.Map.handleMoveRange(this.tilePos, this.move)
+		this.moveRange = this.Map.handleMoveRange(this.tilePos, this.move, UNIT_SIDE.PLAYER)
 	}
 
 	private setState (state) {
