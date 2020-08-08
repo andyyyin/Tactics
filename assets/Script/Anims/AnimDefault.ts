@@ -19,4 +19,8 @@ export default class AnimDefault extends AnimSuper {
 		await this.playAnim()
 	}
 
+	onFinish () {
+		this.node.angle = 0
+	}
+
 }

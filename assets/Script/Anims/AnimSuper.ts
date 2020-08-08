@@ -1,9 +1,4 @@
-import find = cc.find;
-
 const {ccclass, property} = cc._decorator;
-
-import {rotationToAngle} from "../Global/Node";
-import {getTwoPointAngle} from "../Global/Math";
 
 @ccclass
 export default class AnimDefault extends cc.Component {
@@ -15,8 +10,10 @@ export default class AnimDefault extends cc.Component {
 		this.Animation = this.getComponent(cc.Animation)
 		this.Unit = this.node.parent.getComponent('BattleUnit')
 		this.Unit.addAttackAnim(this, this.node.name)
-		this.node.active = false
-		this.Animation.on('finished', () => this.node.active = false)
+
+		this.Animation.on('finished', () => {
+			if (this.onFinish) this.onFinish()
+		})
 	}
 
 	playAnim (name?) {
@@ -31,5 +28,7 @@ export default class AnimDefault extends cc.Component {
 	onHit () {
 		this.node.emit('hit')
 	}
+
+	onFinish () {}
 
 }

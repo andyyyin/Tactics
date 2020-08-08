@@ -313,7 +313,8 @@ export default class BattleMap extends cc.Component {
 			moveRange.push(currentArray)
 		}
 		// 剔除友军占位格子
-		moveRange = moveRange.map(step => {
+		moveRange = moveRange.map((step, index) => {
+			if (index === 0) return step
 			return step.filter(pi => !this.Battle.getUnitAt(this.iToP(pi)))
 		})
 		return moveRange
