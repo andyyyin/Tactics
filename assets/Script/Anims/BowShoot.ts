@@ -1,6 +1,4 @@
 import AnimSuper from "./AnimSuper";
-import {getTwoPointAngle} from "../Global/Math";
-import {rotationToAngle} from "../Global/Node";
 
 const {ccclass, property} = cc._decorator;
 

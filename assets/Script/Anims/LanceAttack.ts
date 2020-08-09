@@ -8,10 +8,10 @@ const {ccclass, property} = cc._decorator;
 export default class LanceAttack extends AnimSuper {
 
 	@property(cc.Node)
-	Lance
+	Lance = null
 
 	@property(cc.Node)
-	Effect
+	Effect = null
 
 	async onReady () {
 		this.Animation.pause()

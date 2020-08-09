@@ -61,13 +61,17 @@ export default class BattleUnit extends cc.Component {
 		this.attackAnimController = controller
 	}
 
-	updatePosition () {
+	public getPosByTile (tilePos) {
 		let {layerFloor, tileSize} = this.Map
-		let pos = this.tempPos || this.tilePos
-		let {x, y} = layerFloor.getPositionAt(pos);
+		let {x, y} = layerFloor.getPositionAt(tilePos);
 		let fixX = tileSize.width / 2
 		let fixY = tileSize.height / 2
-		this.node.setPosition(x + fixX, y + fixY);
+		return new cc.Vec2(x + fixX, y + fixY)
+	}
+
+	updatePosition () {
+		let pos = this.tempPos || this.tilePos
+		this.node.setPosition(this.getPosByTile(pos));
 	}
 
 	async attackStart (target) {

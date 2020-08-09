@@ -9,6 +9,8 @@ let _hoverTarget
 let _moveIndicatorColor
 let _attackIndicatorColor
 
+let _route
+
 @ccclass
 export default class BattleMap extends cc.Component {
 
@@ -159,7 +161,7 @@ export default class BattleMap extends cc.Component {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
-				this.showRoute(tilePos, range)
+				_route = this.showRoute(tilePos, range)
 			}
 			return
 		}
@@ -177,6 +179,24 @@ export default class BattleMap extends cc.Component {
 		}
 	}
 
+	showMoveAction (unit, route) {
+		return new Promise(resolve => {
+			if (!route || !route.length) {
+				resolve()
+				return
+			}
+			let tween = cc.tween(unit.node)
+			for (let i = 1; i < route.length; i++) {
+				let pos = unit.getPosByTile(this.iToP(route[i]))
+				tween = i === route.length - 1 ?
+					tween.to(0.06, {position: pos}, {easing: 'quadOut'}) :
+					tween.to(0.03, {position: pos})
+			}
+
+			tween.call(resolve).start()
+		})
+	}
+
 	onClick (tilePos) {
 		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
@@ -184,7 +204,10 @@ export default class BattleMap extends cc.Component {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
 				if (range && range.flat().includes(this.pToI(tilePos))) {
-					player.moveTo(tilePos)
+					this.showMoveAction(player, _route).then(() => {
+						_route = null
+						player.moveTo(tilePos)
+					})
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
@@ -247,12 +270,14 @@ export default class BattleMap extends cc.Component {
 		let preIndex;
 		let endIndex = this.pToI(pos)
 		let tiles = this.iTileList
+		let route = []
 		for (let i = range.length - 1; i >= 0; i--) {
 			if (preIndex === undefined) {
 				range[i].map(pi => {
 					if (pi === endIndex) {
 						tiles[pi].getChildByName('Route').active = true
 						preIndex = pi
+						route.push(pi)
 					} else {
 						tiles[pi].getChildByName('Route').active = false
 					}
@@ -263,14 +288,15 @@ export default class BattleMap extends cc.Component {
 					if (!findFlag && this.isClose(pi, preIndex)) {
 						tiles[pi].getChildByName('Route').active = true
 						preIndex = pi
+						route.unshift(pi)
 						findFlag = true
 					} else {
 						tiles[pi].getChildByName('Route').active = false
 					}
 				})
 			}
-
 		}
+		return route
 	}
 
 	handleRange (start, range) {
