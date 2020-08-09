@@ -11,6 +11,8 @@ enum ACTION_STATE {
 	DONE
 }
 
+let _actionLock = false
+
 @ccclass
 export default class Player extends BattleUnit {
 
@@ -68,8 +70,11 @@ export default class Player extends BattleUnit {
 		this.setState(ACTION_STATE.MOVE)
 	}
 
-	public moveTo (pos) {
-		this.tempPos = pos
+	async moveTo (route) {
+		_actionLock = true
+		await super.moveTo(route)
+		_actionLock = false
+		this.tempPos = route[route.length - 1]
 		this.updatePosition()
 		this.setState(ACTION_STATE.OPTION)
 	}
@@ -77,8 +82,9 @@ export default class Player extends BattleUnit {
 	public async attackTo (target) {
 		// let target = this.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, pos))
 		// if (!target) return
+		_actionLock = true
 		await this.attackStart(target)
-
+		_actionLock = false
 	}
 
 	public getOpponents () {
@@ -96,9 +102,6 @@ export default class Player extends BattleUnit {
 		if (index === 0) return
 		let newState = stateSequence[index - 1]
 		this.setState(newState)
-		if (newState === ACTION_STATE.READY) {
-			this.Battle.unFocus()
-		}
 	}
 
 	public actionComplete () {
@@ -118,9 +121,14 @@ export default class Player extends BattleUnit {
 	}
 
 	private setState (state) {
+		if (_actionLock) return
 		this.StateMark.active = state !== ACTION_STATE.DONE
 		this.StateMark.color = state === ACTION_STATE.READY ?
 			this.StateColorReady : this.StateColorFocus
+
+		if (state === ACTION_STATE.READY) {
+			this.Battle.unFocus()
+		}
 
 		if (state === ACTION_STATE.MOVE) {
 			this.tempPos = null

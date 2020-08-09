@@ -66,7 +66,25 @@ export default class BattleUnit extends cc.Component {
 		let {x, y} = layerFloor.getPositionAt(tilePos);
 		let fixX = tileSize.width / 2
 		let fixY = tileSize.height / 2
-		return new cc.Vec2(x + fixX, y + fixY)
+		return new cc.Vec3(x + fixX, y + fixY)
+	}
+
+	public moveTo (route) {
+		return new Promise(resolve => {
+			if (!route || !route.length) {
+				resolve()
+				return
+			}
+			let tween = cc.tween(this.node)
+			for (let i = 1; i < route.length; i++) {
+				let pos = this.getPosByTile(route[i])
+				tween = i === route.length - 1 ?
+					tween.to(0.06, {position: pos}, {easing: 'quadOut'}) :
+					tween.to(0.03, {position: pos})
+			}
+
+			tween.call(resolve).start()
+		})
 	}
 
 	updatePosition () {

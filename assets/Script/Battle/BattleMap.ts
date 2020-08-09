@@ -179,24 +179,6 @@ export default class BattleMap extends cc.Component {
 		}
 	}
 
-	showMoveAction (unit, route) {
-		return new Promise(resolve => {
-			if (!route || !route.length) {
-				resolve()
-				return
-			}
-			let tween = cc.tween(unit.node)
-			for (let i = 1; i < route.length; i++) {
-				let pos = unit.getPosByTile(this.iToP(route[i]))
-				tween = i === route.length - 1 ?
-					tween.to(0.06, {position: pos}, {easing: 'quadOut'}) :
-					tween.to(0.03, {position: pos})
-			}
-
-			tween.call(resolve).start()
-		})
-	}
-
 	onClick (tilePos) {
 		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
@@ -204,10 +186,7 @@ export default class BattleMap extends cc.Component {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
 				if (range && range.flat().includes(this.pToI(tilePos))) {
-					this.showMoveAction(player, _route).then(() => {
-						_route = null
-						player.moveTo(tilePos)
-					})
+					player.moveTo(_route).then()
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
@@ -268,7 +247,7 @@ export default class BattleMap extends cc.Component {
 
 	showRoute (pos, range) {
 		let preIndex;
-		let endIndex = this.pToI(pos)
+		let endIndex = typeof pos === 'number' ? pos : this.pToI(pos)
 		let tiles = this.iTileList
 		let route = []
 		for (let i = range.length - 1; i >= 0; i--) {
@@ -277,7 +256,7 @@ export default class BattleMap extends cc.Component {
 					if (pi === endIndex) {
 						tiles[pi].getChildByName('Route').active = true
 						preIndex = pi
-						route.push(pi)
+						route.push(this.iToP(pi))
 					} else {
 						tiles[pi].getChildByName('Route').active = false
 					}
@@ -288,7 +267,7 @@ export default class BattleMap extends cc.Component {
 					if (!findFlag && this.isClose(pi, preIndex)) {
 						tiles[pi].getChildByName('Route').active = true
 						preIndex = pi
-						route.unshift(pi)
+						route.unshift(this.iToP(pi))
 						findFlag = true
 					} else {
 						tiles[pi].getChildByName('Route').active = false

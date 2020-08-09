@@ -27,6 +27,9 @@ export default class Enemy extends BattleUnit {
 			// 找最近的
 			let [target, pos, distance] = attackRange[0]
 
+			let route = this.Map.showRoute(pos, moveRange)
+			await this.moveTo(route)
+
 			this.tilePos = this.Map.iToP(pos)
 			this.updatePosition()
 
