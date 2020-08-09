@@ -5,23 +5,30 @@ import {rotationToAngle} from "../Global/Node";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class BowShoot extends AnimSuper {
+export default class LanceAttack extends AnimSuper {
 
 	@property(cc.Node)
-	Arrow = null
+	Lance
 
-	async onShoot () {
+	@property(cc.Node)
+	Effect
+
+	async onReady () {
 		this.Animation.pause()
 		let relativePos = this.target.node.getPosition().subtract(this.Unit.node.getPosition())
+		let distance = relativePos.mag()
+		let effectPos = new cc.Vec3(0, distance)
 
 		await new Promise(resolve => {
-			let distance = relativePos.mag()
 			let time = distance / 5000
-			cc.tween(this.Arrow)
-				.to(time, {position: new cc.Vec2(0, distance)})
+			cc.tween(this.Lance)
+				.to(time, {position: effectPos})
 				.call(resolve).start()
 		})
+		this.Effect.active = true
 		this.onHit()
+		await new Promise(resolve => setTimeout(resolve, 700))
+		this.Effect.active = false
 		this.Animation.resume()
 	}
 

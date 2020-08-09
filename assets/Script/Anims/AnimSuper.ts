@@ -1,3 +1,6 @@
+import {getTwoPointAngle} from "../Global/Math";
+import {rotationToAngle} from "../Global/Node";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -5,6 +8,8 @@ export default class AnimDefault extends cc.Component {
 
 	Animation
 	Unit
+
+	target
 
 	protected onLoad() {
 		this.Animation = this.getComponent(cc.Animation)
@@ -16,12 +21,20 @@ export default class AnimDefault extends cc.Component {
 		})
 	}
 
-	playAnim (name?) {
-		this.node.active = true
+	async playAttackTo (target) {
+		this.target = target
+
+		let rotation = getTwoPointAngle(this.Unit.node, target.node)
+		this.node.angle = rotationToAngle(rotation)
+
+		await this.playAnim()
+	}
+
+	playAnim () {
 		return new Promise(resolve => {
+			this.Animation.play()
 			this.node.once('hit', resolve)
 			this.Animation.once('finished', resolve)
-			this.Animation.play(name)
 		})
 	}
 
@@ -29,6 +42,8 @@ export default class AnimDefault extends cc.Component {
 		this.node.emit('hit')
 	}
 
-	onFinish () {}
+	onFinish () {
+		this.node.angle = 0
+	}
 
 }

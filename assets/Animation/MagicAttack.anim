@@ -3,7 +3,7 @@
   "_name": "MagicAttack",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.48333333333333334,
+  "_duration": 0.5,
   "sample": 60,
   "speed": 1,
   "wrapMode": 1,
@@ -105,6 +105,18 @@
               }
             ]
           }
+        },
+        "props": {
+          "active": [
+            {
+              "frame": 0,
+              "value": true
+            },
+            {
+              "frame": 0.5,
+              "value": false
+            }
+          ]
         }
       }
     }

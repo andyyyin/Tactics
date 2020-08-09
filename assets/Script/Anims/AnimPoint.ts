@@ -15,4 +15,8 @@ export default class AnimPoint extends AnimSuper {
 		await this.playAnim()
 	}
 
+	onFinish() {
+		this.node.setPosition(0, 0)
+	}
+
 }
