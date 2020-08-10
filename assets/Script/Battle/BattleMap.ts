@@ -210,6 +210,7 @@ export default class BattleMap extends cc.Component {
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
 		if (target && !target.isDone) {
 			this.Battle.focus(target)
+			_route = null
 		}
 	}
 

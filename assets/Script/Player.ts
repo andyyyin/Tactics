@@ -74,17 +74,21 @@ export default class Player extends BattleUnit {
 		_actionLock = true
 		await super.moveTo(route)
 		_actionLock = false
-		this.tempPos = route[route.length - 1]
-		this.updatePosition()
+		if (route && route.length) {
+			this.tempPos = route[route.length - 1]
+			this.updatePosition()
+		}
 		this.setState(ACTION_STATE.OPTION)
 	}
 
 	public async attackTo (target) {
 		// let target = this.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, pos))
 		// if (!target) return
+		if (_actionLock) return false
 		_actionLock = true
 		await this.attackStart(target)
 		_actionLock = false
+		return true
 	}
 
 	public getOpponents () {
@@ -105,7 +109,7 @@ export default class Player extends BattleUnit {
 	}
 
 	public actionComplete () {
-		this.tilePos = this.tempPos
+		this.tilePos = this.tempPos || this.tilePos
 		this.setState(ACTION_STATE.DONE)
 	}
 

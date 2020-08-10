@@ -56,8 +56,9 @@ export default class BattleManager extends cc.Component {
 	}
 
 	public async attackTo (target) {
-		await this.focusPlayer.attackTo(target)
-		this.actionDone()
+		if (await this.focusPlayer.attackTo(target)) {
+			this.actionDone()
+		}
 	}
 
 	public getPlayerAt (pos) {
