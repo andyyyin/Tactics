@@ -36,7 +36,7 @@ export default class BattleUnit extends cc.Component {
 	// @property(cc.Integer)
 	// accuracy = 100
 
-	attackAnimController;
+	AttackController;
 
 	HpProgress
 
@@ -57,8 +57,8 @@ export default class BattleUnit extends cc.Component {
 		this.Battle.registerEnemy(this)
 	}
 
-	public addAttackAnim (controller, name) {
-		this.attackAnimController = controller
+	public addAttackController (controller, name) {
+		this.AttackController = controller
 	}
 
 	public getPosByTile (tilePos) {
@@ -93,9 +93,9 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	async attackStart (target) {
-		let animController = this.attackAnimController
-		if (animController) {
-			await animController.playAttackTo(target)
+		let controller = this.AttackController
+		if (controller) {
+			await controller.playAttackTo(target)
 		}
 		let hitChance = calcHitChance(this, target)
 		let position = target.node.getPosition()

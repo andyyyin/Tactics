@@ -185,7 +185,9 @@ export default class BattleMap extends cc.Component {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
-				if (range && range.flat().includes(this.pToI(tilePos))) {
+				let inRange = range && range.flat().includes(this.pToI(tilePos))
+				let occupied = this.Battle.getUnitAt(tilePos)
+				if (inRange && (!occupied || occupied === player)) {
 					player.moveTo(_route).then()
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
@@ -318,11 +320,6 @@ export default class BattleMap extends cc.Component {
 			step++
 			moveRange.push(currentArray)
 		}
-		// 剔除友军占位格子
-		moveRange = moveRange.map((step, index) => {
-			if (index === 0) return step
-			return step.filter(pi => !this.Battle.getUnitAt(this.iToP(pi)))
-		})
 		return moveRange
 	}
 

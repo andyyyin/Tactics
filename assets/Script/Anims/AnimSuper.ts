@@ -14,7 +14,7 @@ export default class AnimDefault extends cc.Component {
 	protected onLoad() {
 		this.Animation = this.getComponent(cc.Animation)
 		this.Unit = this.node.parent.getComponent('BattleUnit')
-		this.Unit.addAttackAnim(this, this.node.name)
+		this.Unit.addAttackController(this, this.node.name)
 
 		this.Animation.on('finished', () => {
 			if (this.onFinish) this.onFinish()
@@ -44,6 +44,14 @@ export default class AnimDefault extends cc.Component {
 
 	onFinish () {
 		this.node.angle = 0
+	}
+
+	getRange (scopeRange) {
+		let unit = this.Unit
+		let map = this.Unit.Map
+		let [min, max] = scopeRange
+		let pos = unit.tempPos || unit.tilePos
+		return map.handleRange(pos, [min, max])
 	}
 
 }

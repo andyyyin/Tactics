@@ -23,4 +23,8 @@ export default class BowShoot extends AnimSuper {
 		this.Animation.resume()
 	}
 
+	getRange () {
+		return super.getRange([4, 7])
+	}
+
 }
