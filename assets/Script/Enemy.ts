@@ -1,6 +1,6 @@
-import {UNIT_SIDE} from "./Global/Enums";
-
 const {ccclass, property} = cc._decorator;
+import {UNIT_SIDE} from "./Global/Enums";
+import {wait} from "./Global/Func";
 import BattleUnit from "./BattleUnit";
 
 @ccclass
@@ -27,11 +27,17 @@ export default class Enemy extends BattleUnit {
 			// 找最近的
 			let [target, pos, distance] = attackRange[0]
 
+			this.Map.showIndicator(moveRange, true)
+			await wait(500)
+
 			let route = this.Map.showRoute(pos, moveRange)
+			await wait(500)
+
 			await this.moveTo(route)
 
 			this.tilePos = this.Map.iToP(pos)
 			this.updatePosition()
+			this.Map.hideIndicator()
 
 			await this.attackStart(target)
 		}

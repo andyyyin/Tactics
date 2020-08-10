@@ -20,6 +20,7 @@ export default class BattleManager extends cc.Component {
 	enemies = []
 
 	focusPlayer;
+	isEnemyTurn
 
 	protected onLoad() {
 		this.Map = this.BattleMap
@@ -102,20 +103,21 @@ export default class BattleManager extends cc.Component {
 	}
 
 	private playerTurnEnd () {
-		this.enemyTurnStart()
+		this.enemyTurnStart().then()
 	}
 
-	private enemyTurnStart () {
+	private async enemyTurnStart () {
+		this.isEnemyTurn = true
 		console.log('enemy act')
-
-		Promise.all(this.enemies.map(e => e.startAI())).then(() => {
-			console.log('enemy done')
-			this.enemyTurnEnd()
-		})
-
+		for (let i = 0; i < this.enemies.length; i++) {
+			await	this.enemies[i].startAI()
+		}
+		console.log('enemy done')
+		this.enemyTurnEnd()
 	}
 
 	private enemyTurnEnd () {
+		this.isEnemyTurn = false
 		this.playerTurnStart()
 	}
 

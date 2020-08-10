@@ -1,6 +1,6 @@
 
-export const calcHitChance = (unit, target) => {
-	let {accuracy} = unit
-	let {dodge} = target
-	return (accuracy - dodge + 50) / 100
+export const wait = (time) => {
+	return new Promise(resolve => {
+		setTimeout(resolve, time)
+	})
 }

@@ -1,5 +1,5 @@
 const {ccclass, property} = cc._decorator;
-import {calcHitChance} from "./Global/Func";
+import {calcHitChance} from "./Global/Calc";
 
 @ccclass
 export default class BattleUnit extends cc.Component {
@@ -16,7 +16,7 @@ export default class BattleUnit extends cc.Component {
 
 	@property(cc.Integer)
 	mhp = 100
-	hp = this.mhp
+	hp
 
 	@property(cc.Integer)
 	damage = 15
@@ -45,6 +45,7 @@ export default class BattleUnit extends cc.Component {
 		this.Map = this.Battle.Map
 
 		let hpNode = this.node.getChildByName('hp')
+		this.hp = this.mhp
 		this.HpProgress = hpNode && hpNode.getComponent(cc.ProgressBar)
 		// let attackNode = this.node.getChildByName('attack')
 		// if (attackNode) {

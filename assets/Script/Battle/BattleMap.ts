@@ -112,6 +112,7 @@ export default class BattleMap extends cc.Component {
 
 	onMouseMove (event) {
 		if (!this.cursorNode) return
+		if (this.Battle.isEnemyTurn) return
 		let {x, y} = this.mouseLoc = this.getMouseLocation(event)
 		let {width, height} = this.tileSize
 		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
@@ -124,9 +125,11 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onMouseDown (event) {
+		if (this.Battle.isEnemyTurn) return
 		this.mouseHolding = this.getTilePos(this.getMouseLocation(event))
 	}
 	onMouseUp (event) {
+		if (this.Battle.isEnemyTurn) return
 		if (!this.mouseHolding) return
 		let holding = this.mouseHolding
 		this.mouseHolding = false
