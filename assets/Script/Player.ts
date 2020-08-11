@@ -37,7 +37,7 @@ export default class Player extends BattleUnit {
 	}
 
 	protected start() {
-		this.updatePosition()
+		super.start()
 		this.updateMoveRange()
 	}
 
@@ -134,13 +134,13 @@ export default class Player extends BattleUnit {
 		if (state === ACTION_STATE.MOVE) {
 			this.tempPos = null
 			this.updatePosition()
-			this.Map.showIndicator(this.moveRange, true)
+			this.Map.showFocusIndicator(this.moveRange)
 		} else if (this.actionState === ACTION_STATE.MOVE) {
 			this.Map.hideIndicator()
 		}
 
 		if (state === ACTION_STATE.ATTACK) {
-			this.Map.showIndicator(this.attackRange, true, true)
+			this.Map.showAttackIndicator(this.attackRange)
 		} else if (this.actionState === ACTION_STATE.ATTACK) {
 			this.Map.hideIndicator()
 		}

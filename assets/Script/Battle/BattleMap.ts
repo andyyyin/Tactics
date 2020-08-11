@@ -43,6 +43,8 @@ export default class BattleMap extends cc.Component {
 
 	showing
 
+	stopControlFlag = false
+
 	onLoad() {
 		// let posArr = [cc.v2(-249, 96), cc.v2(-150, 76), cc.v2(-60, 54), cc.v2(-248, -144), cc.v2(-89, -34)];
 		// for (let i = 0; i < posArr.length; i++) {
@@ -112,7 +114,7 @@ export default class BattleMap extends cc.Component {
 
 	onMouseMove (event) {
 		if (!this.cursorNode) return
-		if (this.Battle.isEnemyTurn) return
+		if (this.stopControlFlag) return
 		let {x, y} = this.mouseLoc = this.getMouseLocation(event)
 		let {width, height} = this.tileSize
 		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
@@ -125,11 +127,11 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onMouseDown (event) {
-		if (this.Battle.isEnemyTurn) return
+		if (this.stopControlFlag) return
 		this.mouseHolding = this.getTilePos(this.getMouseLocation(event))
 	}
 	onMouseUp (event) {
-		if (this.Battle.isEnemyTurn) return
+		if (this.stopControlFlag) return
 		if (!this.mouseHolding) return
 		let holding = this.mouseHolding
 		this.mouseHolding = false
@@ -170,9 +172,9 @@ export default class BattleMap extends cc.Component {
 		}
 		// 看是否指向玩家
 		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
-		if (_hoverTarget) _hoverTarget.node.zIndex = 0
-		_hoverTarget = target
 		if (_hoverTarget) _hoverTarget.node.zIndex = 1
+		_hoverTarget = target
+		if (_hoverTarget) _hoverTarget.node.zIndex = 2
 
 		if (target && !target.isDone) {
 			this.hideIndicator()
@@ -229,15 +231,23 @@ export default class BattleMap extends cc.Component {
 		this.Battle.Control.toggleOptionPanel()
 	}
 
-	showIndicator (param, focus?, attack?) {
+	showFocusIndicator (param) { this.showIndicator(param, 1) }
+	showAttackIndicator (param) { this.showIndicator(param, 2) }
+	showAreaIndicator (param) { this.showIndicator(param, 3) }
+
+	showIndicator (param, type?) {
+		let isFocus = type === 1
+		let isAttack = type === 2
+		let isEffectArea = type === 3
+		this.IndicatorNode.zIndex = (isAttack || isEffectArea) ? 5 : 0
 		if (Array.isArray(param)) {
-			param.forEach(p => this.showIndicator(p, focus, attack))
+			param.forEach(p => this.showIndicator(p, type))
 		} else {
 			let index = typeof param === 'object' ? this.pToI(param) : param
 			let iTile = this.iTileList[index]
 			if (!iTile) return
-			iTile.opacity = focus ? 150 : 70
-			iTile.color = attack ? _attackIndicatorColor : _moveIndicatorColor
+			iTile.opacity = (isFocus || isEffectArea) ? 150 : 70
+			iTile.color = (isAttack || isEffectArea) ? _attackIndicatorColor : _moveIndicatorColor
 			iTile.active = true
 			this.showing = true
 		}
@@ -374,6 +384,16 @@ export default class BattleMap extends cc.Component {
 		if (typeof p1 === 'number') p1 = this.iToP(p1)
 		if (typeof p2 === 'number') p2 = this.iToP(p2)
 		return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)
+	}
+
+	stopControl () {
+		this.stopControlFlag = true
+		this.cursorNode.active = false
+	}
+
+	enableControl () {
+		this.stopControlFlag = false
+		this.cursorNode.active = true
 	}
 
 	pToI (p1, p2?) {

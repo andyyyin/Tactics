@@ -55,7 +55,8 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	protected start() {
-		this.Battle.registerEnemy(this)
+		this.updatePosition()
+		this.node.zIndex = 1
 	}
 
 	public addAttackController (controller, name) {

@@ -13,11 +13,11 @@ export default class Enemy extends BattleUnit {
 	}
 
 	protected start() {
-		this.updatePosition()
+		super.start()
 	}
 
 	public async startAI () {
-		this.node.zIndex = 1
+		this.node.zIndex = 2
 
 		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move, UNIT_SIDE.ENEMY)
 		let min = this.attackMin
@@ -27,13 +27,16 @@ export default class Enemy extends BattleUnit {
 			// 找最近的
 			let [target, pos, distance] = attackRange[0]
 
-			this.Map.showIndicator(moveRange, true)
+			this.Map.showFocusIndicator(moveRange)
 			await wait(500)
 
 			let route = this.Map.showRoute(pos, moveRange)
 			await wait(500)
 
 			await this.moveTo(route)
+			this.Map.hideIndicator()
+			this.Map.showAreaIndicator(target.tilePos)
+			await wait(500)
 
 			this.tilePos = this.Map.iToP(pos)
 			this.updatePosition()
@@ -41,7 +44,7 @@ export default class Enemy extends BattleUnit {
 
 			await this.attackStart(target)
 		}
-		this.node.zIndex = 0
+		this.node.zIndex = 1
 	}
 
 	getOpponents () {
