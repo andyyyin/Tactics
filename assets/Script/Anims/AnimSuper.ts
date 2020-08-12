@@ -50,8 +50,8 @@ export default class AnimDefault extends cc.Component {
 		let unit = this.Unit
 		let map = this.Unit.Map
 		let [min, max] = scopeRange
-		let pos = unit.tempPos || unit.tilePos
-		return map.handleRange(pos, [min, max])
+		let ip = unit.tempPos || unit.iPos
+		return map.handleRange(ip, [min, max])
 	}
 
 }

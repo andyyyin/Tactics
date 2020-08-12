@@ -82,7 +82,7 @@ export default class BattleMap extends cc.Component {
 		// let startPos = cc.v2(startObj.x, startObj.y);
 		// let endPos = cc.v2(endObj.x, endObj.y);
 
-		// this.startPos = this.getTilePos(startPos);
+		// this.startPos = this.pixelPosToIndex(startPos);
 	}
 
 	start() {
@@ -119,8 +119,8 @@ export default class BattleMap extends cc.Component {
 		let {width, height} = this.tileSize
 		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
 		this.cursorNode.y = Math.floor(y - (y % height)) + height / 2
-		let newPos = this.getTilePos({x, y})
-		if (!_hoverCache || !cc.Vec2.strictEquals(_hoverCache, newPos)) {
+		let newPos = this.pixelPosToIndex({x, y})
+		if (_hoverCache === undefined || _hoverCache !== newPos) {
 			_hoverCache = newPos
 			this.onHover(newPos)
 		}
@@ -131,21 +131,21 @@ export default class BattleMap extends cc.Component {
 		// 如果显示面板同时地图响应鼠标，那么点击按钮后面板关闭，地图会在所有按钮逻辑走完后在相应鼠标抬起的事件
 		// 完美的相当于点完按钮再点地图（点两次，而实际只点一次），造成bug
 		if (this.Battle.Control.isShowingPanel && event.getButton() === 0) return
-		this.mouseHolding = this.getTilePos(this.getMouseLocation(event))
+		this.mouseHolding = this.pixelPosToIndex(this.getMouseLocation(event))
 	}
 	onMouseUp (event) {
 		if (this.stopControlFlag) return
-		if (!this.mouseHolding) return
+		if (this.mouseHolding === undefined) return
 		let holding = this.mouseHolding
-		this.mouseHolding = false
-		let tilePos =  this.getTilePos(this.getMouseLocation(event))
-		if (!cc.Vec2.strictEquals(tilePos, holding)) return
+		this.mouseHolding = undefined
+		let iPos =  this.pixelPosToIndex(this.getMouseLocation(event))
+		if (iPos !== holding) return
 		switch (event.getButton()) {
 			case 0:
-				this.onClick(tilePos)
+				this.onClick(iPos)
 				break
 			case 2:
-				this.onRightClick(tilePos)
+				this.onRightClick(iPos)
 		}
 	}
 
@@ -159,27 +159,27 @@ export default class BattleMap extends cc.Component {
 		return this.iToP(_playerPosCache.shift())
 	}
 
-	updateIndicator (tilePos?) {
-		this.onHover(tilePos || this.getTilePos(this.mouseLoc))
+	updateIndicator (iPos?) {
+		this.onHover(iPos || this.pixelPosToIndex(this.mouseLoc))
 	}
 
-	getTargetOfAttack (tilePos) {
+	getTargetOfAttack (iPos) {
 		let player = this.Battle.focusPlayer
 		let range = player.attackRange
-		if (!range || !range.flat().includes(this.pToI(tilePos))) return
-		return player.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, tilePos))
+		if (!range || !range.flat().includes(iPos)) return
+		return player.getOpponents().find(e => e.iPos === iPos)
 	}
 
-	onHover (tilePos) {
+	onHover (iPos) {
 		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
-				_route = this.showRoute(tilePos, range)
+				_route = this.showRoute(iPos, range)
 			}
 			if (this.Battle.focusPlayer.isAttacking) {
-				let target = this.getTargetOfAttack(tilePos)
+				let target = this.getTargetOfAttack(iPos)
 				if (target) {
 					this.Battle.Display.showInfo(target, this.Battle.focusPlayer)
 				} else {
@@ -189,7 +189,7 @@ export default class BattleMap extends cc.Component {
 			return
 		}
 		// 看是否指向玩家
-		let target = this.Battle.getUnitAt(tilePos)
+		let target = this.Battle.getUnitAt(iPos)
 		if (_hoverTarget && _hoverTarget.node) _hoverTarget.node.zIndex = 1
 		_hoverTarget = target
 		if (_hoverTarget && _hoverTarget.node) _hoverTarget.node.zIndex = 2
@@ -208,21 +208,21 @@ export default class BattleMap extends cc.Component {
 
 	}
 
-	onClick (tilePos) {
+	onClick (iPos) {
 		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
 				let range = player.moveRange
-				let inRange = range && range.flat().includes(this.pToI(tilePos))
-				let occupied = this.Battle.getUnitAt(tilePos)
+				let inRange = range && range.flat().includes(iPos)
+				let occupied = this.Battle.getUnitAt(iPos)
 				if (inRange && (!occupied || occupied === player)) {
 					player.moveTo(_route).then()
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
 			} else if (this.Battle.focusPlayer.isAttacking) {
-				let target = this.getTargetOfAttack(tilePos)
+				let target = this.getTargetOfAttack(iPos)
 				if (target) {
 					this.Battle.attackTo(target)
 				} else {
@@ -232,18 +232,18 @@ export default class BattleMap extends cc.Component {
 			return
 		}
 
-		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
+		let target = this.Battle.players.find(p => iPos === p.iPos)
 		if (target && !target.isDone) {
 			this.Battle.focus(target)
 			_route = null
 		}
 	}
 
-	onRightClick (tilePos) {
+	onRightClick (iPos) {
 		if (this.Battle.focusPlayer) {
 			this.Battle.focusPlayer.revertAction()
 			// 点击瞬间更新指示状态
-			this.updateIndicator(tilePos)
+			this.updateIndicator(iPos)
 			return
 		}
 		this.Battle.Control.toggleOptionPanel()
@@ -286,25 +286,25 @@ export default class BattleMap extends cc.Component {
 		let route = []
 		for (let i = range.length - 1; i >= 0; i--) {
 			if (preIndex === undefined) {
-				range[i].map(pi => {
-					if (pi === endIndex) {
-						tiles[pi].getChildByName('Route').active = true
-						preIndex = pi
-						route.push(this.iToP(pi))
+				range[i].map(ip => {
+					if (ip === endIndex) {
+						tiles[ip].getChildByName('Route').active = true
+						preIndex = ip
+						route.push(ip)
 					} else {
-						tiles[pi].getChildByName('Route').active = false
+						tiles[ip].getChildByName('Route').active = false
 					}
 				})
 			} else {
 				let findFlag = false
-				range[i].map(pi => {
-					if (!findFlag && this.isClose(pi, preIndex)) {
-						tiles[pi].getChildByName('Route').active = true
-						preIndex = pi
-						route.unshift(this.iToP(pi))
+				range[i].map(ip => {
+					if (!findFlag && this.isClose(ip, preIndex)) {
+						tiles[ip].getChildByName('Route').active = true
+						preIndex = ip
+						route.unshift(ip)
 						findFlag = true
 					} else {
-						tiles[pi].getChildByName('Route').active = false
+						tiles[ip].getChildByName('Route').active = false
 					}
 				})
 			}
@@ -320,11 +320,11 @@ export default class BattleMap extends cc.Component {
 		for (let step = min; step <= max; step++) {
 			for (let y = step; y >= -step; y--) {
 				let x = step - Math.abs(y)
-				let pi1 = this.pToI(start.x + x, start.y + y)
-				if (pi1) result.push(pi1)
+				let ip1 = this.pToI(start.x + x, start.y + y)
+				if (ip1) result.push(ip1)
 				if (x > 0) {
-					let pi2 = this.pToI(start.x - x, start.y + y)
-					if (pi2) result.push(pi2)
+					let ip2 = this.pToI(start.x - x, start.y + y)
+					if (ip2) result.push(ip2)
 				}
 			}
 		}
@@ -338,8 +338,8 @@ export default class BattleMap extends cc.Component {
 		while (step <= move) {
 			let prevArray = moveRange[step - 1]
 			let currentArray = []
-			prevArray.map(pi => {
-				let around = this.aroundList(pi)
+			prevArray.map(ip => {
+				let around = this.aroundList(ip)
 				around.map(ai => {
 					if (this.isBlocked(ai, unitSide)) return
 					if (currentArray.includes(ai)) return
@@ -360,13 +360,13 @@ export default class BattleMap extends cc.Component {
 		let move = moveRange.length - 1
 		let startPos = moveRange[0][0]
 		// 先过滤掉太远不可能碰到的
-		opponents = opponents.filter(p => this.getDistance(p.tilePos, startPos) <= (move + max))
+		opponents = opponents.filter(p => this.getDistance(p.iPos, startPos) <= (move + max))
 		let results = []
-		moveRange.flat().map(pi => {
+		moveRange.flat().map(ip => {
 			opponents.map(op => {
-				let distance = this.getDistance(pi, op.tilePos)
+				let distance = this.getDistance(ip, op.iPos)
 				if (distance >= min && distance <= max) {
-					results.push([op, pi, distance])
+					results.push([op, ip, distance])
 				}
 			})
 		})
@@ -378,24 +378,33 @@ export default class BattleMap extends cc.Component {
 		return event.getLocation().add(camera)
 	}
 
-	isBlocked (index, unitSide?) {
-		if (!this.iTileList[index]) return
-		let {x, y} = this.iToP(index)
+	isBlocked (ip, unitSide?) {
+		if (!this.iTileList[ip]) return
+		let {x, y} = this.iToP(ip)
 		if (this.layerBarrier.getTileGIDAt(x, y)) return true
-		if (unitSide === undefined && this.Battle.getUnitAt({x, y})) return true
-		if (unitSide === UNIT_SIDE.ENEMY && this.Battle.getPlayerAt({x, y})) return true
-		if (unitSide === UNIT_SIDE.PLAYER && this.Battle.getEnemyAt({x, y})) return true
+		if (unitSide === undefined && this.Battle.getUnitAt(ip)) return true
+		if (unitSide === UNIT_SIDE.ENEMY && this.Battle.getPlayerAt(ip)) return true
+		if (unitSide === UNIT_SIDE.PLAYER && this.Battle.getEnemyAt(ip)) return true
 		// todo 其他物体检测
 		return false
 	}
 
 
-	getTilePos (posInPixel) {
+	public pixelPosToIndex (posInPixel) {
 		let mapNodeSize = this.TiledMap.node.getContentSize();
 		let tileSize = this.tileSize
 		let x = Math.floor(posInPixel.x / tileSize.width);
 		let y = Math.floor((mapNodeSize.height - posInPixel.y) / tileSize.height);
-		return cc.v2(x, y);
+		return this.pToI(x, y);
+	}
+
+	public indexToItemPixelPos (iPos) {
+		let {layerFloor, tileSize} = this
+		let position = this.iToP(iPos)
+		let {x, y} = layerFloor.getPositionAt(position);
+		let fixX = tileSize.width / 2
+		let fixY = tileSize.height / 2
+		return new cc.Vec3(x + fixX, y + fixY)
 	}
 
 	getDistance (p1, p2) {

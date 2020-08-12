@@ -11,7 +11,7 @@ export default class Enemy extends BattleUnit {
 	protected onLoad() {
 		super.onLoad()
 		this.Battle.registerEnemy(this)
-		this.tilePos = this.Map.getTilePos(this.node)
+		this.iPos = this.Map.pixelPosToIndex(this.node)
 	}
 
 	protected start() {
@@ -21,7 +21,7 @@ export default class Enemy extends BattleUnit {
 	public async startAI () {
 		this.node.zIndex = 2
 
-		let moveRange = this.Map.handleMoveRange(this.tilePos, this.move, UNIT_SIDE.ENEMY)
+		let moveRange = this.Map.handleMoveRange(this.iPos, this.move, UNIT_SIDE.ENEMY)
 		let min = this.attackMin
 		let max = this.attackMax
 		let attackRange = this.Map.handleAIAttackOptions([min, max], moveRange, this.getOpponents())
@@ -37,10 +37,10 @@ export default class Enemy extends BattleUnit {
 
 			await this.moveTo(route)
 			this.Map.hideIndicator()
-			this.Map.showAreaIndicator(target.tilePos)
+			this.Map.showAreaIndicator(target.iPos)
 			await wait(500)
 
-			this.tilePos = this.Map.iToP(pos)
+			this.iPos = pos
 			this.updatePosition()
 			this.Map.hideIndicator()
 

@@ -35,7 +35,7 @@ export default class Player extends BattleUnit {
 		this.StateMark = this.node.getChildByName('state_mark')
 		this.setState(ACTION_STATE.READY)
 		this.Battle.registerPlayer(this)
-		this.tilePos = this.Map.getTilePos(this.node)
+		this.iPos = this.Map.pixelPosToIndex(this.node)
 	}
 
 	protected start() {
@@ -81,8 +81,6 @@ export default class Player extends BattleUnit {
 	}
 
 	public async attackTo (target) {
-		// let target = this.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, pos))
-		// if (!target) return
 		if (_actionLock) return false
 		_actionLock = true
 		await this.attackStart(target)
@@ -108,7 +106,7 @@ export default class Player extends BattleUnit {
 	}
 
 	public actionComplete () {
-		this.tilePos = this.tempPos || this.tilePos
+		this.iPos = this.tempPos || this.iPos
 		this.setState(ACTION_STATE.DONE)
 	}
 
@@ -120,7 +118,7 @@ export default class Player extends BattleUnit {
 	/* ------------ private ------------ */
 
 	private updateMoveRange () {
-		this.moveRange = this.Map.handleMoveRange(this.tilePos, this.move, UNIT_SIDE.PLAYER)
+		this.moveRange = this.Map.handleMoveRange(this.iPos, this.move, UNIT_SIDE.PLAYER)
 	}
 
 	private setState (state) {

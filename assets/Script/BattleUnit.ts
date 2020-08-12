@@ -11,7 +11,7 @@ export default class BattleUnit extends cc.Component {
 	Battle
 	Map
 
-	tilePos
+	iPos
 	tempPos
 
 	@property(cc.Integer)
@@ -66,14 +66,6 @@ export default class BattleUnit extends cc.Component {
 		this.AttackController = controller
 	}
 
-	public getPosByTile (tilePos) {
-		let {layerFloor, tileSize} = this.Map
-		let {x, y} = layerFloor.getPositionAt(tilePos);
-		let fixX = tileSize.width / 2
-		let fixY = tileSize.height / 2
-		return new cc.Vec3(x + fixX, y + fixY)
-	}
-
 	public moveTo (route) {
 		return new Promise(resolve => {
 			if (!route || !route.length) {
@@ -82,7 +74,7 @@ export default class BattleUnit extends cc.Component {
 			}
 			let tween = cc.tween(this.node)
 			for (let i = 1; i < route.length; i++) {
-				let pos = this.getPosByTile(route[i])
+				let pos = this.Map.indexToItemPixelPos(route[i])
 				tween = i === route.length - 1 ?
 					tween.to(0.06, {position: pos}, {easing: 'quadOut'}) :
 					tween.to(0.03, {position: pos})
@@ -93,8 +85,8 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	updatePosition () {
-		let pos = this.tempPos || this.tilePos
-		this.node.setPosition(this.getPosByTile(pos));
+		let pos = this.tempPos || this.iPos
+		this.node.setPosition(this.Map.indexToItemPixelPos(pos));
 	}
 
 	async attackStart (target) {
