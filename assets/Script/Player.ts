@@ -16,15 +16,7 @@ let _actionLock = false
 @ccclass
 export default class Player extends BattleUnit {
 
-	@property(cc.Color)
-	StateColorReady = null
-
-	@property(cc.Color)
-	StateColorFocus = null
-
 	actionState
-
-	StateMark;
 
 	attackRange;
 
@@ -32,7 +24,7 @@ export default class Player extends BattleUnit {
 
 	protected onLoad() {
 		super.onLoad()
-		this.StateMark = this.node.getChildByName('state_mark')
+
 		this.setState(ACTION_STATE.READY)
 		this.Battle.registerPlayer(this)
 		this.iPos = this.Map.pixelPosToIndex(this.node)
@@ -123,9 +115,10 @@ export default class Player extends BattleUnit {
 
 	private setState (state) {
 		if (_actionLock) return
+		let {StateColorReady, StateColorFocus} = this.Battle.State
 		this.StateMark.active = state !== ACTION_STATE.DONE
 		this.StateMark.color = state === ACTION_STATE.READY ?
-			this.StateColorReady : this.StateColorFocus
+			StateColorReady : StateColorFocus
 
 		if (state === ACTION_STATE.READY) {
 			this.Battle.unFocus()

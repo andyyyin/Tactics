@@ -20,6 +20,8 @@ export default class Enemy extends BattleUnit {
 
 	public async startAI () {
 		this.node.zIndex = 2
+		this.StateMark.active = true
+		this.StateMark.color = this.Battle.State.StateColorFocus
 
 		let moveRange = this.Map.handleMoveRange(this.iPos, this.move, UNIT_SIDE.ENEMY)
 		let min = this.attackMin
@@ -47,6 +49,7 @@ export default class Enemy extends BattleUnit {
 			await this.attackStart(target)
 		}
 		this.node.zIndex = 1
+		this.StateMark.active = false
 	}
 
 	getOpponents () {

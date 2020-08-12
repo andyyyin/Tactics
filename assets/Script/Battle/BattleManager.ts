@@ -14,6 +14,10 @@ export default class BattleManager extends cc.Component {
 	BattleAnim = null
 	Anim
 
+	@property(cc.Component)
+	BattleState = null
+	State
+
 	Control
 	Display
 
@@ -25,6 +29,7 @@ export default class BattleManager extends cc.Component {
 	protected onLoad() {
 		this.Map = this.BattleMap
 		this.Anim = this.BattleAnim
+		this.State = this.BattleState
 		this.Control = this.getComponent('BattleControl')
 		this.Display = this.getComponent('BattleDisplayInfo')
 	}

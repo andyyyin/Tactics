@@ -14,6 +14,8 @@ export default class BattleUnit extends cc.Component {
 	iPos
 	tempPos
 
+	StateMark
+
 	@property(cc.Integer)
 	mhp = 100
 	hp
@@ -46,7 +48,8 @@ export default class BattleUnit extends cc.Component {
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 		this.Map = this.Battle.Map
-
+		this.StateMark = this.node.getChildByName('state_mark')
+		this.StateMark.active = false
 		let hpNode = this.node.getChildByName('hp')
 		this.hp = this.mhp
 		this.HpProgress = hpNode && hpNode.getComponent(cc.ProgressBar)

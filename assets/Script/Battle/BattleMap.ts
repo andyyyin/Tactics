@@ -46,15 +46,6 @@ export default class BattleMap extends cc.Component {
 	stopControlFlag = false
 
 	onLoad() {
-		// let posArr = [cc.v2(-249, 96), cc.v2(-150, 76), cc.v2(-60, 54), cc.v2(-248, -144), cc.v2(-89, -34)];
-		// for (let i = 0; i < posArr.length; i++) {
-		// 	let shieldNode = cc.instantiate(this.player);
-		// 	// 可任意设置节点位置，这里仅作为示范
-		// 	shieldNode.x = posArr[i].x;
-		// 	shieldNode.y = posArr[i].y;
-		// 	// 调用 TiledLayer 组件的 addUserNode 方法，可将节点添加到对应的地图层中，并与地图层产生相互遮挡关系。
-		// 	this.playerLayer.addUserNode(shieldNode);
-		// }
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_MOVE, this.onMouseMove, this)
@@ -72,17 +63,6 @@ export default class BattleMap extends cc.Component {
 
 		this.layerFloor = this.TiledMap.getLayer('floor');
 		this.layerBarrier = this.TiledMap.getLayer('barrier');
-
-		// let objectGroup = this.TiledMap.getObjectGroup('points');
-		// if (!objectGroup) return;
-		//
-		// let startObj = objectGroup.getObject('SpawnPoint');
-		// let endObj = objectGroup.getObject('SuccessPoint');
-		// if (!startObj || !endObj) return;
-		// let startPos = cc.v2(startObj.x, startObj.y);
-		// let endPos = cc.v2(endObj.x, endObj.y);
-
-		// this.startPos = this.pixelPosToIndex(startPos);
 	}
 
 	start() {
