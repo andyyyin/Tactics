@@ -128,6 +128,9 @@ export default class BattleMap extends cc.Component {
 
 	onMouseDown (event) {
 		if (this.stopControlFlag) return
+		// 如果显示面板同时地图响应鼠标，那么点击按钮后面板关闭，地图会在所有按钮逻辑走完后在相应鼠标抬起的事件
+		// 完美的相当于点完按钮再点地图（点两次，而实际只点一次），造成bug
+		if (this.Battle.Control.isShowingPanel && event.getButton() === 0) return
 		this.mouseHolding = this.getTilePos(this.getMouseLocation(event))
 	}
 	onMouseUp (event) {
@@ -187,9 +190,9 @@ export default class BattleMap extends cc.Component {
 		}
 		// 看是否指向玩家
 		let target = this.Battle.getUnitAt(tilePos)
-		if (_hoverTarget) _hoverTarget.node.zIndex = 1
+		if (_hoverTarget && _hoverTarget.node) _hoverTarget.node.zIndex = 1
 		_hoverTarget = target
-		if (_hoverTarget) _hoverTarget.node.zIndex = 2
+		if (_hoverTarget && _hoverTarget.node) _hoverTarget.node.zIndex = 2
 
 		if (target) {
 			this.Battle.Display.showInfo(target)
