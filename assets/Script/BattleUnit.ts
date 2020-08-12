@@ -33,6 +33,9 @@ export default class BattleUnit extends cc.Component {
 	@property(cc.Integer)
 	dodge = 100
 
+	@property(cc.Integer)
+	critical = 10
+
 	// @property(cc.Integer)
 	// accuracy = 100
 
@@ -101,7 +104,17 @@ export default class BattleUnit extends cc.Component {
 		}
 		let hitChance = calcHitChance(this, target)
 		let position = target.node.getPosition()
-		if (Math.random() < hitChance) {
+
+		let criChance = this.critical / 100
+		let isHit = Math.random() < hitChance
+		let isCritical = isHit && Math.random() < criChance
+
+
+		if (isCritical) {
+			let damage = Math.floor(this.damage * (2 + Math.random()))
+			await this.Battle.Anim.playCriDamage(position, damage)
+			target.changeHp(-damage)
+		} else if (isHit) {
 			let damage = this.damage
 			await this.Battle.Anim.playDamage(position, damage)
 			target.changeHp(-damage)

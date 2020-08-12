@@ -5910,6 +5910,7 @@
     "attackMin": 1,
     "accuracy": 100,
     "dodge": 100,
+    "critical": 10,
     "StateColorReady": {
       "__type__": "cc.Color",
       "r": 38,
@@ -6914,6 +6915,7 @@
     "attackMin": 4,
     "accuracy": 100,
     "dodge": 100,
+    "critical": 10,
     "StateColorReady": {
       "__type__": "cc.Color",
       "r": 38,
@@ -7920,6 +7922,7 @@
     "attackMin": 2,
     "accuracy": 100,
     "dodge": 100,
+    "critical": 10,
     "StateColorReady": {
       "__type__": "cc.Color",
       "r": 38,
@@ -8621,6 +8624,7 @@
     "attackMin": 4,
     "accuracy": 100,
     "dodge": 100,
+    "critical": 10,
     "_id": "6dieQfv5JAZpGckoTgPP+M"
   },
   {
@@ -9297,6 +9301,7 @@
     "attackMin": 1,
     "accuracy": 120,
     "dodge": 120,
+    "critical": 10,
     "_id": "b27aqJQkFPLayWp/r1QfLT"
   },
   {
@@ -9973,6 +9978,7 @@
     "attackMin": 1,
     "accuracy": 80,
     "dodge": 50,
+    "critical": 10,
     "_id": "beTdKWlDZDSJdF4Ovd4+In"
   },
   {

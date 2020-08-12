@@ -4,6 +4,7 @@ enum EffectType {
 	NONE,
 	MISS,
 	DAMAGE,
+	CRI_DAMAGE,
 	HEAL,
 }
 
@@ -34,6 +35,10 @@ export default class BattleAnim extends cc.Component {
 		return this.playEffect(position, EffectType.DAMAGE, damage)
 	}
 
+	public playCriDamage (position, damage) {
+		return this.playEffect(position, EffectType.CRI_DAMAGE, damage)
+	}
+
 	private async playEffect (position, type, value?) {
 		// console.log(position);
 		this.MapAnim.node.setPosition(position)
@@ -45,6 +50,9 @@ export default class BattleAnim extends cc.Component {
 				break
 			case EffectType.DAMAGE:
 				this.showDamage(value)
+				break
+			case EffectType.CRI_DAMAGE:
+				this.showDamage(value, true)
 				break
 			default:
 		}
@@ -63,10 +71,12 @@ export default class BattleAnim extends cc.Component {
 		this.MissNode.active = true
 	}
 
-	private showDamage (value) {
+	private showDamage (value, isCritical?) {
 		this.hideAllMapItems()
 		this.DamageNode.active = true
-		this.DamageNode.getComponent(cc.Label).string = `-${value}`
+		let Label = this.DamageNode.getComponent(cc.Label)
+		Label.fontSize = isCritical ? 60 : 40
+		Label.string = `-${value}${isCritical ? '!' : ''}`
 	}
 
 	private hideAllMapItems () {

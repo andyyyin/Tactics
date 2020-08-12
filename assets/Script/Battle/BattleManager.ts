@@ -45,13 +45,7 @@ export default class BattleManager extends cc.Component {
 
 	public unitExit (unit) {
 		let array = unit.isPlayer ? this.players : this.enemies
-		let _length = array.length
 		array.splice(array.findIndex(u => u === unit), 1)
-		if (array.length < _length) {
-			console.log('单位已退场')
-		} else {
-			console.log('退场异常')
-		}
 	}
 
 	public onClickTurnEnd () {
