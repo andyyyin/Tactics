@@ -15,6 +15,7 @@ export default class BattleManager extends cc.Component {
 	Anim
 
 	Control
+	Display
 
 	players = []
 	enemies = []
@@ -25,6 +26,7 @@ export default class BattleManager extends cc.Component {
 		this.Map = this.BattleMap
 		this.Anim = this.BattleAnim
 		this.Control = this.getComponent('BattleControl')
+		this.Display = this.getComponent('BattleDisplayInfo')
 	}
 
 	protected start() {

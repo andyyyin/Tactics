@@ -28,6 +28,8 @@ export default class Player extends BattleUnit {
 
 	attackRange;
 
+	get isPlayer () { return true }
+
 	protected onLoad() {
 		super.onLoad()
 		this.StateMark = this.node.getChildByName('state_mark')

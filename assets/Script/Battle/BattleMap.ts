@@ -160,6 +160,13 @@ export default class BattleMap extends cc.Component {
 		this.onHover(tilePos || this.getTilePos(this.mouseLoc))
 	}
 
+	getTargetOfAttack (tilePos) {
+		let player = this.Battle.focusPlayer
+		let range = player.attackRange
+		if (!range || !range.flat().includes(this.pToI(tilePos))) return
+		return player.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, tilePos))
+	}
+
 	onHover (tilePos) {
 		if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
@@ -168,20 +175,34 @@ export default class BattleMap extends cc.Component {
 				let range = player.moveRange
 				_route = this.showRoute(tilePos, range)
 			}
+			if (this.Battle.focusPlayer.isAttacking) {
+				let target = this.getTargetOfAttack(tilePos)
+				if (target) {
+					this.Battle.Display.showInfo(target, this.Battle.focusPlayer)
+				} else {
+					this.Battle.Display.hideInfo()
+				}
+			}
 			return
 		}
 		// 看是否指向玩家
-		let target = this.Battle.players.find(p => cc.Vec2.strictEquals(tilePos, p.tilePos))
+		let target = this.Battle.getUnitAt(tilePos)
 		if (_hoverTarget) _hoverTarget.node.zIndex = 1
 		_hoverTarget = target
 		if (_hoverTarget) _hoverTarget.node.zIndex = 2
 
-		if (target && !target.isDone) {
-			this.hideIndicator()
-			this.showIndicator(target.moveRange)
-		} else if (this.showing) {
-			this.hideIndicator()
+		if (target) {
+			this.Battle.Display.showInfo(target)
+			if (target.isPlayer && !target.isDone) {
+				this.hideIndicator()
+				this.showIndicator(target.moveRange)
+			} else if (this.showing) {
+				this.hideIndicator()
+			}
+		} else {
+			this.Battle.Display.hideInfo()
 		}
+
 	}
 
 	onClick (tilePos) {
@@ -198,15 +219,9 @@ export default class BattleMap extends cc.Component {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
 			} else if (this.Battle.focusPlayer.isAttacking) {
-				let player = this.Battle.focusPlayer
-				let range = player.attackRange
-				if (range && range.flat().includes(this.pToI(tilePos))) {
-					let target = player.getOpponents().find(e => cc.Vec2.strictEquals(e.tilePos, tilePos))
-					if (target) {
-						this.Battle.attackTo(target)
-					} else {
-						// 点空了，什么也不做，如需要回退可调用revertAction
-					}
+				let target = this.getTargetOfAttack(tilePos)
+				if (target) {
+					this.Battle.attackTo(target)
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}

@@ -26,6 +26,9 @@ export default class BattleControl extends cc.Component {
 		cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 	}
 
+	protected start() {
+	}
+
 	protected update (dt): void {
 		this.updateCamera(dt)
 	}

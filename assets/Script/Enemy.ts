@@ -6,6 +6,8 @@ import BattleUnit from "./BattleUnit";
 @ccclass
 export default class Enemy extends BattleUnit {
 
+	get isPlayer () { return false }
+
 	protected onLoad() {
 		super.onLoad()
 		this.Battle.registerEnemy(this)
