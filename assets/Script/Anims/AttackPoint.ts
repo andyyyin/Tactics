@@ -1,9 +1,9 @@
-import AnimSuper from "./AnimSuper";
+import AttackSuper from "./AttackSuper";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class AnimPoint extends AnimSuper {
+export default class AnimPoint extends AttackSuper {
 
 	protected onLoad() {
 		super.onLoad()

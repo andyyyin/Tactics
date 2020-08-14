@@ -1,11 +1,11 @@
-import AnimSuper from "./AnimSuper";
+import AttackSuper from "./AttackSuper";
 import {getTwoPointAngle} from "../Global/Math";
 import {rotationToAngle} from "../Global/Node";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LanceAttack extends AnimSuper {
+export default class LanceAttack extends AttackSuper {
 
 	@property(cc.Node)
 	Lance = null

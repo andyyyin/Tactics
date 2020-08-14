@@ -1,9 +1,9 @@
-import AnimSuper from "./AnimSuper";
+import AttackSuper from "./AttackSuper";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class BowShoot extends AnimSuper {
+export default class BowShoot extends AttackSuper {
 
 	@property(cc.Node)
 	Arrow = null
