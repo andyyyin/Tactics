@@ -38,6 +38,7 @@ export default class CustomButton extends cc.Component {
 
 	onMouseUp () {
 		if (!this.holding) return
+		this.holding = false
 		this.onClick && this.onClick()
 	}
 

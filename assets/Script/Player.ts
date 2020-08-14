@@ -156,6 +156,11 @@ export default class Player extends BattleUnit {
 		}
 
 		this.actionState = state
+		/* 状态已更新 */
+
+		if (state === ACTION_STATE.MOVE) {
+			this.Map.updateIndicator(true)
+		}
 	}
 
 }
