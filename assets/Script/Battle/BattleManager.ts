@@ -18,7 +18,10 @@ export default class BattleManager extends cc.Component {
 	BattleState = null
 	State
 
+	@property(cc.Component)
+	BattleControl = null
 	Control
+
 	Display
 
 	players = []
@@ -30,7 +33,7 @@ export default class BattleManager extends cc.Component {
 		this.Map = this.BattleMap
 		this.Anim = this.BattleAnim
 		this.State = this.BattleState
-		this.Control = this.getComponent('BattleControl')
+		this.Control = this.BattleControl
 		this.Display = this.getComponent('BattleDisplayInfo')
 	}
 
@@ -54,23 +57,11 @@ export default class BattleManager extends cc.Component {
 	}
 
 	public onClickTurnEnd () {
-		this.Control.hidePanel()
 		this.playerTurnEnd()
 	}
 
-	public onClickAttack () {
-		this.focusPlayer.attackPrepare()
-		// this.focusPlayer.attackStart().then()
-	}
-
-	public onClickWait () {
-		this.actionDone()
-	}
-
 	public async attackTo (target) {
-		if (await this.focusPlayer.attackTo(target)) {
-			this.actionDone()
-		}
+		await this.focusPlayer.attackTo(target)
 	}
 
 	public getPlayerAt (ip) {
@@ -93,16 +84,16 @@ export default class BattleManager extends cc.Component {
 
 	public unFocus () {
 		this.focusPlayer = null
+		this.Map.updateIndicator(true)
 	}
-	/* ------------ private ------------ */
 
-
-	private actionDone () {
-		this.focusPlayer.actionComplete()
+	public onPlayerActionDone () {
 		this.unFocus()
 		this.updateUnits()
-		this.Map.updateIndicator()
+		this.Map.updateIndicator(true)
 	}
+
+	/* ------------ private ------------ */
 
 	private updateUnits () {
 		this.players.map(p => p.updateSituation())

@@ -77,7 +77,7 @@ export default class Player extends BattleUnit {
 		_actionLock = true
 		await this.attackStart(target)
 		_actionLock = false
-		return true
+		this.actionComplete()
 	}
 
 	public getOpponents () {
@@ -115,6 +115,7 @@ export default class Player extends BattleUnit {
 
 	private setState (state) {
 		if (_actionLock) return
+		if (this.actionState === state) return
 		let {StateColorReady, StateColorFocus} = this.Battle.State
 		this.StateMark.active = state !== ACTION_STATE.DONE
 		this.StateMark.color = state === ACTION_STATE.READY ?
@@ -132,13 +133,27 @@ export default class Player extends BattleUnit {
 			this.Map.hideIndicator()
 		}
 
+		if (state === ACTION_STATE.OPTION) {
+			let camera = this.Battle.Control.CameraNode
+			// todo
+			let position = this.node.getPosition().add(new cc.Vec2(-390, -320)).subtract(camera)
+			this.Battle.Control.showOptions([
+				['ATTACK', () => this.attackPrepare()],
+				['WAIT', () => this.actionComplete()]
+			], position)
+		} else {
+			this.Battle.Control.hidePanel()
+		}
+
 		if (state === ACTION_STATE.ATTACK) {
 			this.Map.showAttackIndicator(this.attackRange)
 		} else if (this.actionState === ACTION_STATE.ATTACK) {
 			this.Map.hideIndicator()
 		}
 
-		this.Battle.Control.toggleActionPanel(state === ACTION_STATE.OPTION)
+		if (state === ACTION_STATE.DONE) {
+			this.Battle.onPlayerActionDone()
+		}
 
 		this.actionState = state
 	}

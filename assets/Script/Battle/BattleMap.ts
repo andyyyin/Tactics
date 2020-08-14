@@ -17,8 +17,8 @@ export default class BattleMap extends cc.Component {
 	@property(cc.Prefab)
 	IndicatorTile = null
 
-	@property(cc.Prefab)
-	CursorPrefab = null
+	@property(cc.Node)
+	CursorNode = null
 
 	@property(cc.Node)
 	IndicatorNode = null
@@ -38,7 +38,6 @@ export default class BattleMap extends cc.Component {
 	iTileList = []
 
 	mouseLoc;
-	cursorNode;
 	mouseHolding
 
 	showing
@@ -47,7 +46,6 @@ export default class BattleMap extends cc.Component {
 
 	onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
-
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_MOVE, this.onMouseMove, this)
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
@@ -63,6 +61,12 @@ export default class BattleMap extends cc.Component {
 
 		this.layerFloor = this.TiledMap.getLayer('floor');
 		this.layerBarrier = this.TiledMap.getLayer('barrier');
+	}
+
+	protected onDestroy() {
+		this.TiledMap.node.off(cc.Node.EventType.MOUSE_MOVE, this.onMouseMove, this)
+		this.TiledMap.node.off(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
+		this.TiledMap.node.off(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
 	}
 
 	start() {
@@ -84,33 +88,33 @@ export default class BattleMap extends cc.Component {
 				iTile.active = false
 			}
 		}
-		let cursorNode = cc.instantiate(this.CursorPrefab)
-		cursorNode.scaleX = this.tileSize.width / cursorNode.width * 1.1
-		cursorNode.scaleY = this.tileSize.height / cursorNode.height * 1.1
-		cursorNode.setPosition(this.tileSize.width/2, this.tileSize.height/2)
-		this.TiledMap.node.addChild(cursorNode, 100, 'Cursor')
-		this.cursorNode = cursorNode
+		this.CursorNode.scaleX = this.tileSize.width / this.CursorNode.width * 1.1
+		this.CursorNode.scaleY = this.tileSize.height / this.CursorNode.height * 1.1
+		this.CursorNode.setPosition(this.tileSize.width/2, this.tileSize.height/2)
+		this.CursorNode.zIndex = 100
 	}
 
 	onMouseMove (event) {
-		if (!this.cursorNode) return
+		this.mouseLoc = this.getMouseLocation(event)
 		if (this.stopControlFlag) return
-		let {x, y} = this.mouseLoc = this.getMouseLocation(event)
-		let {width, height} = this.tileSize
-		this.cursorNode.x = Math.floor(x - (x % width)) + width / 2
-		this.cursorNode.y = Math.floor(y - (y % height)) + height / 2
-		let newPos = this.pixelPosToIndex({x, y})
-		if (_hoverCache === undefined || _hoverCache !== newPos) {
-			_hoverCache = newPos
-			this.onHover(newPos)
-		}
+		if (!this.CursorNode) return
+		this.updateIndicator()
+		// let {x, y} = this.mouseLoc
+		// let {width, height} = this.tileSize
+		// this.CursorNode.x = Math.floor(x - (x % width)) + width / 2
+		// this.CursorNode.y = Math.floor(y - (y % height)) + height / 2
+		// let newPos = this.pixelPosToIndex({x, y})
+		// if (_hoverCache === undefined || _hoverCache !== newPos) {
+		// 	_hoverCache = newPos
+		// 	this.onHover(newPos)
+		// }
 	}
 
 	onMouseDown (event) {
 		if (this.stopControlFlag) return
 		// 如果显示面板同时地图响应鼠标，那么点击按钮后面板关闭，地图会在所有按钮逻辑走完后在相应鼠标抬起的事件
 		// 完美的相当于点完按钮再点地图（点两次，而实际只点一次），造成bug
-		if (this.Battle.Control.isShowingPanel && event.getButton() === 0) return
+		// if (this.Battle.Control.isShowingPanel && event.getButton() === 0) return
 		this.mouseHolding = this.pixelPosToIndex(this.getMouseLocation(event))
 	}
 	onMouseUp (event) {
@@ -125,7 +129,7 @@ export default class BattleMap extends cc.Component {
 				this.onClick(iPos)
 				break
 			case 2:
-				this.onRightClick(iPos)
+				// this.onRightClick(iPos)
 		}
 	}
 
@@ -139,8 +143,17 @@ export default class BattleMap extends cc.Component {
 		return this.iToP(_playerPosCache.shift())
 	}
 
-	updateIndicator (iPos?) {
-		this.onHover(iPos || this.pixelPosToIndex(this.mouseLoc))
+	updateIndicator (force?) {
+		if (!this.mouseLoc) return
+		let {x, y} = this.mouseLoc
+		let {width, height} = this.tileSize
+		this.CursorNode.x = Math.floor(x - (x % width)) + width / 2
+		this.CursorNode.y = Math.floor(y - (y % height)) + height / 2
+		let newPos = this.pixelPosToIndex({x, y})
+		if (force || _hoverCache === undefined || _hoverCache !== newPos) {
+			_hoverCache = newPos
+			this.onHover(newPos)
+		}
 	}
 
 	getTargetOfAttack (iPos) {
@@ -151,7 +164,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onHover (iPos) {
-		if (this.Battle.Control.isShowingPanel) return
+		// if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
@@ -176,20 +189,20 @@ export default class BattleMap extends cc.Component {
 
 		if (target) {
 			this.Battle.Display.showInfo(target)
-			if (target.isPlayer && !target.isDone) {
-				this.hideIndicator()
-				this.showIndicator(target.moveRange)
-			} else if (this.showing) {
-				this.hideIndicator()
-			}
 		} else {
 			this.Battle.Display.hideInfo()
+		}
+		if (target && target.isPlayer && !target.isDone) {
+			this.hideIndicator()
+			this.showIndicator(target.moveRange)
+		} else if (this.showing) {
+			this.hideIndicator()
 		}
 
 	}
 
 	onClick (iPos) {
-		if (this.Battle.Control.isShowingPanel) return
+		// if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			if (this.Battle.focusPlayer.isMoving) {
 				let player = this.Battle.focusPlayer
@@ -219,15 +232,24 @@ export default class BattleMap extends cc.Component {
 		}
 	}
 
-	onRightClick (iPos) {
-		if (this.Battle.focusPlayer) {
-			this.Battle.focusPlayer.revertAction()
-			// 点击瞬间更新指示状态
-			this.updateIndicator(iPos)
-			return
-		}
-		this.Battle.Control.toggleOptionPanel()
-	}
+	// onRightClick (iPos) {
+	// 	if (this.Battle.focusPlayer) {
+	// 		this.Battle.focusPlayer.revertAction()
+	// 		// 点击瞬间更新指示状态
+	// 		this.updateIndicator(iPos)
+	// 		return
+	// 	}
+	// 	// if (this.Battle.Control.isShowingPanel) {
+	// 	// 	this.Battle.Control.hidePanel()
+	// 	// } else {
+	// 		this.Battle.Control.showOptions([
+	// 			['END TURN', () => {
+	// 				this.Battle.Control.hidePanel()
+	// 				this.Battle.onClickTurnEnd()
+	// 			}]
+	// 		])
+	// 	// }
+	// }
 
 	showFocusIndicator (param) { this.showIndicator(param, 1) }
 	showAttackIndicator (param) { this.showIndicator(param, 2) }
@@ -395,12 +417,13 @@ export default class BattleMap extends cc.Component {
 
 	stopControl () {
 		this.stopControlFlag = true
-		this.cursorNode.active = false
+		this.CursorNode.active = false
 	}
 
 	enableControl () {
 		this.stopControlFlag = false
-		this.cursorNode.active = true
+		this.CursorNode.active = true
+		this.updateIndicator()
 	}
 
 	pToI (p1, p2?) {
