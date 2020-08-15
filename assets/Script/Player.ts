@@ -52,7 +52,9 @@ export default class Player extends BattleUnit {
 	}
 
 	public attackPrepare () {
-		this.attackRange = this.AttackController.getRange()
+		let attacks = Object.keys(this.attackMap)
+		let controller = this.attackMap[attacks[0]]
+		this.attackRange = controller.getRange()
 		this.setState(ACTION_STATE.ATTACK)
 
 	}

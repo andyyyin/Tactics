@@ -1,10 +1,20 @@
+const {ccclass, property} = cc._decorator;
 import {getTwoPointAngle} from "../Global/Math";
 import {rotationToAngle} from "../Global/Node";
-
-const {ccclass, property} = cc._decorator;
+import {RangeFun, getRangeFun} from "./Fun/Range";
 
 @ccclass
 export default class AnimDefault extends cc.Component {
+
+	@property({type: RangeFun})
+	RangeFun = 0
+	@property(cc.String)
+	RangeParam = ''
+	// @property(cc.String)
+	// CoverParam
+
+	rangeFun
+	rangeParams
 
 	Animation
 	Unit
@@ -19,6 +29,8 @@ export default class AnimDefault extends cc.Component {
 		this.Animation.on('finished', () => {
 			if (this.onFinish) this.onFinish()
 		})
+		this.rangeParams = this.RangeParam.split(',').filter(p => p).map(p => Number(p.trim()))
+		this.rangeFun = getRangeFun(this.RangeFun)
 	}
 
 	async playAttackTo (target) {
@@ -46,12 +58,8 @@ export default class AnimDefault extends cc.Component {
 		this.node.angle = 0
 	}
 
-	getRange (scopeRange) {
-		let unit = this.Unit
-		let map = this.Unit.Map
-		let [min, max] = scopeRange
-		let ip = unit.tempPos || unit.iPos
-		return map.handleRange(ip, [min, max])
+	getRange () {
+		return this.rangeFun(this.Unit, this.rangeParams)
 	}
 
 }

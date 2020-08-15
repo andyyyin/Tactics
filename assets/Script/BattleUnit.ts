@@ -24,12 +24,6 @@ export default class BattleUnit extends cc.Component {
 	damage = 15
 
 	@property(cc.Integer)
-	attackMax = 1
-
-	@property(cc.Integer)
-	attackMin = 1
-
-	@property(cc.Integer)
 	accuracy = 100
 
 	@property(cc.Integer)
@@ -41,7 +35,7 @@ export default class BattleUnit extends cc.Component {
 	// @property(cc.Integer)
 	// accuracy = 100
 
-	AttackController;
+	attackMap = {}
 
 	HpProgress
 
@@ -66,7 +60,7 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	public addAttackController (controller, name) {
-		this.AttackController = controller
+		this.attackMap[name] = controller
 	}
 
 	public moveTo (route) {
@@ -92,8 +86,14 @@ export default class BattleUnit extends cc.Component {
 		this.node.setPosition(this.Map.indexToItemPixelPos(pos));
 	}
 
+	getAttackController (index) {
+		let attacks = Object.keys(this.attackMap)
+		return this.attackMap[attacks[index]]
+	}
+
 	async attackStart (target) {
-		let controller = this.AttackController
+		let controller = this.getAttackController(0)
+
 		if (controller) {
 			await controller.playAttackTo(target)
 		}

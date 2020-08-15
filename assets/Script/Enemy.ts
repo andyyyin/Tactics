@@ -24,10 +24,22 @@ export default class Enemy extends BattleUnit {
 		this.StateMark.color = this.Battle.State.StateColorFocus
 
 		let moveRange = this.Map.handleMoveRange(this.iPos, this.move, UNIT_SIDE.ENEMY)
-		let min = this.attackMin
-		let max = this.attackMax
-		let attackRange = this.Map.handleAIAttackOptions([min, max], moveRange, this.getOpponents())
-		if (attackRange.length) {
+		let attackRange
+
+		/* todo 下面处理待优化 */
+		let controller = this.getAttackController(0)
+		if (controller.RangeFun === 0) {
+			let [min, max] = controller.rangeParams
+			min = min || 1
+			max = max || min
+			if (min > max) {
+				[min, max] = [max, min]
+			}
+			attackRange = this.Map.handleAIAttackOptions([min, max], moveRange, this.getOpponents())
+		}
+		/* end */
+
+		if (attackRange && attackRange.length) {
 			// 找最近的
 			let [target, pos, distance] = attackRange[0]
 
