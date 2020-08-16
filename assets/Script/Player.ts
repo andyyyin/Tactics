@@ -7,6 +7,7 @@ enum ACTION_STATE {
 	READY,
 	MOVE,
 	OPTION,
+	ATTACK_OPTION,
 	ATTACK,
 	DONE
 }
@@ -51,8 +52,12 @@ export default class Player extends BattleUnit {
 		this.updateMoveRange()
 	}
 
-	public attackPrepare () {
-		let controller = this.getAttackController(0)
+	public attackOption () {
+		this.setState(ACTION_STATE.ATTACK_OPTION)
+	}
+
+	public attackPrepare (index) {
+		let controller = this.getAttackController(index || 0)
 		this.attackRange = controller.getRange()
 		this.setState(ACTION_STATE.ATTACK)
 	}
@@ -89,6 +94,7 @@ export default class Player extends BattleUnit {
 			ACTION_STATE.READY,
 			ACTION_STATE.MOVE,
 			ACTION_STATE.OPTION,
+			ACTION_STATE.ATTACK_OPTION,
 			ACTION_STATE.ATTACK,
 		]
 		let index = stateSequence.findIndex(s => this.actionState === s)
@@ -113,6 +119,13 @@ export default class Player extends BattleUnit {
 		this.moveRange = this.Map.handleMoveRange(this.iPos, this.move, UNIT_SIDE.PLAYER)
 	}
 
+	private showOptionNearby (options) {
+		let camera = this.Battle.Control.CameraNode
+		// todo
+		let position = this.node.getPosition().add(new cc.Vec2(-390, -320)).subtract(camera)
+		this.Battle.Control.showOptions(options, position)
+	}
+
 	private setState (state) {
 		if (_actionLock) return
 		if (this.actionState === state) return
@@ -134,16 +147,19 @@ export default class Player extends BattleUnit {
 		}
 
 		if (state === ACTION_STATE.OPTION) {
-			let camera = this.Battle.Control.CameraNode
-			// todo
-			let position = this.node.getPosition().add(new cc.Vec2(-390, -320)).subtract(camera)
-			this.Battle.Control.showOptions([
-				['ATTACK', () => this.attackPrepare()],
+			this.showOptionNearby([
+				['ATTACK', () => this.attackOption()],
 				['WAIT', () => this.actionComplete()]
-			], position)
+			])
+		} else if (state === ACTION_STATE.ATTACK_OPTION) {
+			let options = this.attackList.map((name, index) => {
+				return [name, () => this.attackPrepare(index)]
+			})
+			this.showOptionNearby(options)
 		} else {
 			this.Battle.Control.hidePanel()
 		}
+
 
 		if (state === ACTION_STATE.ATTACK) {
 			this.Map.showAttackIndicator(this.attackRange)

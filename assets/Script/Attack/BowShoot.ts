@@ -23,8 +23,4 @@ export default class BowShoot extends AttackSuper {
 		this.Animation.resume()
 	}
 
-	getRange () {
-		return super.getRange([4, 7])
-	}
-
 }

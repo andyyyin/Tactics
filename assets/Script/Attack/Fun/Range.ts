@@ -14,10 +14,10 @@ r.default = (unit, [min, max]) => {
 		for (let y = step; y >= -step; y--) {
 			let x = step - Math.abs(y)
 			let ip1 = Map.pToI(start.x + x, start.y + y)
-			if (ip1) result.push(ip1)
+			if (ip1 && Map.iTileList[ip1]) result.push(ip1)
 			if (x > 0) {
 				let ip2 = Map.pToI(start.x - x, start.y + y)
-				if (ip2) result.push(ip2)
+				if (ip2 && Map.iTileList[ip2]) result.push(ip2)
 			}
 		}
 	}

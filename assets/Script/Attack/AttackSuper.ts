@@ -7,6 +7,10 @@ import {CoverFun, getCoverFun} from "./Fun/Cover";
 @ccclass
 export default class AnimDefault extends cc.Component {
 
+	@property(cc.String)
+	Name = ''
+	@property(cc.String)
+	AnimName = ''
 	@property({type: RangeFun})
 	RangeFun = 0
 	@property(cc.String)
@@ -30,7 +34,7 @@ export default class AnimDefault extends cc.Component {
 	protected onLoad() {
 		this.Animation = this.getComponent(cc.Animation)
 		this.Unit = this.node.parent.getComponent('BattleUnit')
-		this.Unit.addAttackController(this, this.node.name)
+		this.Unit.addAttackController(this, this.Name || this.node.name)
 
 		this.Animation.on('finished', () => {
 			if (this.onFinish) this.onFinish()
@@ -52,7 +56,7 @@ export default class AnimDefault extends cc.Component {
 
 	playAnim () {
 		return new Promise(resolve => {
-			this.Animation.play()
+			this.Animation.play(this.AnimName || undefined)
 			this.node.once('hit', resolve)
 			this.Animation.once('finished', resolve)
 		})

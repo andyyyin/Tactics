@@ -36,6 +36,7 @@ export default class BattleUnit extends cc.Component {
 	// accuracy = 100
 
 	attackMap = {}
+	attackList = []
 
 	HpProgress
 
@@ -61,6 +62,7 @@ export default class BattleUnit extends cc.Component {
 
 	public addAttackController (controller, name) {
 		this.attackMap[name] = controller
+		this.attackList.push(name)
 	}
 
 	public moveTo (route) {
@@ -87,8 +89,7 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	getAttackController (index) {
-		let attacks = Object.keys(this.attackMap)
-		return this.attackMap[attacks[index]]
+		return this.attackMap[this.attackList[index]]
 	}
 
 	getAttackCover (point) {

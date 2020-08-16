@@ -32,8 +32,4 @@ export default class LanceAttack extends AttackSuper {
 		this.Animation.resume()
 	}
 
-	getRange () {
-		return super.getRange([2, 2])
-	}
-
 }
