@@ -11,6 +11,13 @@ let _attackIndicatorColor
 
 let _route
 
+let _indicator = {
+	move: null,
+	attack: null,
+	cover: null,
+	focus: false,
+}
+
 @ccclass
 export default class BattleMap extends cc.Component {
 
@@ -99,15 +106,6 @@ export default class BattleMap extends cc.Component {
 		if (this.stopControlFlag) return
 		if (!this.CursorNode) return
 		this.updateIndicator()
-		// let {x, y} = this.mouseLoc
-		// let {width, height} = this.tileSize
-		// this.CursorNode.x = Math.floor(x - (x % width)) + width / 2
-		// this.CursorNode.y = Math.floor(y - (y % height)) + height / 2
-		// let newPos = this.pixelPosToIndex({x, y})
-		// if (_hoverCache === undefined || _hoverCache !== newPos) {
-		// 	_hoverCache = newPos
-		// 	this.onHover(newPos)
-		// }
 	}
 
 	onMouseDown (event) {
@@ -166,17 +164,24 @@ export default class BattleMap extends cc.Component {
 	onHover (iPos) {
 		// if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
-			if (this.Battle.focusPlayer.isMoving) {
-				let player = this.Battle.focusPlayer
+			let player = this.Battle.focusPlayer
+			if (player.isMoving) {
 				let range = player.moveRange
 				_route = this.showRoute(iPos, range)
 			}
-			if (this.Battle.focusPlayer.isAttacking) {
-				let target = this.getTargetOfAttack(iPos)
-				if (target) {
-					this.Battle.Display.showInfo(target, this.Battle.focusPlayer)
-				} else {
-					this.Battle.Display.hideInfo()
+			if (player.isAttacking) {
+				let range = player.attackRange
+				if (range && range.flat().includes(iPos)) {
+					let cover = player.getAttackCover(iPos)
+					if (cover) {
+						this.showCoverIndicator(cover)
+					}
+					let target = player.getOpponents().find(e => e.iPos === iPos)
+					if (target) {
+						this.Battle.Display.showInfo(target, this.Battle.focusPlayer)
+					} else {
+						this.Battle.Display.hideInfo()
+					}
 				}
 			}
 			return
@@ -194,7 +199,7 @@ export default class BattleMap extends cc.Component {
 		}
 		if (target && target.isPlayer && !target.isDone) {
 			this.hideIndicator()
-			this.showIndicator(target.moveRange)
+			this.updateMapIndicator({move: target.moveRange.flat()})
 		} else if (this.showing) {
 			this.hideIndicator()
 		}
@@ -232,45 +237,49 @@ export default class BattleMap extends cc.Component {
 		}
 	}
 
-	// onRightClick (iPos) {
-	// 	if (this.Battle.focusPlayer) {
-	// 		this.Battle.focusPlayer.revertAction()
-	// 		// 点击瞬间更新指示状态
-	// 		this.updateIndicator(iPos)
-	// 		return
-	// 	}
-	// 	// if (this.Battle.Control.isShowingPanel) {
-	// 	// 	this.Battle.Control.hidePanel()
-	// 	// } else {
-	// 		this.Battle.Control.showOptions([
-	// 			['END TURN', () => {
-	// 				this.Battle.Control.hidePanel()
-	// 				this.Battle.onClickTurnEnd()
-	// 			}]
-	// 		])
-	// 	// }
-	// }
+	showFocusIndicator (move) {
+		this.updateMapIndicator({move: move.flat(), focus: true})
+	}
+	showAttackIndicator (attack) {
+		this.updateMapIndicator({attack: attack.flat()})
+	}
+	showCoverIndicator (cover) {
+		let {attack} = _indicator
+		this.updateMapIndicator({attack, cover: cover.flat()})
+	}
 
-	showFocusIndicator (param) { this.showIndicator(param, 1) }
-	showAttackIndicator (param) { this.showIndicator(param, 2) }
-	showAreaIndicator (param) { this.showIndicator(param, 3) }
-
-	showIndicator (param, type?) {
-		let isFocus = type === 1
-		let isAttack = type === 2
-		let isEffectArea = type === 3
-		this.IndicatorNode.zIndex = (isAttack || isEffectArea) ? 5 : 0
-		if (Array.isArray(param)) {
-			param.forEach(p => this.showIndicator(p, type))
-		} else {
-			let index = typeof param === 'object' ? this.pToI(param) : param
-			let iTile = this.iTileList[index]
-			if (!iTile) return
-			iTile.opacity = (isFocus || isEffectArea) ? 150 : 70
-			iTile.color = (isAttack || isEffectArea) ? _attackIndicatorColor : _moveIndicatorColor
+	updateMapIndicator (param: {move?, attack?, cover?, focus?: boolean}) {
+		let {move, attack, cover, focus} = param
+		const show = (ip, color, opacity) => {
+			let iTile = this.iTileList[ip]
 			iTile.active = true
-			this.showing = true
+			iTile.getChildByName('Route').active = false
+			iTile.color = color
+			iTile.opacity = opacity
 		}
+
+		if (_indicator.attack) {
+			_indicator.attack.map(ap => this.iTileList[ap].active = false)
+		}
+		if (_indicator.cover) {
+			_indicator.cover.map(cp => this.iTileList[cp].active = false)
+		}
+		if (_indicator.move) {
+			_indicator.move.map(mp => this.iTileList[mp].active = false)
+		}
+
+		if (attack) {
+			attack.map(ap => show(ap, _attackIndicatorColor, 70))
+			if (cover) {
+				cover.map(cp => show(cp, _attackIndicatorColor, 150))
+			}
+		} else if (move) {
+			move.map(mp => show(mp, _moveIndicatorColor, focus ? 150 : 70))
+		}
+
+		this.IndicatorNode.zIndex = attack ? 5 : 0
+
+		_indicator = {move, attack, cover, focus}
 	}
 
 	hideIndicator () {
@@ -449,6 +458,16 @@ export default class BattleMap extends cc.Component {
 		let y = Math.floor(index / width)
 		let x = Math.floor(index % width)
 		return {x, y}
+	}
+
+	isSameRow (i1, i2) {
+		let {width} = this.mapSize
+		return Math.floor(i1 / width) === Math.floor(i2 / width)
+	}
+
+	isSameCol (i1, i2) {
+		let {width} = this.mapSize
+		return Math.floor(i1 % width) === Math.floor(i2 % width)
 	}
 
 	toUp (index) { return index - this.mapSize.width }

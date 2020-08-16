@@ -91,6 +91,11 @@ export default class BattleUnit extends cc.Component {
 		return this.attackMap[attacks[index]]
 	}
 
+	getAttackCover (point) {
+		let controller = this.getAttackController(0)
+		return controller.getCover(point)
+	}
+
 	async attackStart (target) {
 		let controller = this.getAttackController(0)
 

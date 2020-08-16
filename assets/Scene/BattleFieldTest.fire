@@ -4524,6 +4524,8 @@
     "_enabled": true,
     "RangeFun": 0,
     "RangeParam": "1",
+    "CoverFun": 0,
+    "CoverParam": "",
     "_id": "3aQOaXrPlNzq54KbYsE41T"
   },
   {
@@ -5512,6 +5514,8 @@
     "_enabled": true,
     "RangeFun": 0,
     "RangeParam": "4,7",
+    "CoverFun": 0,
+    "CoverParam": "",
     "Arrow": {
       "__id__": 132
     },
@@ -6502,6 +6506,8 @@
     "_enabled": true,
     "RangeFun": 0,
     "RangeParam": "2",
+    "CoverFun": 0,
+    "CoverParam": "",
     "Lance": {
       "__id__": 158
     },
@@ -7304,6 +7310,8 @@
     "_enabled": true,
     "RangeFun": 0,
     "RangeParam": "4",
+    "CoverFun": 0,
+    "CoverParam": "",
     "_id": "5aMFkMAvxG5acrAnWFK1gZ"
   },
   {
@@ -7320,8 +7328,6 @@
     "accuracy": 100,
     "dodge": 100,
     "critical": 10,
-    "attackMax": 4,
-    "attackMin": 4,
     "_id": "6dieQfv5JAZpGckoTgPP+M"
   },
   {
@@ -8080,6 +8086,8 @@
     "_enabled": true,
     "RangeFun": 0,
     "RangeParam": "1,2",
+    "CoverFun": 0,
+    "CoverParam": "",
     "_id": "89+1047rhAF53EQFSCaRM5"
   },
   {
@@ -8096,8 +8104,6 @@
     "accuracy": 120,
     "dodge": 120,
     "critical": 10,
-    "attackMax": 2,
-    "attackMin": 1,
     "_id": "b27aqJQkFPLayWp/r1QfLT"
   },
   {
@@ -8856,6 +8862,8 @@
     "_enabled": true,
     "RangeFun": 0,
     "RangeParam": "1,3",
+    "CoverFun": 0,
+    "CoverParam": "",
     "_id": "d9tkG58R1DoKsoAXZW98UR"
   },
   {
@@ -8872,8 +8880,6 @@
     "accuracy": 80,
     "dodge": 50,
     "critical": 10,
-    "attackMax": 3,
-    "attackMin": 1,
     "_id": "beTdKWlDZDSJdF4Ovd4+In"
   },
   {

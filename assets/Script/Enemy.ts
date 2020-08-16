@@ -51,7 +51,7 @@ export default class Enemy extends BattleUnit {
 
 			await this.moveTo(route)
 			this.Map.hideIndicator()
-			this.Map.showAreaIndicator(target.iPos)
+			this.Map.showCoverIndicator([target.iPos])
 			await wait(500)
 
 			this.iPos = pos
