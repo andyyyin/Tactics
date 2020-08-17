@@ -183,6 +183,8 @@ export default class BattleMap extends cc.Component {
 					} else {
 						this.Battle.Display.hideInfo()
 					}
+				} else {
+					this.hideCover()
 				}
 			}
 			return
@@ -226,7 +228,6 @@ export default class BattleMap extends cc.Component {
 					this.Battle.attackTo(this.indexToItemPixelPos(iPos), _cover)
 				}
 
-
 				// let target = this.getTargetOfAttack(iPos)
 				// if (target) {
 				// 	this.Battle.attackTo(target)
@@ -253,6 +254,10 @@ export default class BattleMap extends cc.Component {
 	showCoverIndicator (cover) {
 		let {attack} = _indicator
 		this.updateMapIndicator({attack, cover: (_cover = cover.flat())})
+	}
+	hideCover () {
+		let {attack} = _indicator
+		this.updateMapIndicator({attack})
 	}
 
 	updateMapIndicator (param: {move?, attack?, cover?, focus?: boolean}) {
