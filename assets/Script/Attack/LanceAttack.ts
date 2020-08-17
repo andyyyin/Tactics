@@ -15,7 +15,7 @@ export default class LanceAttack extends AttackSuper {
 
 	async onReady () {
 		this.Animation.pause()
-		let relativePos = this.target.node.getPosition().subtract(this.Unit.node.getPosition())
+		let relativePos = this.targetPosition.subtract(this.Unit.node.getPosition())
 		let distance = relativePos.mag()
 		let effectPos = new cc.Vec3(0, distance)
 

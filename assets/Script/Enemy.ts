@@ -27,7 +27,7 @@ export default class Enemy extends BattleUnit {
 		let attackRange
 
 		/* todo 下面处理待优化 */
-		let controller = this.getAttackController(0)
+		let controller = this.getAttackController()
 		if (controller.RangeFun === 0) {
 			let [min, max] = controller.rangeParams
 			min = min || 1
@@ -58,7 +58,7 @@ export default class Enemy extends BattleUnit {
 			this.updatePosition()
 			this.Map.hideIndicator()
 
-			await this.attackStart(target.node.getPosition(), target)
+			await this.attackStart(target.node.getPosition(), [target])
 		}
 		this.node.zIndex = 1
 		this.StateMark.active = false
