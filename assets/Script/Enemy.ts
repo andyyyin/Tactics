@@ -58,7 +58,7 @@ export default class Enemy extends BattleUnit {
 			this.updatePosition()
 			this.Map.hideIndicator()
 
-			await this.attackStart(target)
+			await this.attackStart(target.node.getPosition(), target)
 		}
 		this.node.zIndex = 1
 		this.StateMark.active = false

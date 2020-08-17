@@ -56,8 +56,9 @@ export default class Player extends BattleUnit {
 		this.setState(ACTION_STATE.ATTACK_OPTION)
 	}
 
-	public attackPrepare (index) {
-		let controller = this.getAttackController(index || 0)
+	public attackPrepare (name) {
+		this.attackChosen = name
+		let controller = this.getAttackController()
 		this.attackRange = controller.getRange()
 		this.setState(ACTION_STATE.ATTACK)
 	}
@@ -77,10 +78,10 @@ export default class Player extends BattleUnit {
 		this.setState(ACTION_STATE.OPTION)
 	}
 
-	public async attackTo (target) {
+	public async attackTo (position, targets) {
 		if (_actionLock) return false
 		_actionLock = true
-		await this.attackStart(target)
+		await this.attackStart(position, targets)
 		_actionLock = false
 		this.actionComplete()
 	}
@@ -152,8 +153,9 @@ export default class Player extends BattleUnit {
 				['WAIT', () => this.actionComplete()]
 			])
 		} else if (state === ACTION_STATE.ATTACK_OPTION) {
-			let options = this.attackList.map((name, index) => {
-				return [name, () => this.attackPrepare(index)]
+			this.attackChosen = null
+			let options = this.attackList.map((name) => {
+				return [name, () => this.attackPrepare(name)]
 			})
 			this.showOptionNearby(options)
 		} else {

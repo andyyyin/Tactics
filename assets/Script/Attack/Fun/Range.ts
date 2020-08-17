@@ -24,8 +24,15 @@ r.default = (unit, [min, max]) => {
 	return result
 }
 
-r.fun2 = () => {
-	console.log('fun22')
+r['斜角'] = (unit) => {
+	let Map = unit.Map
+	let {x, y} = Map.iToP(unit.tempPos || unit.iPos)
+	return [
+		Map.pToI(x + 1, y + 1),
+		Map.pToI(x + 1, y - 1),
+		Map.pToI(x - 1, y - 1),
+		Map.pToI(x - 1, y + 1),
+	]
 }
 
 /* ---------------------- end ----------------------*/

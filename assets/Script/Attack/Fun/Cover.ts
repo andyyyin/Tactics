@@ -3,7 +3,7 @@ const c: any = {}
 
 c.default = (unit, point, [length]) => [point]
 
-c.sweep = (unit, point, [length]) => {
+c['横扫'] = (unit, point, [length]) => {
 	let Map = unit.Map
 	let stand = unit.tempPos || unit.iPos
 	length = length || 1
@@ -19,6 +19,18 @@ c.sweep = (unit, point, [length]) => {
 			result.push(Map.toDown(result[result.length - 1]))
 		}
 	}
+	return result
+}
+
+c['三角'] = (unit, point) => {
+	let Map = unit.Map
+	let stand = unit.tempPos || unit.iPos
+	let result = [point]
+	let {x: rx, y: ry} = Map.relativeTo(stand, point)
+	if (rx > 0) result.push(Map.toLeft(point))
+	if (rx < 0) result.push(Map.toRight(point))
+	if (ry < 0) result.push(Map.toDown(point))
+	if (ry > 0) result.push(Map.toUp(point))
 	return result
 }
 

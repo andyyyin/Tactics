@@ -1,0 +1,97 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "SwordSweep",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.6666666666666666,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "sprite": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 18.727
+            },
+            {
+              "frame": 0.08333333333333333,
+              "value": -20.115,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.3333333333333333,
+              "value": 35.246,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": 18.727
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": -0.34
+            },
+            {
+              "frame": 0.08333333333333333,
+              "value": 9.482,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.3333333333333333,
+              "value": 17.072,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": -0.34
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": -46
+            },
+            {
+              "frame": 0.08333333333333333,
+              "value": 36.517999999999994,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.3333333333333333,
+              "value": -101.60300000000001,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": -46
+            }
+          ]
+        }
+      },
+      "effect_circle": {
+        "props": {
+          "active": [
+            {
+              "frame": 0,
+              "value": false
+            },
+            {
+              "frame": 0.3333333333333333,
+              "value": true
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": false
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

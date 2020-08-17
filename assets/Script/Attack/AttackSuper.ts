@@ -29,7 +29,7 @@ export default class AnimDefault extends cc.Component {
 	Animation
 	Unit
 
-	target
+	targetPosition
 
 	protected onLoad() {
 		this.Animation = this.getComponent(cc.Animation)
@@ -45,10 +45,10 @@ export default class AnimDefault extends cc.Component {
 		this.coverFun = getCoverFun(this.CoverFun)
 	}
 
-	async playAttackTo (target) {
-		this.target = target
+	async playAttackTo (position) {
+		this.targetPosition = position
 
-		let rotation = getTwoPointAngle(this.Unit.node, target.node)
+		let rotation = getTwoPointAngle(this.Unit.node, position)
 		this.node.angle = rotationToAngle(rotation)
 
 		await this.playAnim()

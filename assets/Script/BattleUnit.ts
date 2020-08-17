@@ -40,6 +40,8 @@ export default class BattleUnit extends cc.Component {
 
 	HpProgress
 
+	attackChosen
+
 	protected onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
 		this.Map = this.Battle.Map
@@ -88,39 +90,45 @@ export default class BattleUnit extends cc.Component {
 		this.node.setPosition(this.Map.indexToItemPixelPos(pos));
 	}
 
-	getAttackController (index) {
-		return this.attackMap[this.attackList[index]]
+	getAttackController (name?) {
+		name = name || this.attackChosen || this.attackList[0]
+		return this.attackMap[name]
 	}
 
 	getAttackCover (point) {
-		let controller = this.getAttackController(0)
+		let controller = this.getAttackController()
 		return controller.getCover(point)
 	}
 
-	async attackStart (target) {
-		let controller = this.getAttackController(0)
+	async attackStart (position, targets) {
+		this.Map.IndicatorNode.zIndex = 0
+
+		let controller = this.getAttackController()
 
 		if (controller) {
-			await controller.playAttackTo(target)
+			await controller.playAttackTo(position)
 		}
-		let hitChance = calcHitChance(this, target)
-		let position = target.node.getPosition()
 
-		let criChance = this.critical / 100
-		let isHit = Math.random() < hitChance
-		let isCritical = isHit && Math.random() < criChance
+		for (let i = 0; i < targets.length; i++) {
+			let target = targets[i]
+			let tPosition = target.node.getPosition()
+			let hitChance = calcHitChance(this, target)
 
+			let criChance = this.critical / 100
+			let isHit = Math.random() < hitChance
+			let isCritical = isHit && Math.random() < criChance
 
-		if (isCritical) {
-			let damage = Math.floor(this.damage * (2 + Math.random()))
-			await this.Battle.Anim.playCriDamage(position, damage)
-			target.changeHp(-damage)
-		} else if (isHit) {
-			let damage = this.damage
-			await this.Battle.Anim.playDamage(position, damage)
-			target.changeHp(-damage)
-		} else {
-			await this.Battle.Anim.playMiss(position)
+			if (isCritical) {
+				let damage = Math.floor(this.damage * (2 + Math.random()))
+				await this.Battle.Anim.playCriDamage(tPosition, damage)
+				target.changeHp(-damage)
+			} else if (isHit) {
+				let damage = this.damage
+				await this.Battle.Anim.playDamage(tPosition, damage)
+				target.changeHp(-damage)
+			} else {
+				await this.Battle.Anim.playMiss(tPosition)
+			}
 		}
 		console.log('attack finish')
 	}

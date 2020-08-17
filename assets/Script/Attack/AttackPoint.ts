@@ -9,8 +9,8 @@ export default class AnimPoint extends AttackSuper {
 		super.onLoad()
 	}
 
-	async playAttackTo (target) {
-		let relativePos = target.node.getPosition().subtract(this.Unit.node.getPosition())
+	async playAttackTo (position) {
+		let relativePos = position.subtract(this.Unit.node.getPosition())
 		this.node.setPosition(relativePos)
 		await this.playAnim()
 	}

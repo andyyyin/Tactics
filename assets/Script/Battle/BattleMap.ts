@@ -10,6 +10,7 @@ let _moveIndicatorColor
 let _attackIndicatorColor
 
 let _route
+let _cover
 
 let _indicator = {
 	move: null,
@@ -209,8 +210,8 @@ export default class BattleMap extends cc.Component {
 	onClick (iPos) {
 		// if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
-			if (this.Battle.focusPlayer.isMoving) {
-				let player = this.Battle.focusPlayer
+			let player = this.Battle.focusPlayer
+			if (player.isMoving) {
 				let range = player.moveRange
 				let inRange = range && range.flat().includes(iPos)
 				let occupied = this.Battle.getUnitAt(iPos)
@@ -219,13 +220,19 @@ export default class BattleMap extends cc.Component {
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
-			} else if (this.Battle.focusPlayer.isAttacking) {
-				let target = this.getTargetOfAttack(iPos)
-				if (target) {
-					this.Battle.attackTo(target)
-				} else {
-					// 点空了，什么也不做，如需要回退可调用revertAction
+			} else if (player.isAttacking) {
+				let range = player.attackRange
+				if (range && range.flat().includes(iPos)) {
+					this.Battle.attackTo(this.indexToItemPixelPos(iPos), _cover)
 				}
+
+
+				// let target = this.getTargetOfAttack(iPos)
+				// if (target) {
+				// 	this.Battle.attackTo(target)
+				// } else {
+				// 	// 点空了，什么也不做，如需要回退可调用revertAction
+				// }
 			}
 			return
 		}
@@ -245,7 +252,7 @@ export default class BattleMap extends cc.Component {
 	}
 	showCoverIndicator (cover) {
 		let {attack} = _indicator
-		this.updateMapIndicator({attack, cover: cover.flat()})
+		this.updateMapIndicator({attack, cover: (_cover = cover.flat())})
 	}
 
 	updateMapIndicator (param: {move?, attack?, cover?, focus?: boolean}) {
@@ -270,14 +277,15 @@ export default class BattleMap extends cc.Component {
 
 		if (attack) {
 			attack.map(ap => show(ap, _attackIndicatorColor, 70))
-			if (cover) {
-				cover.map(cp => show(cp, _attackIndicatorColor, 150))
-			}
-		} else if (move) {
+		}
+		if (cover) {
+			cover.map(cp => show(cp, _attackIndicatorColor, 150))
+		}
+		if (move) {
 			move.map(mp => show(mp, _moveIndicatorColor, focus ? 150 : 70))
 		}
 
-		this.IndicatorNode.zIndex = attack ? 5 : 0
+		this.IndicatorNode.zIndex = (attack || cover) ? 5 : 0
 
 		_indicator = {move, attack, cover, focus}
 	}
@@ -468,6 +476,12 @@ export default class BattleMap extends cc.Component {
 	isSameCol (i1, i2) {
 		let {width} = this.mapSize
 		return Math.floor(i1 % width) === Math.floor(i2 % width)
+	}
+
+	relativeTo (i1, i2) {
+		let {x: x1, y: y1} = this.iToP(i1)
+		let {x: x2, y: y2} = this.iToP(i2)
+		return {x: x2 - x1, y: y2 - y1}
 	}
 
 	toUp (index) { return index - this.mapSize.width }

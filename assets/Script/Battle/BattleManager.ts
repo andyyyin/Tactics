@@ -60,8 +60,9 @@ export default class BattleManager extends cc.Component {
 		this.playerTurnEnd()
 	}
 
-	public async attackTo (target) {
-		await this.focusPlayer.attackTo(target)
+	public async attackTo (position, cover) {
+		let targets = this.enemies.filter(e => cover.includes(e.iPos))
+		await this.focusPlayer.attackTo(position, targets)
 	}
 
 	public getPlayerAt (ip) {

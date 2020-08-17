@@ -10,7 +10,7 @@ export default class BowShoot extends AttackSuper {
 
 	async onShoot () {
 		this.Animation.pause()
-		let relativePos = this.target.node.getPosition().subtract(this.Unit.node.getPosition())
+		let relativePos = this.targetPosition.subtract(this.Unit.node.getPosition())
 
 		await new Promise(resolve => {
 			let distance = relativePos.mag()
