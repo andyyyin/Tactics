@@ -61,7 +61,12 @@ export default class BattleManager extends cc.Component {
 	}
 
 	public async attackTo (position, cover) {
-		let targets = this.enemies.filter(e => cover.includes(e.iPos))
+		let targets = []
+		// 保证处理顺序与cover列表顺序相同
+		cover.map(ci => {
+			let enemy = this.getEnemyAt(ci)
+			if (enemy) targets.push(enemy)
+		})
 		await this.focusPlayer.attackTo(position, targets)
 	}
 

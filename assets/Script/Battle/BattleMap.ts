@@ -365,7 +365,10 @@ export default class BattleMap extends cc.Component {
 			prevArray.map(ip => {
 				let around = this.aroundList(ip)
 				around.map(ai => {
-					if (this.isBlocked(ai, unitSide)) return
+					if (this.isBlocked(ai)) return
+					if (this.isOutOfMap(ai)) return
+					if (unitSide === UNIT_SIDE.ENEMY && this.Battle.getPlayerAt(ai)) return
+					if (unitSide === UNIT_SIDE.PLAYER && this.Battle.getEnemyAt(ai)) return
 					if (currentArray.includes(ai)) return
 					if (prevArray.includes(ai)) return
 					if (moveRange[step - 2] && moveRange[step - 2].includes(ai)) return
@@ -402,14 +405,13 @@ export default class BattleMap extends cc.Component {
 		return event.getLocation().add(camera)
 	}
 
-	isBlocked (ip, unitSide?) {
+	isBlocked (ip) {
 		if (!this.iTileList[ip]) return
 		let {x, y} = this.iToP(ip)
 		if (this.layerBarrier.getTileGIDAt(x, y)) return true
-		if (unitSide === undefined && this.Battle.getUnitAt(ip)) return true
-		if (unitSide === UNIT_SIDE.ENEMY && this.Battle.getPlayerAt(ip)) return true
-		if (unitSide === UNIT_SIDE.PLAYER && this.Battle.getEnemyAt(ip)) return true
-		// todo 其他物体检测
+		// if (unitSide === undefined && this.Battle.getUnitAt(ip)) return true
+		// if (unitSide === UNIT_SIDE.ENEMY && this.Battle.getPlayerAt(ip)) return true
+		// if (unitSide === UNIT_SIDE.PLAYER && this.Battle.getEnemyAt(ip)) return true
 		return false
 	}
 
@@ -493,6 +495,10 @@ export default class BattleMap extends cc.Component {
 	toLeft (index) { return index - 1 }
 	toRight (index) { return index + 1 }
 	toDown (index) { return index + this.mapSize.width }
+
+	isOutOfMap (index) {
+		return !Number.isInteger(index) || index < 0 || index >= this.iTileList.length
+	}
 
 	aroundList (index) {
 		return [this.toUp(index), this.toRight(index), this.toLeft(index), this.toDown(index)]

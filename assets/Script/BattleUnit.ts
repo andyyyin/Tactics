@@ -1,3 +1,5 @@
+import {UNIT_SIDE} from "./Global/Enums";
+
 const {ccclass, property} = cc._decorator;
 import {calcHitChance} from "./Global/Calc";
 
@@ -13,6 +15,8 @@ export default class BattleUnit extends cc.Component {
 
 	iPos
 	tempPos
+
+	unitSide
 
 	StateMark
 
@@ -61,6 +65,8 @@ export default class BattleUnit extends cc.Component {
 		this.updatePosition()
 		this.node.zIndex = 1
 	}
+
+	get isPlayer () { return this.unitSide === UNIT_SIDE.PLAYER }
 
 	public addAttackController (controller, name) {
 		this.attackMap[name] = controller

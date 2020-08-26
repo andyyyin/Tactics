@@ -34,6 +34,23 @@ c['三角'] = (unit, point) => {
 	return result
 }
 
+c['直线畅通'] = (unit, point, [length]) => {
+	let Map = unit.Map
+	let stand = unit.tempPos || unit.iPos
+	let result = [point]
+	let {x: rx, y: ry} = Map.relativeTo(stand, point)
+	for (let i = 1; i <= length; i++) {
+		let next
+		if (rx > 0) next = Map.toRight(result[result.length - 1])
+		if (rx < 0) next = Map.toLeft(result[result.length - 1])
+		if (ry < 0) next = Map.toUp(result[result.length - 1])
+		if (ry > 0) next = Map.toDown(result[result.length - 1])
+		if (Map.isBlocked(next) || Map.isOutOfMap(next)) break
+		result.push(next)
+	}
+	return result
+}
+
 /* ---------------------- end ----------------------*/
 
 let cKeys = Object.keys(c)

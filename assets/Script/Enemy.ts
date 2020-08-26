@@ -6,10 +6,9 @@ import BattleUnit from "./BattleUnit";
 @ccclass
 export default class Enemy extends BattleUnit {
 
-	get isPlayer () { return false }
-
 	protected onLoad() {
 		super.onLoad()
+		this.unitSide = UNIT_SIDE.ENEMY
 		this.Battle.registerEnemy(this)
 		this.iPos = this.Map.pixelPosToIndex(this.node)
 	}

@@ -21,12 +21,10 @@ export default class Player extends BattleUnit {
 
 	attackRange;
 
-	get isPlayer () { return true }
-
 	protected onLoad() {
 		super.onLoad()
-
 		this.setState(ACTION_STATE.READY)
+		this.unitSide = UNIT_SIDE.PLAYER
 		this.Battle.registerPlayer(this)
 		this.iPos = this.Map.pixelPosToIndex(this.node)
 	}
