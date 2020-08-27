@@ -49,7 +49,6 @@ export default class AIBase extends cc.Component {
 			await wait(500)
 
 			await this.Unit.moveTo(route)
-			this.Map.hideIndicator()
 			this.Map.showCoverIndicator([target.iPos])
 			await wait(500)
 

@@ -48,8 +48,6 @@ export default class BattleMap extends cc.Component {
 	mouseLoc;
 	mouseHolding
 
-	showing
-
 	stopControlFlag = false
 
 	onLoad() {
@@ -163,7 +161,6 @@ export default class BattleMap extends cc.Component {
 	}
 
 	onHover (iPos) {
-		// if (this.Battle.Control.isShowingPanel) return
 		if (this.Battle.focusPlayer) {
 			let player = this.Battle.focusPlayer
 			if (player.isMoving) {
@@ -201,10 +198,9 @@ export default class BattleMap extends cc.Component {
 			this.Battle.Display.hideInfo()
 		}
 		if (target && target.isPlayer && !target.isDone) {
-			this.hideIndicator()
 			this.updateMapIndicator({move: target.moveRange.flat()})
-		} else if (this.showing) {
-			this.hideIndicator()
+		} else {
+			this.updateMapIndicator()
 		}
 
 	}
@@ -260,7 +256,7 @@ export default class BattleMap extends cc.Component {
 		this.updateMapIndicator({attack})
 	}
 
-	updateMapIndicator (param: {move?, attack?, cover?, focus?: boolean}) {
+	updateMapIndicator (param: {move?, attack?, cover?, focus?: boolean} = {}) {
 		let {move, attack, cover, focus} = param
 		const show = (ip, color, opacity) => {
 			let iTile = this.iTileList[ip]
@@ -296,11 +292,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	hideIndicator () {
-		this.iTileList.map(iTile => {
-			iTile.active = false
-			iTile.getChildByName('Route').active = false
-		})
-		this.showing = false
+		this.updateMapIndicator()
 	}
 
 	showRoute (pos, range) {
