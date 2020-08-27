@@ -496,7 +496,7 @@
       "array": [
         0,
         0,
-        270.19992598074487,
+        269.33390057696045,
         0,
         0,
         0,
@@ -1574,6 +1574,7 @@
     "ButtonPrefab": {
       "__uuid__": "3d5dbb06-f8bf-49d5-9812-7180cf1b11ff"
     },
+    "cameraSpeed": 600,
     "_id": "24QkoLRQFMMIB9142OH4KP"
   },
   {
@@ -5556,13 +5557,13 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        20.174,
+        16,
         0.519,
         0,
         0,
         0,
-        0,
         1,
+        6.123233995736766e-17,
         0.4,
         0.4,
         0.4
@@ -5572,7 +5573,7 @@
       "__type__": "cc.Vec3",
       "x": 0,
       "y": 0,
-      "z": 0
+      "z": 180
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -5597,7 +5598,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "fb9bfeb2-1472-4328-b188-0c09d7e26f1b"
+      "__uuid__": "ba45c4cc-b25c-47f2-89d2-fab30384bc86"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -5611,7 +5612,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "2c15d5d2-767a-4ef9-992a-37b177b6e835"
+      "__uuid__": "70e6a195-1934-42a7-b203-9c3233643837"
     },
     "_id": "6cNVC06FZAHrFPWyYoIHaA"
   },
@@ -5857,10 +5858,10 @@
     },
     "_clips": [
       {
-        "__uuid__": "69e64f66-761a-4f90-9d9b-6784984a71f6"
+        "__uuid__": "0f8b1e2a-21bb-4df4-859f-6d8a2b3dd180"
       },
       {
-        "__uuid__": "0f8b1e2a-21bb-4df4-859f-6d8a2b3dd180"
+        "__uuid__": "69e64f66-761a-4f90-9d9b-6784984a71f6"
       }
     ],
     "playOnLoad": false,

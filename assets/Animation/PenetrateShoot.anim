@@ -14,7 +14,7 @@
           "x": [
             {
               "frame": 0,
-              "value": 20.174
+              "value": 16
             },
             {
               "frame": 0.016666666666666666,
@@ -23,7 +23,7 @@
             },
             {
               "frame": 0.8333333333333334,
-              "value": 20.174
+              "value": 16
             }
           ],
           "y": [
@@ -44,16 +44,16 @@
           "angle": [
             {
               "frame": 0,
-              "value": 0
+              "value": 180
             },
             {
               "frame": 0.016666666666666666,
-              "value": 90,
+              "value": 270,
               "curve": "constant"
             },
             {
               "frame": 0.8333333333333334,
-              "value": 0
+              "value": 180
             }
           ]
         },
@@ -63,31 +63,25 @@
               {
                 "frame": 0,
                 "value": {
-                  "__uuid__": "fb9bfeb2-1472-4328-b188-0c09d7e26f1b"
+                  "__uuid__": "ba45c4cc-b25c-47f2-89d2-fab30384bc86"
                 }
               },
               {
-                "frame": 0.16666666666666666,
+                "frame": 0.2,
                 "value": {
-                  "__uuid__": "cbe0687b-f577-4a07-a305-8e882dd84564"
-                }
-              },
-              {
-                "frame": 0.3333333333333333,
-                "value": {
-                  "__uuid__": "f18c64c1-8b05-4ab0-9c07-c38f48b11158"
+                  "__uuid__": "9e7d89e9-196d-4e91-8baf-973d0414cfb1"
                 }
               },
               {
                 "frame": 0.5,
                 "value": {
-                  "__uuid__": "fb9bfeb2-1472-4328-b188-0c09d7e26f1b"
+                  "__uuid__": "ba45c4cc-b25c-47f2-89d2-fab30384bc86"
                 }
               },
               {
                 "frame": 0.8333333333333334,
                 "value": {
-                  "__uuid__": "fb9bfeb2-1472-4328-b188-0c09d7e26f1b"
+                  "__uuid__": "ba45c4cc-b25c-47f2-89d2-fab30384bc86"
                 }
               }
             ]
@@ -121,19 +115,13 @@
               "curve": "constant"
             },
             {
-              "frame": 0.16666666666666666,
+              "frame": 0.2,
               "value": 43,
               "curve": "constant"
             },
             {
-              "frame": 0.3333333333333333,
-              "value": 38,
-              "curve": "constant"
-            },
-            {
               "frame": 0.48333333333333334,
-              "value": 38,
-              "curve": "linear"
+              "value": 43
             },
             {
               "frame": 0.5833333333333334,
