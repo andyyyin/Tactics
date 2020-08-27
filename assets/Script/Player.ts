@@ -114,10 +114,6 @@ export default class Player extends BattleUnit {
 
 	/* ------------ private ------------ */
 
-	private updateMoveRange () {
-		this.moveRange = this.Map.handleMoveRange(this.iPos, this.move, UNIT_SIDE.PLAYER)
-	}
-
 	private showOptionNearby (options) {
 		let camera = this.Battle.Control.CameraNode
 		// todo

@@ -91,6 +91,10 @@ export default class BattleUnit extends cc.Component {
 		})
 	}
 
+	updateMoveRange () {
+		return (this.moveRange = this.Map.handleMoveRange(this.iPos, this.move, this.unitSide))
+	}
+
 	updatePosition () {
 		let pos = this.tempPos || this.iPos
 		this.node.setPosition(this.Map.indexToItemPixelPos(pos));
