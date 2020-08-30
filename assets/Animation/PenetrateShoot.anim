@@ -100,7 +100,7 @@
               "value": true
             },
             {
-              "frame": 0.5833333333333334,
+              "frame": 0.5166666666666667,
               "value": false
             }
           ],
@@ -124,8 +124,8 @@
               "value": 43
             },
             {
-              "frame": 0.5833333333333334,
-              "value": 336
+              "frame": 0.5,
+              "value": 65
             }
           ]
         }
@@ -152,8 +152,8 @@
   },
   "events": [
     {
-      "frame": 0.5333333333333333,
-      "func": "onHit",
+      "frame": 0.5,
+      "func": "onShoot",
       "params": []
     }
   ]

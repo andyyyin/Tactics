@@ -11,6 +11,7 @@ let _attackIndicatorColor
 
 let _route
 let _cover
+let _animPos
 
 let _indicator = {
 	move: null,
@@ -170,8 +171,9 @@ export default class BattleMap extends cc.Component {
 			if (player.isAttacking) {
 				let range = player.attackRange
 				if (range && range.flat().includes(iPos)) {
-					let cover = player.getAttackCover(iPos)
-					if (cover) {
+					let {cover, animPos} = player.getAttackCover(iPos)
+					if (cover && cover.length) {
+						_animPos = animPos
 						this.showCoverIndicator(cover)
 					}
 					let target = player.getOpponents().find(e => e.iPos === iPos)
@@ -218,17 +220,11 @@ export default class BattleMap extends cc.Component {
 				} else {
 					// 点空了，什么也不做，如需要回退可调用revertAction
 				}
-			} else if (player.isAttacking) {
-				let range = player.attackRange
-				if (range && range.flat().includes(iPos)) {
-					this.Battle.attackTo(this.indexToItemPixelPos(iPos), _cover)
-				}
-
-				// let target = this.getTargetOfAttack(iPos)
-				// if (target) {
-				// 	this.Battle.attackTo(target)
-				// } else {
-				// 	// 点空了，什么也不做，如需要回退可调用revertAction
+			} else if (player.isAttacking && _cover && _cover.length) {
+				// let range = player.attackRange
+				// if (range && range.flat().includes(iPos)) {
+				let position = this.indexToItemPixelPos(_animPos !== undefined ? _animPos : iPos)
+				this.Battle.attackTo(position, _cover)
 				// }
 			}
 			return
@@ -249,7 +245,7 @@ export default class BattleMap extends cc.Component {
 	}
 	showCoverIndicator (cover) {
 		let {attack} = _indicator
-		this.updateMapIndicator({attack, cover: (_cover = cover.flat())})
+		this.updateMapIndicator({attack, cover: cover.flat()})
 	}
 	hideCover () {
 		let {attack} = _indicator
@@ -287,7 +283,7 @@ export default class BattleMap extends cc.Component {
 		}
 
 		this.IndicatorNode.zIndex = (attack || cover) ? 5 : 0
-
+		_cover = cover
 		_indicator = {move, attack, cover, focus}
 	}
 

@@ -1,57 +1,65 @@
 
 const c: any = {}
 
-c.default = (unit, point, [length]) => [point]
+c.default = (unit, point, [length]) => ({cover: [point]})
 
 c['横扫'] = (unit, point, [length]) => {
 	let Map = unit.Map
 	let stand = unit.tempPos || unit.iPos
 	length = length || 1
-	let result = [point]
+	let cover = [point]
 	let isSameRow = Map.isSameRow(stand, point)
 	let isSameCol = Map.isSameCol(stand, point)
 	for (let i = 0; i < length; i++) {
 		if (isSameCol) {
-			result.unshift(Map.toLeft(result[0]))
-			result.push(Map.toRight(result[result.length - 1]))
+			cover.unshift(Map.toLeft(cover[0]))
+			cover.push(Map.toRight(cover[cover.length - 1]))
 		} else if (isSameRow) {
-			result.unshift(Map.toUp(result[0]))
-			result.push(Map.toDown(result[result.length - 1]))
+			cover.unshift(Map.toUp(cover[0]))
+			cover.push(Map.toDown(cover[cover.length - 1]))
+		}
+		if (Map.isBlocked(cover[0]) || Map.isBlocked(cover[cover.length - 1])) {
+			return null
 		}
 	}
-	return result
+	return {cover}
 }
 
 c['三角'] = (unit, point) => {
 	let Map = unit.Map
 	let stand = unit.tempPos || unit.iPos
-	let result = [point]
+	let cover = [point]
 	let {x: rx, y: ry} = Map.relativeTo(stand, point)
-	if (rx > 0) result.push(Map.toLeft(point))
-	if (rx < 0) result.push(Map.toRight(point))
-	if (ry < 0) result.push(Map.toDown(point))
-	if (ry > 0) result.push(Map.toUp(point))
-	return result
+	if (rx > 0) cover.push(Map.toLeft(point))
+	if (rx < 0) cover.push(Map.toRight(point))
+	if (ry < 0) cover.push(Map.toDown(point))
+	if (ry > 0) cover.push(Map.toUp(point))
+	if (cover.find(p => Map.isBlocked(p)) !== undefined) {
+		return null
+	}
+	return {cover}
 }
 
 c['直线畅通'] = (unit, point, [length]) => {
 	let Map = unit.Map
 	let stand = unit.tempPos || unit.iPos
-	let result = [point]
+	if (Map.isBlocked(point)) return null
+	let cover = [point]
 	let {x: rx, y: ry} = Map.relativeTo(stand, point)
 	for (let i = 1; i <= length; i++) {
 		let next
-		if (rx > 0) next = Map.toRight(result[result.length - 1])
-		if (rx < 0) next = Map.toLeft(result[result.length - 1])
-		if (ry < 0) next = Map.toUp(result[result.length - 1])
-		if (ry > 0) next = Map.toDown(result[result.length - 1])
+		if (rx > 0) next = Map.toRight(cover[cover.length - 1])
+		if (rx < 0) next = Map.toLeft(cover[cover.length - 1])
+		if (ry < 0) next = Map.toUp(cover[cover.length - 1])
+		if (ry > 0) next = Map.toDown(cover[cover.length - 1])
 		if (Map.isBlocked(next) || Map.isOutOfMap(next)) break
-		result.push(next)
+		cover.push(next)
 	}
-	return result
+	let animPos = cover[cover.length - 1]
+	return {cover, animPos}
 }
 
-/* ---------------------- end ----------------------*/
+/* ---------------------- end ---------------------- */
 
 let cKeys = Object.keys(c)
 let cEnum: any = {}

@@ -68,6 +68,7 @@ export default class AnimDefault extends cc.Component {
 
 	onFinish () {
 		this.node.angle = 0
+		this.targetPosition = undefined
 	}
 
 	getRange () {

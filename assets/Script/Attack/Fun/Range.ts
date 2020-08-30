@@ -32,7 +32,7 @@ r['斜角'] = (unit) => {
 		Map.pToI(x + 1, y - 1),
 		Map.pToI(x - 1, y - 1),
 		Map.pToI(x - 1, y + 1),
-	]
+	].filter(ip => !Map.isBlocked(ip))
 }
 
 /* ---------------------- end ----------------------*/
