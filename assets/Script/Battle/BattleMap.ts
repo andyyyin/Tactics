@@ -382,6 +382,7 @@ export default class BattleMap extends cc.Component {
 		opponents = opponents.filter(p => this.getDistance(p.iPos, startPos) <= (move + max))
 		let results = []
 		moveRange.flat().map(ip => {
+			if (ip !== startPos && this.Battle.getUnitAt(ip)) return
 			opponents.map(op => {
 				let distance = this.getDistance(ip, op.iPos)
 				if (distance >= min && distance <= max) {
@@ -440,6 +441,23 @@ export default class BattleMap extends cc.Component {
 		this.stopControlFlag = false
 		this.CursorNode.active = true
 		this.updateIndicator()
+	}
+
+	getPosTowards (range, targetPos) {
+		let distance
+		let options
+		range.flat().map(ip => {
+			if (this.Battle.getUnitAt(ip)) return
+			let thisDistance = this.getDistance(ip, targetPos)
+			let d = thisDistance - distance
+			if (distance === undefined || thisDistance - distance < 0) {
+				distance = thisDistance
+				options = [ip]
+			} else if (thisDistance === distance) {
+				options.push[ip]
+			}
+		})
+		return options.length < 2 ? options[0] : options[Math.floor(Math.random() * options.length)]
 	}
 
 	pToI (p1, p2?) {

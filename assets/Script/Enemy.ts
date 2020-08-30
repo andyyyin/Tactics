@@ -8,6 +8,8 @@ export default class Enemy extends BattleUnit {
 
 	aiComponent
 
+	isDone = false
+
 	protected onLoad() {
 		super.onLoad()
 		this.unitSide = UNIT_SIDE.ENEMY
@@ -23,15 +25,34 @@ export default class Enemy extends BattleUnit {
 		this.aiComponent = component
 	}
 
+	public onTurnPrepare () {
+		this.isDone = false
+		this.aiComponent.onTurnPrepare()
+	}
+
 	public async startAI () {
 		this.node.zIndex = 2
 		this.StateMark.active = true
 		this.StateMark.color = this.Battle.State.StateColorFocus
 
-		await this.aiComponent.startAction()
+		this.isDone = await this.aiComponent.startAction()
 
 		this.node.zIndex = 1
 		this.StateMark.active = false
+	}
+
+	public async actMoveTo (pos) {
+		this.Map.showFocusIndicator(this.moveRange)
+		await wait(500)
+
+		let route = this.Map.showRoute(pos, this.moveRange)
+		await wait(500)
+
+		await this.moveTo(route)
+
+		this.iPos = pos
+		this.updatePosition()
+		this.Map.hideIndicator()
 	}
 
 	getOpponents () {

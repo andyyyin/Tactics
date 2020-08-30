@@ -109,6 +109,7 @@ export default class BattleManager extends cc.Component {
 		this.Map.enableControl()
 		console.log('player turn start')
 		this.players.map(p => p.resetState())
+		this.Map.updateIndicator(true)
 	}
 
 	private playerTurnEnd () {
@@ -117,11 +118,18 @@ export default class BattleManager extends cc.Component {
 
 	private async enemyTurnStart () {
 		this.Map.stopControl()
-		console.log('enemy act')
-		for (let i = 0; i < this.enemies.length; i++) {
-			await	this.enemies[i].startAI()
+		console.log('enemy start act')
+		this.enemies.map(e => e.onTurnPrepare())
+		let hasNewSituation = true
+		while (hasNewSituation) {
+			hasNewSituation = false
+			for (let i = 0; i < this.enemies.length; i++) {
+				if (this.enemies[i].isDone) continue
+				await	this.enemies[i].startAI()
+				if (this.enemies[i].isDone) hasNewSituation = true
+			}
 		}
-		console.log('enemy done')
+		console.log('enemy all done')
 		this.enemyTurnEnd()
 	}
 
