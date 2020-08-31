@@ -16,7 +16,7 @@ export default class BowShoot extends AttackSuper {
 
 		await new Promise(resolve => {
 			let distance = relativePos.mag()
-			let time = distance / 5000
+			let time = distance / 3000
 			cc.tween(this.Arrow)
 				.to(time, {position: new cc.Vec2(0, distance)})
 				.call(resolve).start()
