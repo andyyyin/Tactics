@@ -68,6 +68,8 @@ export default class BattleUnit extends cc.Component {
 
 	get isPlayer () { return this.unitSide === UNIT_SIDE.PLAYER }
 
+	get curPos () { return this.tempPos || this.iPos}
+
 	public addAttackController (controller, name) {
 		this.attackMap[name] = controller
 		this.attackList.push(name)
@@ -96,7 +98,7 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	updatePosition () {
-		let pos = this.tempPos || this.iPos
+		let pos = this.curPos
 		this.node.setPosition(this.Map.indexToItemPixelPos(pos));
 	}
 

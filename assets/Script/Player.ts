@@ -103,7 +103,7 @@ export default class Player extends BattleUnit {
 	}
 
 	public actionComplete () {
-		this.iPos = this.tempPos || this.iPos
+		this.iPos = this.curPos
 		this.setState(ACTION_STATE.DONE)
 	}
 
@@ -134,7 +134,7 @@ export default class Player extends BattleUnit {
 		}
 
 		if (state === ACTION_STATE.MOVE) {
-			this.tempPos = null
+			this.tempPos = undefined
 			this.updatePosition()
 			this.Map.showFocusIndicator(this.moveRange)
 		} else if (this.actionState === ACTION_STATE.MOVE) {

@@ -496,7 +496,7 @@
       "array": [
         0,
         0,
-        201.1344000289359,
+        260.67168657995154,
         0,
         0,
         0,
@@ -7006,8 +7006,8 @@
     "_enabled": true,
     "Name": "突刺",
     "AnimName": "LanceAttack",
-    "RangeFun": 0,
-    "RangeParam": "2",
+    "RangeFun": 1,
+    "RangeParam": "",
     "CoverFun": 0,
     "CoverParam": "",
     "Lance": {

@@ -171,8 +171,9 @@ export default class BattleMap extends cc.Component {
 			if (player.isAttacking) {
 				let range = player.attackRange
 				if (range && range.flat().includes(iPos)) {
-					let {cover, animPos} = player.getAttackCover(iPos)
-					if (cover && cover.length) {
+					let coverData = player.getAttackCover(iPos)
+					if (coverData && coverData.cover && coverData.cover.length) {
+						let {cover, animPos} = coverData
 						_animPos = animPos
 						this.showCoverIndicator(cover)
 					}
@@ -497,10 +498,33 @@ export default class BattleMap extends cc.Component {
 		return {x: x2 - x1, y: y2 - y1}
 	}
 
-	toUp (index) { return index - this.mapSize.width }
-	toLeft (index) { return index - 1 }
-	toRight (index) { return index + 1 }
-	toDown (index) { return index + this.mapSize.width }
+	getPosBetween (i1, i2) {
+		let result = []
+		if (i1 !== i2 && this.isSameCol(i1, i2)) {
+			let up = i1, down = i2
+			if (i1 > i2) [up, down] = [i2, i1]
+			let curIp
+			while ((curIp = this.toDown(result[result.length - 1] || up)) !== down) {
+				result.push(curIp)
+			}
+			return result
+		}
+		if (i1 !== i2 && this.isSameRow(i1, i2)) {
+			let left = i1, right = i2
+			if (i1 > i2) [left, right] = [i2, i1]
+			let curIp
+			while ((curIp = this.toRight(result[result.length - 1] || left)) !== right) {
+				result.push(curIp)
+			}
+			return result
+		}
+		return null
+	}
+
+	toUp (index, step = 1) { return index - this.mapSize.width * step }
+	toLeft (index, step = 1) { return index - step }
+	toRight (index, step = 1) { return index + step }
+	toDown (index, step = 1) { return index + this.mapSize.width * step }
 
 	isOutOfMap (index) {
 		return !Number.isInteger(index) || index < 0 || index >= this.iTileList.length

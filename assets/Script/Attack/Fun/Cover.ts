@@ -5,7 +5,7 @@ c.default = (unit, point, [length]) => ({cover: [point]})
 
 c['横扫'] = (unit, point, [length]) => {
 	let Map = unit.Map
-	let stand = unit.tempPos || unit.iPos
+	let stand = unit.curPos
 	length = length || 1
 	let cover = [point]
 	let isSameRow = Map.isSameRow(stand, point)
@@ -27,7 +27,7 @@ c['横扫'] = (unit, point, [length]) => {
 
 c['三角'] = (unit, point) => {
 	let Map = unit.Map
-	let stand = unit.tempPos || unit.iPos
+	let stand = unit.curPos
 	let cover = [point]
 	let {x: rx, y: ry} = Map.relativeTo(stand, point)
 	if (rx > 0) cover.push(Map.toLeft(point))
@@ -42,7 +42,7 @@ c['三角'] = (unit, point) => {
 
 c['直线畅通'] = (unit, point, [length]) => {
 	let Map = unit.Map
-	let stand = unit.tempPos || unit.iPos
+	let stand = unit.curPos
 	if (Map.isBlocked(point)) return null
 	let cover = [point]
 	let {x: rx, y: ry} = Map.relativeTo(stand, point)

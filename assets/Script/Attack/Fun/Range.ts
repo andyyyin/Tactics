@@ -8,7 +8,7 @@ r.default = (unit, [min, max]) => {
 		[min, max] = [max, min]
 	}
 	let Map = unit.Map
-	let start = Map.iToP(unit.tempPos || unit.iPos)
+	let start = Map.iToP(unit.curPos)
 	let result = []
 	for (let step = min; step <= max; step++) {
 		for (let y = step; y >= -step; y--) {
@@ -24,9 +24,26 @@ r.default = (unit, [min, max]) => {
 	return result
 }
 
+r['长枪'] = (unit) => {
+	let Map = unit.Map
+	let Battle = unit.Battle
+	let result = r.default(unit, [2, 2])
+	result = result.filter(ip => {
+		if (Map.isBlocked(ip)) return false
+		if (Map.isSameCol(unit.curPos, ip) || Map.isSameRow(unit.curPos, ip)) {
+			let between = Map.getPosBetween(unit.curPos, ip)
+			if (between && (Map.isBlocked(between[0]) || Battle.getUnitAt(between[0]))) {
+				return false
+			}
+		}
+		return true
+	})
+	return result
+}
+
 r['斜角'] = (unit) => {
 	let Map = unit.Map
-	let {x, y} = Map.iToP(unit.tempPos || unit.iPos)
+	let {x, y} = Map.iToP(unit.curPos)
 	return [
 		Map.pToI(x + 1, y + 1),
 		Map.pToI(x + 1, y - 1),
