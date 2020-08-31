@@ -2,6 +2,7 @@ import {UNIT_SIDE} from "./Global/Enums";
 
 const {ccclass, property} = cc._decorator;
 import {calcHitChance} from "./Global/Calc";
+import {isNum} from "./Global/Func";
 
 @ccclass
 export default class BattleUnit extends cc.Component {
@@ -68,7 +69,7 @@ export default class BattleUnit extends cc.Component {
 
 	get isPlayer () { return this.unitSide === UNIT_SIDE.PLAYER }
 
-	get curPos () { return this.tempPos || this.iPos}
+	get curPos () { return isNum(this.tempPos) ? this.tempPos : this.iPos}
 
 	public addAttackController (controller, name) {
 		this.attackMap[name] = controller

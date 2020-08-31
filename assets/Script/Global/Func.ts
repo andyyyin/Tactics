@@ -4,3 +4,7 @@ export const wait = (time) => {
 		setTimeout(resolve, time)
 	})
 }
+
+export const isNum = (value) => {
+	return typeof value === 'number'
+}
