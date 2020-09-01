@@ -125,18 +125,23 @@ export default class BattleUnit extends cc.Component {
 		for (let i = 0; i < targets.length; i++) {
 			let target = targets[i]
 			let tPosition = target.node.getPosition()
-			let hitChance = calcHitChance(this, target)
 
-			let criChance = this.critical / 100
+			let {criticalFix, accuracyFix, damageFix} = controller
+
+			let accuracy = this.accuracy + (accuracyFix || 0)
+			let hitChance = calcHitChance(accuracy, target.dodge)
 			let isHit = Math.random() < hitChance
-			let isCritical = isHit && Math.random() < criChance
+
+			let critical = this.critical + (criticalFix || 0)
+			let isCritical = isHit && Math.random() < (critical / 100)
+
+			let damage = this.damage + (damageFix || 0)
 
 			if (isCritical) {
-				let damage = Math.floor(this.damage * (2 + Math.random()))
+				damage = Math.floor(damage * (2 + Math.random()))
 				await this.Battle.Anim.playCriDamage(tPosition, damage)
 				target.changeHp(-damage)
 			} else if (isHit) {
-				let damage = this.damage
 				await this.Battle.Anim.playDamage(tPosition, damage)
 				target.changeHp(-damage)
 			} else {

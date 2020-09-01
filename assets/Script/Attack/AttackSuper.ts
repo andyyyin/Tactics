@@ -20,6 +20,13 @@ export default class AnimDefault extends cc.Component {
 	@property(cc.String)
 	CoverParam = ''
 
+	@property(cc.Integer)
+	damageFix = 0
+	@property(cc.Integer)
+	accuracyFix = 0
+	@property(cc.Integer)
+	criticalFix = 0
+
 	rangeFun
 	rangeParams
 

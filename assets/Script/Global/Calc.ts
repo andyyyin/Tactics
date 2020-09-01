@@ -1,6 +1,4 @@
 
-export const calcHitChance = (unit, target) => {
-	let {accuracy} = unit
-	let {dodge} = target
+export const calcHitChance = (accuracy, dodge) => {
 	return (accuracy - dodge + 50) / 100
 }

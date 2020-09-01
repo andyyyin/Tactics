@@ -8,7 +8,9 @@ export default class BattleDisplayInfo extends cc.Component {
 	@property(cc.Node)
 	UnitInfoPanel = null
 
-	unitHp = ''
+	unitHpValue = ''
+
+	unitHpProgress = 0
 
 	unitDamage = ''
 
@@ -18,15 +20,20 @@ export default class BattleDisplayInfo extends cc.Component {
 
 	attackInfo = ''
 
+	isEnemy = false
+	isPlayer = false
+
 	protected onLoad() {
 		this.UnitInfoPanel.active = false
 	}
 
 	showInfo (unit, attacker?) {
-		this.unitHp = `${unit.hp}/${unit.mhp}`
+		this.unitHpValue = `${unit.hp}/${unit.mhp}`
+		this.unitHpProgress = Number(unit.hp) / Number(unit.mhp)
 		this.unitAcc = unit.accuracy
 		this.unitDamage = unit.damage
 		this.unitDodge = unit.dodge
+		this.isEnemy = !(this.isPlayer = unit.isPlayer)
 		this.UnitInfoPanel.active = true
 		if (attacker) {
 			let chance = calcHitChance(attacker, unit)
