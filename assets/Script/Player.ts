@@ -115,10 +115,7 @@ export default class Player extends BattleUnit {
 	/* ------------ private ------------ */
 
 	private showOptionNearby (options) {
-		let camera = this.Battle.Control.CameraNode
-		// todo
-		let position = this.node.getPosition().add(new cc.Vec2(-390, -320)).subtract(camera)
-		this.Battle.Control.showOptions(options, position)
+		this.Battle.Control.showOptionsNearBy(options, this.node)
 	}
 
 	private setState (state) {
@@ -144,7 +141,7 @@ export default class Player extends BattleUnit {
 		if (state === ACTION_STATE.OPTION) {
 			this.showOptionNearby([
 				['ATTACK', () => this.attackOption()],
-				['WAIT', () => this.actionComplete()]
+				['WAIT', () => this.actionComplete()],
 			])
 		} else if (state === ACTION_STATE.ATTACK_OPTION) {
 			this.attackChosen = null

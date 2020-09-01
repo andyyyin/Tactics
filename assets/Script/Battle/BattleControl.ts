@@ -58,6 +58,14 @@ export default class BattleControl extends cc.Component {
 
 	protected update (dt): void {
 		this.updateCamera(dt)
+		if (this.ActionPanel.height > 20) {
+			let {top, bottom} = getNodeAround(this.ActionPanel)
+			if (bottom < -310) {
+				setNodeAround(this.ActionPanel, {bottom: -310})
+			} else if (top > 310) {
+				setNodeAround(this.ActionPanel, {top: 310})
+			}
+		}
 	}
 
 	get isShowingPanel () {
@@ -120,9 +128,6 @@ export default class BattleControl extends cc.Component {
 	updateCamera (dt) {
 		if (this.isShowingPanel) return
 		let speed = this.cameraSpeed
-		// todo 相机移动添加边缘限制
-
-
 
 		if (this.cameraMovingX) {
 			if (this.cameraMovingX < 0 && _cameraAround.left > _mapAround.left) {
@@ -159,6 +164,17 @@ export default class BattleControl extends cc.Component {
 			_cameraAround = getNodeAround(this.CameraNode)
 			// console.log({top, bottom})
 		}
+	}
+
+	showOptionsNearBy (options, targetNode) {
+		// let position = targetNode.getPosition().add(new cc.Vec2(-480, -320)).subtract(this.CameraNode)
+		let wp = targetNode.parent.convertToWorldSpaceAR(targetNode.getPosition())
+		let position = this.CameraNode.convertToNodeSpaceAR(wp)
+		position.x = position.x + 90
+		if (getNodeAround(this.ActionPanel, position).right > getNodeAround(this.CameraNode).right) {
+			position.x = position.x - 180
+		}
+		this.showOptions(options, position)
 	}
 
 	showOptions (options, position?) {

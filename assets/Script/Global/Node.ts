@@ -6,15 +6,18 @@ export const rotationToAngle = (rotation) => {
 	return -180 * rotation / Math.PI
 };
 
-
-export const getNodeAround = (node) => {
+/**
+*
+* */
+export const getNodeAround = (node, p?) => {
+	let position = p || node.getPosition()
 	return {
-		left: (node.x + (0 - node.anchorX) * node.width),
-		right: (node.x + (1 - node.anchorX) * node.width),
-		centerX: (node.x + (0.5 - node.anchorX) * node.width),
-		top: (node.y + (1 - node.anchorY) * node.height),
-		bottom: (node.y + (0 - node.anchorY) * node.height),
-		centerY: (node.y + (0.5 - node.anchorY) * node.height),
+		left: (position.x + (0 - node.anchorX) * node.width),
+		right: (position.x + (1 - node.anchorX) * node.width),
+		centerX: (position.x + (0.5 - node.anchorX) * node.width),
+		top: (position.y + (1 - node.anchorY) * node.height),
+		bottom: (position.y + (0 - node.anchorY) * node.height),
+		centerY: (position.y + (0.5 - node.anchorY) * node.height),
 	}
 }
 
