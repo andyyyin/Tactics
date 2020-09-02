@@ -21,6 +21,22 @@ export default class Player extends BattleUnit {
 
 	attackRange;
 
+	private _attackChosen
+	set attackChosen (value) {
+		if (this._attackChosen === value) return
+		this._attackChosen = value
+		this.Battle.Display.updateInfo()
+	}
+	get attackChosen () { return this._attackChosen }
+
+	private _attackHover
+	set attackHover (value) {
+		if (this._attackHover === value) return
+		this._attackHover = value
+		this.Battle.Display.updateInfo()
+	}
+	get attackHover () { return this._attackHover }
+
 	protected onLoad() {
 		super.onLoad()
 		this.setState(ACTION_STATE.READY)
@@ -126,10 +142,12 @@ export default class Player extends BattleUnit {
 		this.StateMark.color = state === ACTION_STATE.READY ?
 			StateColorReady : StateColorFocus
 
+		/* READY */
 		if (state === ACTION_STATE.READY) {
 			this.Battle.unFocus()
 		}
 
+		/* MOVE */
 		if (state === ACTION_STATE.MOVE) {
 			this.tempPos = undefined
 			this.updatePosition()
@@ -138,38 +156,47 @@ export default class Player extends BattleUnit {
 			this.Map.hideIndicator()
 		}
 
+		/* OPTION */
 		if (state === ACTION_STATE.OPTION) {
 			this.showOptionNearby([
 				['ATTACK', () => this.attackOption()],
 				['WAIT', () => this.actionComplete()],
 			])
 		} else if (state === ACTION_STATE.ATTACK_OPTION) {
-			this.attackChosen = null
 			let options = this.attackList.map((name) => {
-				return [name, () => this.attackPrepare(name)]
+				return [
+					name,
+					() => this.attackPrepare(name),
+					() => {
+						this.attackHover = name
+						return () => this.attackHover = null
+					}
+				]
 			})
 			this.showOptionNearby(options)
 		} else {
 			this.Battle.Control.hidePanel()
 		}
 
-
+		/* ATTACK */
 		if (state === ACTION_STATE.ATTACK) {
 			this.Map.showAttackIndicator(this.attackRange)
 		} else if (this.actionState === ACTION_STATE.ATTACK) {
 			this.Map.hideIndicator()
 		}
+		if (state !== ACTION_STATE.ATTACK) {
+			this.attackChosen = null
+		}
 
+		/* DONE */
 		if (state === ACTION_STATE.DONE) {
 			this.Battle.onPlayerActionDone()
 		}
 
 		this.actionState = state
 		/* 状态已更新 */
+		this.Map.updateIndicator(true)
 
-		if (state === ACTION_STATE.MOVE) {
-			this.Map.updateIndicator(true)
-		}
 	}
 
 }

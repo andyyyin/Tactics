@@ -4,7 +4,6 @@ const {ccclass, property} = cc._decorator;
 
 let _playerPosCache
 let _hoverCache
-let _hoverTarget
 
 let _moveIndicatorColor
 let _attackIndicatorColor
@@ -50,6 +49,14 @@ export default class BattleMap extends cc.Component {
 	mouseHolding
 
 	stopControlFlag = false
+
+	private _hoverTarget
+	set hoverTarget (value) {
+		if (this._hoverTarget === value) return
+		this._hoverTarget = value
+		this.Battle.Display.updateInfo()
+	}
+	get hoverTarget () { return this._hoverTarget }
 
 	onLoad() {
 		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
@@ -168,6 +175,7 @@ export default class BattleMap extends cc.Component {
 				let range = player.moveRange
 				_route = this.showRoute(iPos, range)
 			}
+			let hoverTarget = null
 			if (player.isAttacking) {
 				let range = player.attackRange
 				if (range && range.flat().includes(iPos)) {
@@ -178,28 +186,19 @@ export default class BattleMap extends cc.Component {
 						this.showCoverIndicator(cover)
 					}
 					let target = player.getOpponents().find(e => e.iPos === iPos)
-					if (target) {
-						this.Battle.Display.showInfo(target, this.Battle.focusPlayer)
-					} else {
-						this.Battle.Display.hideInfo()
-					}
+					hoverTarget = target
 				} else {
 					this.hideCover()
 				}
 			}
+			this.hoverTarget = hoverTarget
 			return
 		}
 		// 看是否指向玩家
 		let target = this.Battle.getUnitAt(iPos)
-		if (_hoverTarget && _hoverTarget.node) _hoverTarget.node.zIndex = 1
-		_hoverTarget = target
-		if (_hoverTarget && _hoverTarget.node) _hoverTarget.node.zIndex = 2
-
-		if (target) {
-			this.Battle.Display.showInfo(target)
-		} else {
-			this.Battle.Display.hideInfo()
-		}
+		if (this.hoverTarget && this.hoverTarget.node) this.hoverTarget.node.zIndex = 1
+		this.hoverTarget = target
+		if (this.hoverTarget && this.hoverTarget.node) this.hoverTarget.node.zIndex = 2
 		if (target && target.isPlayer && !target.isDone) {
 			this.updateMapIndicator({move: target.moveRange.flat()})
 		} else {
@@ -233,6 +232,7 @@ export default class BattleMap extends cc.Component {
 
 		let target = this.Battle.players.find(p => iPos === p.iPos)
 		if (target && !target.isDone) {
+			this.hoverTarget = null
 			this.Battle.focus(target)
 			_route = null
 		}

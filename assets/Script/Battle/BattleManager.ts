@@ -27,7 +27,7 @@ export default class BattleManager extends cc.Component {
 	players = []
 	enemies = []
 
-	focusPlayer;
+	focusPlayer
 
 	protected onLoad() {
 		this.Map = this.BattleMap
@@ -85,18 +85,18 @@ export default class BattleManager extends cc.Component {
 	public focus (player) {
 		// this.players.map(p => p.focus = p === player)
 		this.focusPlayer = player
+		this.Display.updateInfo()
 		this.focusPlayer.actionStart()
 	}
 
 	public unFocus () {
 		this.focusPlayer = null
-		this.Map.updateIndicator(true)
+		this.Display.updateInfo()
 	}
 
 	public onPlayerActionDone () {
 		this.unFocus()
 		this.updateUnits()
-		this.Map.updateIndicator(true)
 	}
 
 	/* ------------ private ------------ */

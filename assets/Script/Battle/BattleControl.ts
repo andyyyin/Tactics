@@ -183,7 +183,7 @@ export default class BattleControl extends cc.Component {
 		let buttonPool = this.ActionPanel.children
 		buttonPool.map(button => button.active = false)
 
-		options.map(([text, fun], index) => {
+		options.map(([text, onClick, onHover], index) => {
 			let button
 			if (buttonPool[index]) {
 				button = buttonPool[index]
@@ -192,8 +192,7 @@ export default class BattleControl extends cc.Component {
 				button = cc.instantiate(this.ButtonPrefab)
 				this.ActionPanel.addChild(button)
 			}
-			button.getChildByName('label').getComponent(cc.Label).string = text
-			button.getComponent('CustomButton').onClick = fun
+			button.getComponent('CustomButton').setButton([text, onClick, onHover])
 		})
 		this.ActionPanel.setPosition(position)
 		this.ActionPanel.active = true
