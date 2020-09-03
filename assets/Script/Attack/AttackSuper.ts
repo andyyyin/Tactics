@@ -1,8 +1,8 @@
 const {ccclass, property} = cc._decorator;
 import {getTwoPointAngle} from "../Global/Math";
 import {rotationToAngle} from "../Global/Node";
-import {RangeFun, getRangeFun} from "./Fun/Range";
-import {CoverFun, getCoverFun} from "./Fun/Cover";
+import RangeFunMap from "./Fun/Range";
+import CoverFunMap from "./Fun/Cover";
 
 @ccclass
 export default class AnimDefault extends cc.Component {
@@ -11,14 +11,20 @@ export default class AnimDefault extends cc.Component {
 	Name = ''
 	@property(cc.String)
 	AnimName = ''
-	@property({type: RangeFun})
-	RangeFun = 0
+
+	// @property({type: RangeFun})
+	// RangeFun = 0
+	// @property(cc.String)
+	// RangeParam = ''
+	// @property({type: CoverFun})
+	// CoverFun = 0
+	// @property(cc.String)
+	// CoverParam = ''
+
 	@property(cc.String)
-	RangeParam = ''
-	@property({type: CoverFun})
-	CoverFun = 0
+	Range = ''
 	@property(cc.String)
-	CoverParam = ''
+	Cover = ''
 
 	@property(cc.Integer)
 	damageFix = 0
@@ -46,10 +52,14 @@ export default class AnimDefault extends cc.Component {
 		this.Animation.on('finished', () => {
 			if (this.onFinish) this.onFinish()
 		})
-		this.rangeParams = this.RangeParam.split(',').filter(p => p).map(p => Number(p.trim()))
-		this.rangeFun = getRangeFun(this.RangeFun)
-		this.coverParams = this.CoverParam.split(',').filter(p => p).map(p => Number(p.trim()))
-		this.coverFun = getCoverFun(this.CoverFun)
+
+		let [rangeFun, rangeParam] = this.Range.split('-')
+		let [coverFun, coverParam] = this.Cover.split('-')
+
+		this.rangeFun = RangeFunMap[rangeFun.trim()]
+		this.rangeParams = rangeParam && rangeParam.split(',').filter(p => p).map(p => Number(p.trim()))
+		this.coverFun = CoverFunMap[coverFun.trim()]
+		this.coverParams = coverParam && coverParam.split(',').filter(p => p).map(p => Number(p.trim()))
 	}
 
 	async playAttackTo (position) {
@@ -79,11 +89,11 @@ export default class AnimDefault extends cc.Component {
 	}
 
 	getRange () {
-		return this.rangeFun(this.Unit, this.rangeParams)
+		return this.rangeFun(this.Unit, this.rangeParams || [])
 	}
 
 	getCover (point) {
-		return this.coverFun(this.Unit, point, this.coverParams)
+		return this.coverFun(this.Unit, point, this.coverParams || [])
 	}
 
 }

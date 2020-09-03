@@ -52,16 +52,24 @@ r['斜角'] = (unit) => {
 	].filter(ip => !Map.isBlocked(ip))
 }
 
-/* ---------------------- end ----------------------*/
-
-let rKeys = Object.keys(r)
-let rEnum: any = {}
-rKeys.map((k, i) => {
-	rEnum[k] = i
-})
-
-export const getRangeFun = (n) => {
-	return r[rKeys[n]]
+r['弓方向'] = (unit) => {
+	let Battle = unit.Battle
+	let result = r.default(unit, [1])
+	return result.filter(rp => !Battle.getUnitAt(rp))
 }
 
-export const RangeFun = cc.Enum(rEnum)
+/* ---------------------- end ----------------------*/
+
+// let rKeys = Object.keys(r)
+// let rEnum: any = {}
+// rKeys.map((k, i) => {
+// 	rEnum[k] = i
+// })
+//
+// export const getRangeFun = (n) => {
+// 	return r[rKeys[n]]
+// }
+//
+// export const RangeFun = cc.Enum(rEnum)
+
+export default r

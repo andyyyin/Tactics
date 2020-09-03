@@ -61,14 +61,16 @@ c['直线畅通'] = (unit, point, [length]) => {
 
 /* ---------------------- end ---------------------- */
 
-let cKeys = Object.keys(c)
-let cEnum: any = {}
-cKeys.map((k, i) => {
-	cEnum[k] = i
-})
+// let cKeys = Object.keys(c)
+// let cEnum: any = {}
+// cKeys.map((k, i) => {
+// 	cEnum[k] = i
+// })
+//
+// export const getCoverFun = (n) => {
+// 	return c[cKeys[n]]
+// }
+//
+// export const CoverFun = cc.Enum(cEnum)
 
-export const getCoverFun = (n) => {
-	return c[cKeys[n]]
-}
-
-export const CoverFun = cc.Enum(cEnum)
+export default c
