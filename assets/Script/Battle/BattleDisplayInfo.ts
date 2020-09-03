@@ -5,6 +5,15 @@ import {calcHitChance} from "../Global/Calc";
 let _target
 let _$target
 
+const coloredText = (str, color) => `<color=${color}>${str}</c>`
+const getFixText = (text) => {
+	if (!text || Number(text) === 0) return undefined
+	let symbol = Number(text) < 0 ? '' : '+'
+	let color = Number(text) < 0 ? '#E30000' : '#00ff00'
+	text = symbol + text
+	return coloredText(text, color)
+}
+
 @ccclass
 export default class BattleDisplayInfo extends cc.Component {
 
@@ -69,9 +78,9 @@ export default class BattleDisplayInfo extends cc.Component {
 		if (target) {
 			let attack = target.attackChosen || target.attackHover
 			let {criticalFix, accuracyFix, damageFix} = (attack && target.getAttackController(attack)) || {}
-			this.damageFix = damageFix && (damageFix > 0 ? '+' : '') + damageFix
-			this.accuracyFix = accuracyFix && (accuracyFix > 0 ? '+' : '') + accuracyFix
-			this.criticalFix = criticalFix && (criticalFix > 0 ? '+' : '') + criticalFix
+			this.damageFix = getFixText(damageFix)
+			this.accuracyFix = getFixText(accuracyFix)
+			this.criticalFix = getFixText(criticalFix)
 			if ($target && _$target !== $target) {
 				this.$unitHpValue = `${$target.hp}/${$target.mhp}`
 				this.$unitHpProgress = Number($target.hp) / Number($target.mhp)

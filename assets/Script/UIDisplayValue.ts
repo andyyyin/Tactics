@@ -24,6 +24,7 @@ export default class UIDisplayValue extends cc.Component {
 
 	protected onLoad() {
 		this.label = this.getComponent(cc.Label)
+		if (!this.label) this.label = this.getComponent(cc.RichText)
 		this.progress = this.getComponent(cc.ProgressBar)
 		this.opacityCache = this.node.opacity
 	}
@@ -36,14 +37,16 @@ export default class UIDisplayValue extends cc.Component {
 		if (!this.targetNode) return
 		if (!this.componentName) return
 		if (!this.attrName) return
+		if (this.toggleShow && !this.value) {
+			this.node.opacity = 0
+			return
+		}
+		this.node.opacity = this.opacityCache
 		if (this.label) {
 			this.label.string = this.value
 		}
 		if (this.progress && isNum(this.value)) {
 			this.progress.progress = this.value
-		}
-		if (this.toggleShow) {
-			this.node.opacity = this.value ? this.opacityCache : 0
 		}
 	}
 
