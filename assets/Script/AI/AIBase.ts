@@ -1,5 +1,6 @@
 import {UNIT_SIDE} from "../Global/Enums";
 import {isNum, wait} from "../Global/Func";
+import Enemy from "../Unit/Enemy";
 
 const {ccclass, property} = cc._decorator;
 
@@ -19,7 +20,7 @@ export default class AIBase extends cc.Component {
 	targetPos
 
 	protected onLoad() {
-		this.Unit = this.getComponent('Enemy')
+		this.Unit = this.getComponent(Enemy)
 		this.Battle = this.Unit.Battle
 		this.Map = this.Unit.Map
 		this.Unit.setAIComponent(this)

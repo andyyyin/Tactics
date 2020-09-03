@@ -1,6 +1,9 @@
-const {ccclass, property} = cc._decorator;
+import BattleManager from "./BattleManager";
 import {DIRECTION} from "../Global/Enums";
 import {getNodeAround, setNodeAround} from "../Global/Node";
+import CustomButton from "../CustomButton";
+
+const {ccclass, property} = cc._decorator;
 
 let _cameraAround
 let _mapAround
@@ -31,7 +34,7 @@ export default class BattleControl extends cc.Component {
 	holding
 
 	protected onLoad(): void {
-		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
+		this.Battle = cc.find('BattleManager').getComponent(BattleManager)
 		cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
 		cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 		this.MapNode.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
@@ -192,7 +195,7 @@ export default class BattleControl extends cc.Component {
 				button = cc.instantiate(this.ButtonPrefab)
 				this.ActionPanel.addChild(button)
 			}
-			button.getComponent('CustomButton').setButton([text, onClick, onHover])
+			button.getComponent(CustomButton).setButton([text, onClick, onHover])
 		})
 		this.ActionPanel.setPosition(position)
 		this.ActionPanel.active = true

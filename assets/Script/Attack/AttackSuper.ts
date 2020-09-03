@@ -1,3 +1,5 @@
+import BattleUnit from "../Unit/BattleUnit";
+
 const {ccclass, property} = cc._decorator;
 import {getTwoPointAngle} from "../Global/Math";
 import {rotationToAngle} from "../Global/Node";
@@ -46,7 +48,7 @@ export default class AnimDefault extends cc.Component {
 
 	protected onLoad() {
 		this.Animation = this.getComponent(cc.Animation)
-		this.Unit = this.node.parent.getComponent('BattleUnit')
+		this.Unit = this.node.parent.getComponent(BattleUnit)
 		this.Unit.addAttackController(this, this.Name || this.node.name)
 
 		this.Animation.on('finished', () => {

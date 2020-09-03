@@ -1,6 +1,7 @@
 import {UNIT_SIDE} from "../Global/Enums";
 import {calcHitChance} from "../Global/Calc";
 import {isNum} from "../Global/Func";
+import BattleManager from "../Battle/BattleManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -48,7 +49,7 @@ export default class BattleUnit extends cc.Component {
 	attackChosen
 
 	protected onLoad() {
-		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
+		this.Battle = cc.find('BattleManager').getComponent(BattleManager)
 		this.Map = this.Battle.Map
 		this.StateMark = this.node.getChildByName('state_mark')
 		this.StateMark.active = false

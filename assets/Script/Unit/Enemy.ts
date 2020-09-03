@@ -32,7 +32,7 @@ export default class Enemy extends BattleUnit {
 	}
 
 	public async startAI () {
-		this.node.zIndex = 2
+		this.node.zIndex = 3
 		this.StateMark.active = true
 		this.StateMark.color = this.Battle.State.StateColorFocus
 

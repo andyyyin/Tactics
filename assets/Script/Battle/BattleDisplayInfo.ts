@@ -1,9 +1,8 @@
+import BattleManager from "./BattleManager";
+
 const {ccclass, property} = cc._decorator;
 
 import {calcHitChance} from "../Global/Calc";
-
-let _target
-let _$target
 
 const coloredText = (str, color) => `<color=${color}>${str}</c>`
 const getFixText = (text) => {
@@ -55,7 +54,7 @@ export default class BattleDisplayInfo extends cc.Component {
 	attackInfo = ''
 
 	protected onLoad() {
-		this.Battle = this.getComponent('BattleManager')
+		this.Battle = this.getComponent(BattleManager)
 		this.UnitInfoPanel.active = false
 		this.UnitInfoPanel2.active = false
 		this.AttackInfo.active = false
@@ -64,7 +63,7 @@ export default class BattleDisplayInfo extends cc.Component {
 	public updateInfo() {
 		let target = this.Battle.focusPlayer || this.Battle.Map.hoverTarget
 		let $target = this.Battle.focusPlayer && this.Battle.Map.hoverTarget
-		if (target && _target !== target) {
+		if (target) {
 			this.unitHpValue = `${target.hp}/${target.mhp}`
 			this.unitHpProgress = Number(target.hp) / Number(target.mhp)
 			this.unitAcc = target.accuracy
@@ -72,7 +71,6 @@ export default class BattleDisplayInfo extends cc.Component {
 			this.unitDodge = target.dodge
 			this.unitCritical = target.critical
 			this.isEnemy = !(this.isPlayer = target.isPlayer)
-			_target = target
 		}
 
 		if (target) {
@@ -81,7 +79,7 @@ export default class BattleDisplayInfo extends cc.Component {
 			this.damageFix = getFixText(damageFix)
 			this.accuracyFix = getFixText(accuracyFix)
 			this.criticalFix = getFixText(criticalFix)
-			if ($target && _$target !== $target) {
+			if ($target) {
 				this.$unitHpValue = `${$target.hp}/${$target.mhp}`
 				this.$unitHpProgress = Number($target.hp) / Number($target.mhp)
 				this.$unitAcc = $target.accuracy
@@ -96,7 +94,6 @@ export default class BattleDisplayInfo extends cc.Component {
 				let percent = Math.floor(chance * 100)
 				let damage = target.damage + damageFix
 				this.attackInfo = `-${damage} ${percent}%`
-				_$target = $target
 			}
 		}
 

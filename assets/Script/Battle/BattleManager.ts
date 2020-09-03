@@ -1,3 +1,5 @@
+import BattleDisplayInfo from "./BattleDisplayInfo";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -34,7 +36,7 @@ export default class BattleManager extends cc.Component {
 		this.Anim = this.BattleAnim
 		this.State = this.BattleState
 		this.Control = this.BattleControl
-		this.Display = this.getComponent('BattleDisplayInfo')
+		this.Display = this.getComponent(BattleDisplayInfo)
 	}
 
 	protected start() {

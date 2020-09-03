@@ -1,4 +1,5 @@
 import {UNIT_SIDE} from "../Global/Enums";
+import BattleManager from "./BattleManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -59,7 +60,7 @@ export default class BattleMap extends cc.Component {
 	get hoverTarget () { return this._hoverTarget }
 
 	onLoad() {
-		this.Battle = cc.find('BattleManager').getComponent('BattleManager')
+		this.Battle = cc.find('BattleManager').getComponent(BattleManager)
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_MOVE, this.onMouseMove, this)
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
 		this.TiledMap.node.on(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
