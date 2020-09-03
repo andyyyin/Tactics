@@ -370,25 +370,25 @@ export default class BattleMap extends cc.Component {
 		return moveRange
 	}
 
-	handleAIAttackOptions (shotRange, moveRange, opponents) {
-		if (typeof shotRange === 'number') shotRange = [1, shotRange]
-		let [min, max] = shotRange
-		let move = moveRange.length - 1
-		let startPos = moveRange[0][0]
-		// 先过滤掉太远不可能碰到的
-		opponents = opponents.filter(p => this.getDistance(p.iPos, startPos) <= (move + max))
-		let results = []
-		moveRange.flat().map(ip => {
-			if (ip !== startPos && this.Battle.getUnitAt(ip)) return
-			opponents.map(op => {
-				let distance = this.getDistance(ip, op.iPos)
-				if (distance >= min && distance <= max) {
-					results.push([op, ip, distance])
-				}
-			})
-		})
-		return results
-	}
+	// handleAIAttackOptions (shotRange, moveRange, opponents) {
+	// 	if (typeof shotRange === 'number') shotRange = [1, shotRange]
+	// 	let [min, max] = shotRange
+	// 	let move = moveRange.length - 1
+	// 	let startPos = moveRange[0][0]
+	// 	// 先过滤掉太远不可能碰到的
+	// 	opponents = opponents.filter(p => this.getDistance(p.iPos, startPos) <= (move + max))
+	// 	let results = []
+	// 	moveRange.flat().map(ip => {
+	// 		if (ip !== startPos && this.Battle.getUnitAt(ip)) return
+	// 		opponents.map(op => {
+	// 			let distance = this.getDistance(ip, op.iPos)
+	// 			if (distance >= min && distance <= max) {
+	// 				results.push([op, ip, distance])
+	// 			}
+	// 		})
+	// 	})
+	// 	return results
+	// }
 
 	getMouseLocation (event) {
 		let camera = this.Battle.Control.CameraNode

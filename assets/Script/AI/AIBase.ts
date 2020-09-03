@@ -1,5 +1,5 @@
 import {UNIT_SIDE} from "../Global/Enums";
-import {wait} from "../Global/Func";
+import {isNum, wait} from "../Global/Func";
 
 const {ccclass, property} = cc._decorator;
 
@@ -41,27 +41,41 @@ export default class AIBase extends cc.Component {
 		let moveRange = this.Unit.updateMoveRange()
 		let attackRange
 
-		/* todo 下面处理待优化 */
+		// todo 待加入 技能选择逻辑
 		let controller = this.Unit.getAttackController()
-		if (controller.RangeFun === 0) {
-			let [min, max] = controller.rangeParams
-			min = min || 1
-			max = max || min
-			if (min > max) {
-				[min, max] = [max, min]
-			}
-			attackRange = this.Map.handleAIAttackOptions([min, max], moveRange, this.Unit.getOpponents())
-		}
-		/* end */
 
-		if (attackRange && attackRange.length) {
+		let attackChoice
+
+		let attackOptions = []
+		const opponents = this.Unit.getOpponents()
+		moveRange.flat().map(mp => {
+			if (mp !== this.Unit.iPos && this.Battle.getUnitAt(mp)) return
+			this.Unit.tempPos = mp
+			let range = controller.getRange().flat()
+			range.map(ap => {
+				let {cover, animPos} = controller.getCover(ap)
+				let targets = opponents.filter(t => cover.flat().includes(t.iPos))
+				if (targets && targets.length) {
+					attackOptions.push([mp, ap, cover, animPos, targets])
+				}
+			})
+		})
+		this.Unit.tempPos = undefined
+		if (attackOptions.length) {
+			// todo 待添加 高级选择逻辑
+			attackChoice = attackOptions[0]
+		}
+
+		if (attackChoice) {
 			// 找最近的
-			let [target, pos, distance] = attackRange[0]
-			this.targetPos = target.iPos
-			await this.Unit.actMoveTo(pos)
-			this.Map.showCoverIndicator([target.iPos])
+			let [mp, ap, cover, animPos, targets] = attackChoice
+			// todo 此处逻辑待完善
+			this.targetPos = targets[0].iPos
+			await this.Unit.actMoveTo(mp)
+			this.Map.showCoverIndicator(cover)
+			let position = this.Unit.Map.indexToItemPixelPos(isNum(animPos) ? animPos : ap)
 			await wait(500)
-			await this.Unit.attackStart(target.node.getPosition(), [target])
+			await this.Unit.attackStart(position, targets)
 			return true
 		} else if (this.followGroup && this.followGroup.length) {
 			let targetPos
