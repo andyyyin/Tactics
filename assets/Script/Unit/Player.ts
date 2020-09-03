@@ -1,7 +1,7 @@
-import {UNIT_SIDE} from "./Global/Enums";
+import {UNIT_SIDE} from "../Global/Enums";
+import BattleUnit from "./BattleUnit";
 
 const {ccclass, property} = cc._decorator;
-import BattleUnit from "./BattleUnit";
 
 enum ACTION_STATE {
 	READY,

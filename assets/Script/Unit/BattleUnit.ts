@@ -1,8 +1,8 @@
-import {UNIT_SIDE} from "./Global/Enums";
+import {UNIT_SIDE} from "../Global/Enums";
+import {calcHitChance} from "../Global/Calc";
+import {isNum} from "../Global/Func";
 
 const {ccclass, property} = cc._decorator;
-import {calcHitChance} from "./Global/Calc";
-import {isNum} from "./Global/Func";
 
 @ccclass
 export default class BattleUnit extends cc.Component {

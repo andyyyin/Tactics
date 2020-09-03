@@ -1,7 +1,8 @@
-const {ccclass, property} = cc._decorator;
-import {UNIT_SIDE} from "./Global/Enums";
-import {wait} from "./Global/Func";
+import {UNIT_SIDE} from "../Global/Enums";
+import {wait} from "../Global/Func";
 import BattleUnit from "./BattleUnit";
+
+const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Enemy extends BattleUnit {
