@@ -2,6 +2,8 @@ import {UNIT_SIDE} from "../Global/Enums";
 import {calcHitChance} from "../Global/Calc";
 import {isNum} from "../Global/Func";
 import BattleManager from "../Battle/BattleManager";
+import UnitState from "./UnitState";
+import {State} from "../Global/State";
 
 const {ccclass, property} = cc._decorator;
 
@@ -11,16 +13,6 @@ export default class BattleUnit extends cc.Component {
 	@property(cc.Integer)
 	move = 5
 	moveRange = []
-
-	Battle
-	Map
-
-	iPos
-	tempPos
-
-	unitSide
-
-	StateMark
 
 	@property(cc.Integer)
 	mhp = 100
@@ -38,8 +30,17 @@ export default class BattleUnit extends cc.Component {
 	@property(cc.Integer)
 	critical = 10
 
-	// @property(cc.Integer)
-	// accuracy = 100
+	State
+
+	Battle
+	Map
+
+	iPos
+	tempPos
+
+	unitSide
+
+	StateMark
 
 	attackMap = {}
 	attackList = []
@@ -49,6 +50,7 @@ export default class BattleUnit extends cc.Component {
 	attackChosen
 
 	protected onLoad() {
+		this.State = this.getComponent(UnitState)
 		this.Battle = cc.find('BattleManager').getComponent(BattleManager)
 		this.Map = this.Battle.Map
 		this.StateMark = this.node.getChildByName('state_mark')
@@ -127,27 +129,42 @@ export default class BattleUnit extends cc.Component {
 			let target = targets[i]
 			let tPosition = target.node.getPosition()
 
-			let {criticalFix, accuracyFix, damageFix} = controller
+			let {criticalFix, accuracyFix, damageFix, stateParams} = controller
 
 			let accuracy = this.accuracy + (accuracyFix || 0)
 			let hitChance = calcHitChance(accuracy, target.dodge)
 			let isHit = Math.random() < hitChance
 
-			let critical = this.critical + (criticalFix || 0)
-			let isCritical = isHit && Math.random() < (critical / 100)
+			if (isHit) {
+				/* 命中 */
+				let damage = this.damage + (damageFix || 0)
 
-			let damage = this.damage + (damageFix || 0)
+				let critical = this.critical + (criticalFix || 0)
+				let isCritical = isHit && Math.random() < (critical / 100)
+				if (isCritical) {
+					/* 暴击 */
+					damage = Math.floor(damage * (2 + Math.random()))
+					await this.Battle.Anim.playCriDamage(tPosition, damage)
+				} else {
+					await this.Battle.Anim.playDamage(tPosition, damage)
+				}
+				target.changeHp(-damage)
+				
+				/* 附加状态 */
+				for (let i = 0; i < stateParams.length; i++) {
+					let [state, params] = stateParams[i]
+					let [stateChance] = params || []
+					if (!stateChance || Math.random() < stateChance / 100) {
+						let name = State[state]
+						await this.Battle.Anim.playPushState(tPosition, name)
+						target.State.pushState(state)
+					}
+				}
 
-			if (isCritical) {
-				damage = Math.floor(damage * (2 + Math.random()))
-				await this.Battle.Anim.playCriDamage(tPosition, damage)
-				target.changeHp(-damage)
-			} else if (isHit) {
-				await this.Battle.Anim.playDamage(tPosition, damage)
-				target.changeHp(-damage)
 			} else {
 				await this.Battle.Anim.playMiss(tPosition)
 			}
+
 		}
 		console.log('attack finish')
 	}

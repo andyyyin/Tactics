@@ -6,6 +6,7 @@ enum EffectType {
 	DAMAGE,
 	CRI_DAMAGE,
 	HEAL,
+	STATE,
 }
 
 @ccclass
@@ -19,7 +20,7 @@ export default class BattleAnim extends cc.Component {
 	@property(cc.Node)
 	MissNode = null
 	@property(cc.Node)
-	DamageNode = null
+	LabelNode = null
 
 	onLoad() {
 		this.MapAnim.node.active = false
@@ -39,6 +40,10 @@ export default class BattleAnim extends cc.Component {
 		return this.playEffect(position, EffectType.CRI_DAMAGE, damage)
 	}
 
+	public playPushState (position, name) {
+		return this.playEffect(position, EffectType.STATE, name)
+	}
+
 	private async playEffect (position, type, value?) {
 		// console.log(position);
 		this.MapAnim.node.setPosition(position)
@@ -49,14 +54,16 @@ export default class BattleAnim extends cc.Component {
 				this.showMiss()
 				break
 			case EffectType.DAMAGE:
-				this.showDamage(value)
+				this.showLabel(`-${value}`, 40, '#FF0000')
 				break
 			case EffectType.CRI_DAMAGE:
-				this.showDamage(value, true)
+				this.showLabel(`-${value}!`, 60, '#FF0000')
+				break
+			case EffectType.STATE:
+				this.showLabel(value, 40, '#2719FF')
 				break
 			default:
 		}
-
 
 		this.MapAnim.node.active = true
 		await new Promise(resolve => {
@@ -67,21 +74,20 @@ export default class BattleAnim extends cc.Component {
 	}
 
 	private showMiss () {
-		this.hideAllMapItems()
-		this.MissNode.active = true
+		this.showRelNode(this.MissNode)
 	}
 
-	private showDamage (value, isCritical?) {
-		this.hideAllMapItems()
-		this.DamageNode.active = true
-		let Label = this.DamageNode.getComponent(cc.Label)
-		Label.fontSize = isCritical ? 60 : 40
-		Label.string = `-${value}${isCritical ? '!' : ''}`
+	private showLabel (str, font, color) {
+		this.showRelNode(this.LabelNode)
+		let Label = this.LabelNode.getComponent(cc.Label)
+		Label.fontSize = font
+		Label.string = str
+		Label.node.color = new cc.Color().fromHEX(color)
 	}
 
-	private hideAllMapItems () {
-		this.MissNode.active = false
-		this.DamageNode.active = false
+	private showRelNode (tarNode) {
+		[this.MissNode, this.LabelNode]
+			.map(node => node.active = node === tarNode)
 	}
 
 }

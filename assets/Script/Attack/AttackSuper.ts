@@ -5,6 +5,7 @@ import {getTwoPointAngle} from "../Global/Math";
 import {rotationToAngle} from "../Global/Node";
 import RangeFunMap from "./Fun/Range";
 import CoverFunMap from "./Fun/Cover";
+import {State} from "../Global/State";
 
 @ccclass
 export default class AnimDefault extends cc.Component {
@@ -14,19 +15,15 @@ export default class AnimDefault extends cc.Component {
 	@property(cc.String)
 	AnimName = ''
 
-	// @property({type: RangeFun})
-	// RangeFun = 0
-	// @property(cc.String)
-	// RangeParam = ''
-	// @property({type: CoverFun})
-	// CoverFun = 0
-	// @property(cc.String)
-	// CoverParam = ''
-
 	@property(cc.String)
 	Range = ''
+	rangeFun
+	rangeParams
+
 	@property(cc.String)
 	Cover = ''
+	coverFun
+	coverParams
 
 	@property(cc.Integer)
 	damageFix = 0
@@ -35,11 +32,9 @@ export default class AnimDefault extends cc.Component {
 	@property(cc.Integer)
 	criticalFix = 0
 
-	rangeFun
-	rangeParams
-
-	coverFun
-	coverParams
+	@property([cc.String])
+	State = []
+	stateParams
 
 	Animation
 	Unit
@@ -62,6 +57,13 @@ export default class AnimDefault extends cc.Component {
 		this.rangeParams = rangeParam && rangeParam.split(',').filter(p => p).map(p => Number(p.trim()))
 		this.coverFun = CoverFunMap[coverFun.trim()]
 		this.coverParams = coverParam && coverParam.split(',').filter(p => p).map(p => Number(p.trim()))
+
+		this.stateParams = this.State.map(str => {
+			let [n, p] = str.split('-')
+			let state = State[n.trim()]
+			let params = p.split(',').filter(p => p).map(p => Number(p.trim()))
+			return [state, params]
+		})
 	}
 
 	async playAttackTo (position) {
