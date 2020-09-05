@@ -26,7 +26,11 @@ export default class Enemy extends BattleUnit {
 		this.aiComponent = component
 	}
 
-	public onTurnPrepare () {
+	public onTurnStart () {
+		if (this.State.incapacitated) {
+			this.isDone = true
+			return
+		}
 		this.isDone = false
 		this.aiComponent.onTurnPrepare()
 	}

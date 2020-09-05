@@ -3,7 +3,7 @@ import {calcHitChance} from "../Global/Calc";
 import {isNum} from "../Global/Func";
 import BattleManager from "../Battle/BattleManager";
 import UnitState from "./UnitState";
-import {State} from "../Global/State";
+import {State} from "../Battle/BattleState";
 
 const {ccclass, property} = cc._decorator;
 
@@ -98,7 +98,8 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	updateMoveRange () {
-		return (this.moveRange = this.Map.handleMoveRange(this.iPos, this.move, this.unitSide))
+		let move = isNum(this.State.move) ? this.State.move : this.move
+		return (this.moveRange = this.Map.handleMoveRange(this.iPos, move, this.unitSide))
 	}
 
 	updatePosition () {
@@ -149,7 +150,7 @@ export default class BattleUnit extends cc.Component {
 					await this.Battle.Anim.playDamage(tPosition, damage)
 				}
 				target.changeHp(-damage)
-				
+
 				/* 附加状态 */
 				for (let i = 0; i < stateParams.length; i++) {
 					let [state, params] = stateParams[i]

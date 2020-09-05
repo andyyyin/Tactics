@@ -455,7 +455,7 @@ export default class BattleMap extends cc.Component {
 				options.push[ip]
 			}
 		})
-		return options.length < 2 ? options[0] : options[Math.floor(Math.random() * options.length)]
+		return options && (options.length < 2 ? options[0] : options[Math.floor(Math.random() * options.length)])
 	}
 
 	pToI (p1, p2?) {

@@ -123,7 +123,11 @@ export default class Player extends BattleUnit {
 		this.setState(ACTION_STATE.DONE)
 	}
 
-	public resetState () {
+	public onTurnStart () {
+		if (this.State.incapacitated) {
+			this.setState(ACTION_STATE.DONE)
+			return
+		}
 		this.setState(ACTION_STATE.READY)
 		this.updateMoveRange()
 	}

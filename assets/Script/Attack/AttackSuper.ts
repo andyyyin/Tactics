@@ -5,7 +5,7 @@ import {getTwoPointAngle} from "../Global/Math";
 import {rotationToAngle} from "../Global/Node";
 import RangeFunMap from "./Fun/Range";
 import CoverFunMap from "./Fun/Cover";
-import {State} from "../Global/State";
+import {State} from "../Battle/BattleState";
 
 @ccclass
 export default class AnimDefault extends cc.Component {
