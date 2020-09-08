@@ -13,7 +13,8 @@ export default class AnimDefault extends cc.Component {
 	@property(cc.String)
 	Name = ''
 	@property(cc.String)
-	AnimName = ''
+	Anim = ''
+	animArray = []
 
 	@property(cc.String)
 	Range = ''
@@ -38,6 +39,7 @@ export default class AnimDefault extends cc.Component {
 
 	Animation
 	Unit
+	RotateContainer
 
 	targetPosition
 
@@ -45,10 +47,9 @@ export default class AnimDefault extends cc.Component {
 		this.Animation = this.getComponent(cc.Animation)
 		this.Unit = this.node.parent.getComponent(BattleUnit)
 		this.Unit.addAttackController(this, this.Name || this.node.name)
-
-		this.Animation.on('finished', () => {
-			if (this.onFinish) this.onFinish()
-		})
+		this.RotateContainer = this.node.getChildByName('rotate_container')
+		this.animArray = this.Anim.split('-').filter(a => a).map(a => a.trim())
+		if (!this.animArray.length) this.animArray.push('')
 
 		let [rangeFun, rangeParam] = this.Range.split('-')
 		let [coverFun, coverParam] = this.Cover.split('-')
@@ -66,20 +67,29 @@ export default class AnimDefault extends cc.Component {
 		})
 	}
 
-	async playAttackTo (position) {
-		this.targetPosition = position
-
-		let rotation = getTwoPointAngle(this.Unit.node, position)
-		this.node.angle = rotationToAngle(rotation)
-
-		await this.playAnim()
+	get defaultAnim () {
+		return this.animArray[0]
 	}
 
-	playAnim () {
-		return new Promise(resolve => {
-			this.Animation.play(this.AnimName || undefined)
+	async playAnim () {
+		for (let anim of this.animArray) {
+			await new Promise(resolve => {
+				this.Animation.play(anim || undefined)
+				this.Animation.once('finished', resolve)
+			})
+		}
+	}
+
+	async playAttackTo (position) {
+		this.targetPosition = position
+		// this.rotateToTarget(position)
+
+		await new Promise(resolve => {
+			this.playAnim().then(() => {
+				this.onFinish()
+				resolve()
+			})
 			this.node.once('hit', resolve)
-			this.Animation.once('finished', resolve)
 		})
 	}
 
@@ -98,6 +108,15 @@ export default class AnimDefault extends cc.Component {
 
 	getCover (point) {
 		return this.coverFun(this.Unit, point, this.coverParams || [])
+	}
+
+	/* 动画特殊事件方法 */
+
+	rotateToTarget () {
+		if (!this.targetPosition) return
+		let rotation = getTwoPointAngle(this.Unit.node, this.targetPosition)
+		let node = this.RotateContainer || this.node
+		node.angle = rotationToAngle(rotation)
 	}
 
 }

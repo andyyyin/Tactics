@@ -10,7 +10,7 @@ export default class BowShoot extends AttackSuper {
 
 	async onShoot () {
 		if (!this.targetPosition) return
-		if (!this.Animation.getAnimationState(this.AnimName).isPlaying) return
+		if (!this.Animation.getAnimationState(this.defaultAnim).isPlaying) return
 		this.Animation.pause()
 		let relativePos = this.targetPosition.subtract(this.Unit.node.getPosition())
 

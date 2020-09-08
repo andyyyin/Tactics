@@ -16,9 +16,9 @@ export default class BattleState extends cc.Component {
 	StateColorFocus = null
 
 	@property(cc.Prefab)
-	StopPrefab
+	StopPrefab = null
 	@property(cc.Prefab)
-	DizzPrefab
+	DizzPrefab = null
 
 	getPrefab (state: State) {
 		switch (state) {

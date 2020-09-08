@@ -59,6 +59,11 @@
   },
   "events": [
     {
+      "frame": 0,
+      "func": "rotateToTarget",
+      "params": []
+    },
+    {
       "frame": 0.3333333333333333,
       "func": "onReady",
       "params": []

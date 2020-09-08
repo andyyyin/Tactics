@@ -1,0 +1,141 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "FistAttack1",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.2833333333333333,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "rotate_container/effect": {
+        "comps": {
+          "cc.Sprite": {
+            "spriteFrame": [
+              {
+                "frame": 0,
+                "value": {
+                  "__uuid__": "18844b22-947e-49e2-9b8f-27c7fd9cfa73"
+                }
+              },
+              {
+                "frame": 0.06666666666666667,
+                "value": {
+                  "__uuid__": "fc7a66e0-7cc0-4c7f-9d59-2a42fbfa611d"
+                }
+              }
+            ]
+          }
+        },
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 12,
+              "curve": [
+                0.51712158808933,
+                0.10769230769230764,
+                0.9233250620347395,
+                0.48908188585607937
+              ]
+            },
+            {
+              "frame": 0.05,
+              "value": 4
+            },
+            {
+              "frame": 0.06666666666666667,
+              "value": 0
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 11,
+              "curve": "linear"
+            },
+            {
+              "frame": 0.05,
+              "value": 30
+            },
+            {
+              "frame": 0.06666666666666667,
+              "value": 45
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": 230
+            },
+            {
+              "frame": 0.05,
+              "value": 250
+            }
+          ],
+          "active": [
+            {
+              "frame": 0,
+              "value": true
+            },
+            {
+              "frame": 0.06666666666666667,
+              "value": true
+            },
+            {
+              "frame": 0.2833333333333333,
+              "value": false
+            }
+          ],
+          "scale": [
+            {
+              "frame": 0,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.4,
+                "y": 0.4
+              }
+            },
+            {
+              "frame": 0.06666666666666667,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.4,
+                "y": 0.4
+              }
+            }
+          ]
+        }
+      },
+      "sprite": {
+        "comps": {},
+        "props": {
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 0,
+              "curve": "constant"
+            },
+            {
+              "frame": 0.2833333333333333,
+              "value": 255
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": [
+    {
+      "frame": -0.016666666666666666,
+      "func": "",
+      "params": []
+    },
+    {
+      "frame": 0,
+      "func": "rotateToTarget",
+      "params": []
+    }
+  ]
+}
