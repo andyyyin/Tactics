@@ -3,7 +3,7 @@ const c: any = {}
 
 c.default = (unit, point, [length]) => ({cover: [point]})
 
-c['横扫'] = (unit, point, [length]) => {
+c['横扫'] = (unit, point, [length], block = true) => {
 	let Map = unit.Map
 	let stand = unit.curPos
 	length = length || 1
@@ -18,11 +18,19 @@ c['横扫'] = (unit, point, [length]) => {
 			cover.unshift(Map.toUp(cover[0]))
 			cover.push(Map.toDown(cover[cover.length - 1]))
 		}
-		if (Map.isBlocked(cover[0]) || Map.isBlocked(cover[cover.length - 1])) {
-			return null
+		if (Map.isBlocked(cover[0])) {
+			if (block) return null
+			cover.shift()
+		}
+		if (Map.isBlocked(cover[cover.length - 1])) {
+			if (block) return null
+			cover.pop()
 		}
 	}
 	return {cover}
+}
+c['横排灵活'] = (unit, point, [length]) => {
+	return c['横扫'](unit, point, [length], false)
 }
 
 c['三角'] = (unit, point) => {
