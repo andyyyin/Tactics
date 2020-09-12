@@ -17,6 +17,8 @@ let _indicator = {
 	move: null,
 	attack: null,
 	cover: null,
+	disabled: null,
+	route: null,
 	focus: false,
 }
 
@@ -85,7 +87,7 @@ export default class BattleMap extends cc.Component {
 	}
 
 	start() {
-		_moveIndicatorColor = this.IndicatorTile.data.color
+		_moveIndicatorColor = new cc.Color(127, 244, 157)
 		_attackIndicatorColor = new cc.Color(196, 15, 15)
 		// _attackIndicatorColor = new cc.Color()
 		for (let y = 0; y < this.mapSize.width; y++) {
@@ -99,8 +101,15 @@ export default class BattleMap extends cc.Component {
 				iTile.anchorX = this.IndicatorNode.anchorX
 				iTile.anchorY = this.IndicatorNode.anchorY
 				iTile.setPosition(this.layerFloor.getPositionAt(x, y))
+
+				iTile.tile = iTile.getChildByName('tile')
+				iTile.route = iTile.getChildByName('route')
+				iTile.cross = iTile.getChildByName('cross')
+
+				iTile.tile.active = iTile.route.active = iTile.cross.active = false
+
 				this.iTileList.push(iTile)
-				iTile.active = false
+				// iTile.active = false
 			}
 		}
 		this.CursorNode.scaleX = this.tileSize.width / this.CursorNode.width * 1.1
@@ -185,6 +194,8 @@ export default class BattleMap extends cc.Component {
 						let {cover, animPos} = coverData
 						_animPos = animPos
 						this.showCoverIndicator(cover)
+					} else if (coverData && coverData.disabled && coverData.disabled.length) {
+						this.showDisableIndicator(coverData.disabled)
 					}
 					let target = player.getOpponents().find(e => e.iPos === iPos)
 					hoverTarget = target
@@ -249,44 +260,59 @@ export default class BattleMap extends cc.Component {
 		let {attack} = _indicator
 		this.updateMapIndicator({attack, cover: cover.flat()})
 	}
+	showDisableIndicator (disabled) {
+		let {attack} = _indicator
+		this.updateMapIndicator({attack, disabled})
+	}
 	hideCover () {
 		let {attack} = _indicator
 		this.updateMapIndicator({attack})
 	}
 
-	updateMapIndicator (param: {move?, attack?, cover?, focus?: boolean} = {}) {
-		let {move, attack, cover, focus} = param
+	updateMapIndicator (param: {move?, attack?, cover?, disabled?, route?, focus?: boolean} = {}) {
+		let {move, attack, cover, disabled, route, focus} = param
 		const show = (ip, color, opacity) => {
 			let iTile = this.iTileList[ip]
-			iTile.active = true
-			iTile.getChildByName('Route').active = false
-			iTile.color = color
-			iTile.opacity = opacity
+			iTile.tile.active = true
+			iTile.tile.color = color
+			iTile.tile.opacity = opacity
 		}
 
-		if (_indicator.attack) {
-			_indicator.attack.map(ap => this.iTileList[ap].active = false)
+		if (_indicator.attack && _indicator.attack !== attack) {
+			_indicator.attack.map(ap => this.iTileList[ap].tile.active = false)
 		}
-		if (_indicator.cover) {
-			_indicator.cover.map(cp => this.iTileList[cp].active = false)
+		if (_indicator.cover && _indicator.cover !== cover) {
+			_indicator.cover.map(cp => this.iTileList[cp].tile.active = false)
 		}
-		if (_indicator.move) {
-			_indicator.move.map(mp => this.iTileList[mp].active = false)
+		if (_indicator.disabled && _indicator.disabled !== disabled) {
+			_indicator.disabled.map(dp => this.iTileList[dp].cross.active = false)
+		}
+		if (_indicator.move && _indicator.move !== move) {
+			_indicator.move.map(mp => this.iTileList[mp].tile.active = false)
+		}
+		if (_indicator.route && _indicator.route !== route) {
+			_indicator.move.map(mp => this.iTileList[mp].route.active = false)
 		}
 
 		if (attack) {
 			attack.map(ap => show(ap, _attackIndicatorColor, 70))
 		}
-		if (cover) {
+		if (cover && _indicator.cover !== cover) {
 			cover.map(cp => show(cp, _attackIndicatorColor, 150))
 		}
-		if (move) {
+		if (disabled && _indicator.disabled !== disabled) {
+			disabled.map(dp => this.iTileList[dp].cross.active = true)
+		}
+		if (move && _indicator.move !== move) {
 			move.map(mp => show(mp, _moveIndicatorColor, focus ? 150 : 70))
+		}
+		if (route && _indicator.route !== route) {
+			route.map(mp => this.iTileList[mp].route.active = true)
 		}
 
 		this.IndicatorNode.zIndex = (attack || cover) ? 5 : 0
 		_cover = cover
-		_indicator = {move, attack, cover, focus}
+		_indicator = {move, attack, cover, disabled, route, focus}
 	}
 
 	hideIndicator () {
@@ -302,27 +328,28 @@ export default class BattleMap extends cc.Component {
 			if (preIndex === undefined) {
 				range[i].map(ip => {
 					if (ip === endIndex) {
-						tiles[ip].getChildByName('Route').active = true
+						tiles[ip].route.active = true
 						preIndex = ip
 						route.push(ip)
 					} else {
-						tiles[ip].getChildByName('Route').active = false
+						tiles[ip].route.active = false
 					}
 				})
 			} else {
 				let findFlag = false
 				range[i].map(ip => {
 					if (!findFlag && this.isClose(ip, preIndex)) {
-						tiles[ip].getChildByName('Route').active = true
+						tiles[ip].route.active = true
 						preIndex = ip
 						route.unshift(ip)
 						findFlag = true
 					} else {
-						tiles[ip].getChildByName('Route').active = false
+						tiles[ip].route.active = false
 					}
 				})
 			}
 		}
+		_indicator.route = route
 		return route
 	}
 

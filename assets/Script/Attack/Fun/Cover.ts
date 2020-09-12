@@ -3,13 +3,14 @@ const c: any = {}
 
 c.default = (unit, point, [length]) => ({cover: [point]})
 
-c['横扫'] = (unit, point, [length], block = true) => {
+c['横扫'] = (unit, point, [length], blockDisable = true) => {
 	let Map = unit.Map
 	let stand = unit.curPos
 	length = length || 1
 	let cover = [point]
 	let isSameRow = Map.isSameRow(stand, point)
 	let isSameCol = Map.isSameCol(stand, point)
+	let disabled = []
 	for (let i = 0; i < length; i++) {
 		if (isSameCol) {
 			cover.unshift(Map.toLeft(cover[0]))
@@ -19,15 +20,16 @@ c['横扫'] = (unit, point, [length], block = true) => {
 			cover.push(Map.toDown(cover[cover.length - 1]))
 		}
 		if (Map.isBlocked(cover[0])) {
-			if (block) return null
-			cover.shift()
+			let bp = cover.shift()
+			if (blockDisable) disabled.push(bp)
 		}
 		if (Map.isBlocked(cover[cover.length - 1])) {
-			if (block) return null
-			cover.pop()
+			let bp = cover.pop()
+			if (blockDisable) disabled.push(bp)
 		}
 	}
-	return {cover}
+	if (disabled.length) cover = null
+	return {cover, disabled}
 }
 c['横排灵活'] = (unit, point, [length]) => {
 	return c['横扫'](unit, point, [length], false)
@@ -42,16 +44,18 @@ c['三角'] = (unit, point) => {
 	if (rx < 0) cover.push(Map.toRight(point))
 	if (ry < 0) cover.push(Map.toDown(point))
 	if (ry > 0) cover.push(Map.toUp(point))
-	if (cover.find(p => Map.isBlocked(p)) !== undefined) {
-		return null
+
+	let disabled = cover.filter(ip => Map.isBlocked(ip))
+	if (disabled.length) {
+		cover = null
 	}
-	return {cover}
+	return {cover, disabled}
 }
 
 c['直线畅通'] = (unit, point, [length]) => {
 	let Map = unit.Map
 	let stand = unit.curPos
-	if (Map.isBlocked(point)) return null
+	if (Map.isBlocked(point)) return {disabled: [point]}
 	let cover = [point]
 	let {x: rx, y: ry} = Map.relativeTo(stand, point)
 	for (let i = 1; i <= length; i++) {
