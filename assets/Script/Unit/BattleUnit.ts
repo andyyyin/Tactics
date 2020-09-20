@@ -30,6 +30,9 @@ export default class BattleUnit extends cc.Component {
 	@property(cc.Integer)
 	critical = 10
 
+	mwp = 100
+	wp
+
 	State
 
 	Battle
@@ -46,6 +49,7 @@ export default class BattleUnit extends cc.Component {
 	attackList = []
 
 	HpProgress
+	WpProgress
 
 	attackChosen
 
@@ -56,8 +60,11 @@ export default class BattleUnit extends cc.Component {
 		this.StateMark = this.node.getChildByName('state_mark')
 		this.StateMark.active = false
 		let hpNode = this.node.getChildByName('hp')
+		let wpNode = this.node.getChildByName('wp')
 		this.hp = this.mhp
+		this.wp = this.mwp
 		this.HpProgress = hpNode && hpNode.getComponent(cc.ProgressBar)
+		this.WpProgress = wpNode && wpNode.getComponent(cc.ProgressBar)
 		// let attackNode = this.node.getChildByName('attack')
 		// if (attackNode) {
 		// 	this.attackAnimation = attackNode.getComponent(cc.Animation)
@@ -150,6 +157,7 @@ export default class BattleUnit extends cc.Component {
 					await this.Battle.Anim.playDamage(tPosition, damage)
 				}
 				target.changeHp(-damage)
+				target.changeWp(-damage / 2)
 
 				/* 附加状态 */
 				for (let i = 0; i < stateParams.length; i++) {
@@ -171,6 +179,7 @@ export default class BattleUnit extends cc.Component {
 	}
 
 	changeHp (value) {
+		if (!this.HpProgress) return
 		this.hp += value
 		if (this.hp > this.mhp) this.hp = this.mhp
 		if (this.hp <= 0) {
@@ -179,6 +188,17 @@ export default class BattleUnit extends cc.Component {
 		}
 		this.HpProgress.progress = this.hp / this.mhp
 		console.log(`${this.hp}/${this.mhp} - ${this.HpProgress.progress}`)
+	}
+
+	changeWp (value) {
+		if (!this.WpProgress) return
+		this.wp += value
+		if (this.wp > this.mwp) this.wp = this.mwp
+		if (this.wp <= 0) {
+			this.wp = 0
+			this.defeat()
+		}
+		this.WpProgress.progress = this.wp / this.mwp
 	}
 
 	defeat () {
