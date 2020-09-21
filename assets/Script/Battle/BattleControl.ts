@@ -6,7 +6,7 @@ import CustomButton from "../CustomButton";
 const {ccclass, property} = cc._decorator;
 
 let _cameraAround
-let _mapAround
+let _cameraLimit
 
 @ccclass
 export default class BattleControl extends cc.Component {
@@ -39,8 +39,10 @@ export default class BattleControl extends cc.Component {
 		cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 		this.MapNode.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this)
 		this.MapNode.on(cc.Node.EventType.MOUSE_UP, this.onMouseUp, this)
-		_mapAround = getNodeAround(this.MapNode)
-		console.log('map', _mapAround)
+		_cameraLimit = getNodeAround(this.MapNode)
+		_cameraLimit.left = _cameraLimit.left - 200
+		_cameraLimit.right = _cameraLimit.right + 200
+		console.log('camera limit', _cameraLimit)
 		_cameraAround = getNodeAround(this.CameraNode)
 		if (this.MapNode.width < this.CameraNode.width) {
 			let {centerX} = getNodeAround(this.MapNode)
@@ -133,35 +135,35 @@ export default class BattleControl extends cc.Component {
 		let speed = this.cameraSpeed
 
 		if (this.cameraMovingX) {
-			if (this.cameraMovingX < 0 && _cameraAround.left > _mapAround.left) {
+			if (this.cameraMovingX < 0 && _cameraAround.left > _cameraLimit.left) {
 				this.CameraNode.x += (this.cameraMovingX * speed * dt)
 				let {left} = getNodeAround(this.CameraNode)
-				if (left < _mapAround.left) {
-					setNodeAround(this.CameraNode, {left: _mapAround.left})
+				if (left < _cameraLimit.left) {
+					setNodeAround(this.CameraNode, {left: _cameraLimit.left})
 				}
 			}
-			if (this.cameraMovingX > 0 && _cameraAround.right < _mapAround.right) {
+			if (this.cameraMovingX > 0 && _cameraAround.right < _cameraLimit.right) {
 				this.CameraNode.x += (this.cameraMovingX * speed * dt)
 				let {right} = getNodeAround(this.CameraNode)
-				if (right > _mapAround.right) {
-					setNodeAround(this.CameraNode, {right: _mapAround.right})
+				if (right > _cameraLimit.right) {
+					setNodeAround(this.CameraNode, {right: _cameraLimit.right})
 				}
 			}
 			_cameraAround = getNodeAround(this.CameraNode)
 		}
 		if (this.cameraMovingY) {
-			if (this.cameraMovingY > 0 && _cameraAround.top < _mapAround.top) {
+			if (this.cameraMovingY > 0 && _cameraAround.top < _cameraLimit.top) {
 				this.CameraNode.y += (this.cameraMovingY * speed * dt)
 				let {top} = getNodeAround(this.CameraNode)
-				if (top > _mapAround.top) {
-					setNodeAround(this.CameraNode, {top: _mapAround.top})
+				if (top > _cameraLimit.top) {
+					setNodeAround(this.CameraNode, {top: _cameraLimit.top})
 				}
 			}
-			if (this.cameraMovingY < 0 && _cameraAround.bottom > _mapAround.bottom) {
+			if (this.cameraMovingY < 0 && _cameraAround.bottom > _cameraLimit.bottom) {
 				this.CameraNode.y += (this.cameraMovingY * speed * dt)
 				let {bottom} = getNodeAround(this.CameraNode)
-				if (bottom < _mapAround.bottom) {
-					setNodeAround(this.CameraNode, {bottom: _mapAround.bottom})
+				if (bottom < _cameraLimit.bottom) {
+					setNodeAround(this.CameraNode, {bottom: _cameraLimit.bottom})
 				}
 			}
 			_cameraAround = getNodeAround(this.CameraNode)
